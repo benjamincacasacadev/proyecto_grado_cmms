@@ -1,4 +1,4 @@
-@extends ('layouts.admin', ['title_template' => "U.E República Federal de Alemania"])
+@extends ('layouts.admin', ['title_template' => "Seg Tech AMPER"])
 @section('extracss')
 <style>
 

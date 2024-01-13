@@ -3,7 +3,7 @@
 use App\User;
 use Spatie\Permission\Models\Role;
 function nameEmpresa(){
-    return "Unidad Educativa República Federal de Alemania";
+    return "AMPER SRL";
 }
 
 function userId(){
@@ -206,8 +206,12 @@ function fechaLiteral($fecha = false){
     return $dias[date('N', strtotime($fecha))] . " " . date('j', strtotime($fecha)) . " de " . $meses[date('n', strtotime($fecha))] . " de " . date('Y', strtotime($fecha));
 }
 
-function tempoSelect(){
-    $varSession = Session::get('gestion_temporada');
-    $varSession = isset($varSession) ? $varSession : session(['gestion_temporada'=>date("Y")]);
-    return Session::get('gestion_temporada');
+function permisoAdmin(){
+    return roleId() == 1 || roleId() == 2 || roleId() == 3 ? true : false;
+}
+
+function canPass(){
+    if(!permisoAdmin()){
+        return abort(403);
+    }
 }

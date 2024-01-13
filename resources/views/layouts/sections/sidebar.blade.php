@@ -7,9 +7,8 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <h1 class="navbar-brand ">
-            <img src="{{ asset('logo.png') }}" alt="Samaritan's Purse" style='width:96px; height:64px;' class="navbar-brand-image">
+            <img src="{{ asset('logo.png') }}" alt="Amper SRL" class="navbar-brand-image">
         </h1>
-
 
         <div class="navbar-nav flex-row d-lg-none">
             <div class="nav-item dropdown d-none d-md-flex me-3">
@@ -65,84 +64,171 @@
                     </a>
                 </li>
 
-                <li class="nav-item {!!strstr($item,'.',true)=='1' ? 'active' : ''; !!}">
-                    <a class="dropdown-item @if(strstr($item,'.',true)=='1') text-yellow font-weight-bold @endif" href="/">
+                {{-- =================================================================================================================== --}}
+                {{--                                              ÓRDENES DE TRABAJO                                                     --}}
+                {{-- =================================================================================================================== --}}
+                <li class="nav-item {!!strstr($item,'.',true)=='1'?'active':'';!!}">
+                    <a class="dropdown-item {!!strstr($item,'.',true)=='1'?'text-yellow font-weight-bold':'';!!}" href="/work_orders" >
                         <span class="nav-link-icon  d-lg-inline-block">
-                            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6"></path>
-                                <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4"></path>
-                            </svg>
+                            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><rect x="9" y="3" width="6" height="4" rx="2" /><line x1="9" y1="12" x2="9.01" y2="12" /><line x1="13" y1="12" x2="15" y2="12" /><line x1="9" y1="16" x2="9.01" y2="16" /><line x1="13" y1="16" x2="15" y2="16" /></svg>
                         </span>
                         <span class="nav-link-title">
-                            Estudiantes
-                        </span>
-                    </a>
-                </li>
-
-                <li class="nav-item {!!strstr($item,'.',true)=='2' ? 'active' : ''; !!}">
-                    <a class="dropdown-item @if(strstr($item,'.',true)=='2') text-yellow font-weight-bold @endif" href="/">
-                        <span class="nav-link-icon  d-lg-inline-block">
-                            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <circle cx="15" cy="15" r="3"></circle>
-                                <path d="M13 17.5v4.5l2 -1.5l2 1.5v-4.5"></path>
-                                <path d="M10 19h-5a2 2 0 0 1 -2 -2v-10c0 -1.1 .9 -2 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -1 1.73"></path>
-                                <line x1="6" y1="9" x2="18" y2="9"></line>
-                                <line x1="6" y1="12" x2="9" y2="12"></line>
-                                <line x1="6" y1="15" x2="8" y2="15"></line>
-                            </svg>
-                        </span>
-                        <span class="nav-link-title">
-                            Cursos
-                        </span>
-                    </a>
-                </li>
-
-                <li class="nav-item {!!strstr($item,'.',true)=='3' ? 'active' : ''; !!}">
-                    <a class="dropdown-item @if(strstr($item,'.',true)=='3') text-yellow font-weight-bold @endif" href="/">
-                        <span class="nav-link-icon  d-lg-inline-block">
-                            &nbsp;<i class=" fa fa-user-tie fa-lg"></i>
-                        </span>
-                        <span class="nav-link-title">
-                            Maestros
-                        </span>
-                    </a>
-                </li>
-
-                <li class="nav-item {!!strstr($item,'.',true)=='4' ? 'active' : ''; !!}">
-                    <a class="dropdown-item @if(strstr($item,'.',true)=='4') text-yellow font-weight-bold @endif" href="/">
-                        <span class="nav-link-icon  d-lg-inline-block">
-                            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M12 18h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v7.5"></path>
-                                <path d="M3 6l9 6l9 -6"></path>
-                                <path d="M15 18h6"></path>
-                                <path d="M18 15l3 3l-3 3"></path>
-                            </svg>
-                        </span>
-                        <span class="nav-link-title">
-                            Correspondencia
+                            Órdenes de trabajo &ensp;
                         </span>
                     </a>
                 </li>
 
                 {{-- =================================================================================================================== --}}
-                {{--                                                        USUARIOS                                                     --}}
+                {{--                                                    ACTIVOS                                                          --}}
                 {{-- =================================================================================================================== --}}
-                {{-- @if (Gate::check('users.index') || Gate::check('users.myindex')) --}}
-                    <li class="nav-item {!!strstr($item,'.',true)=='5'?'active':'';!!}">
-                        <a class="dropdown-item @if(strstr($item,'.',true)=='5') text-yellow font-weight-bold @endif" href="/users" >
+                <li class="nav-item {!!strstr($item,'.',true)=='2'?'active':'';!!}">
+                    <a class="dropdown-item {!!strstr($item,'.',true)=='2'?'text-yellow font-weight-bold':'';!!}" href="/work_orders" >
+                        <span class="nav-link-icon  d-lg-inline-block">
+                            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
+                                <line x1="12" y1="12" x2="20" y2="7.5"></line>
+                                <line x1="12" y1="12" x2="12" y2="21"></line>
+                                <line x1="12" y1="12" x2="4" y2="7.5"></line>
+                            </svg>
+                        </span>
+                        <span class="nav-link-title">
+                            Activos
+                        </span>
+                    </a>
+                </li>
+
+                {{-- =================================================================================================================== --}}
+                {{--                                                    CLIENTES                                                         --}}
+                {{-- =================================================================================================================== --}}
+                <li class="nav-item {!!strstr($item,'.',true)=='3'?'active':'';!!}">
+                    <a class="dropdown-item {!!strstr($item,'.',true)=='3'?'text-yellow font-weight-bold':'';!!}" href="/work_orders" >
+                        <span class="nav-link-icon  d-lg-inline-block">
+                            <i class="far fa-building icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Clientes
+                        </span>
+                    </a>
+                </li>
+
+                {{-- =================================================================================================================== --}}
+                {{--                                                     INVENTARIO                                                      --}}
+                {{-- =================================================================================================================== --}}
+                @php
+                    $permisoInventario = 1
+                @endphp
+                @if ($permisoInventario == 1)
+                    <li class="nav-item dropdown {!!strstr($item,'.',true)=='4'?'active':'';!!}">
+                        <a class="dropdown-item dropdown-toggle" href="#navbar-inventario" data-toggle="dropdown" role="button" aria-expanded="false">
                             <span class="nav-link-icon  d-lg-inline-block">
-                                &nbsp;<i class="fa fa-users"></i>
+                                <img src="{{asset('imagenes/screw.svg')}}" width="20" height="20" style="margin-bottom:20px;filter: brightness(0) invert(1);">
                             </span>
                             <span class="nav-link-title">
-                                Usuarios
+                                Inventario
+                            </span>
+                        </a>
+
+                        <div class="dropdown-menu {!!strstr($item,'.',true)=='4.0'?'show':'';!!}">
+                                <div class="dropstart">
+                                <a class="dropdown-item dropdown-toggle" id="fungibles" href="#sidebar-fungibles" data-bs-toggle="dropdown" role="button" >
+                                    <span class="nav-link-icon  d-lg-inline-block">
+                                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="9" y1="6" x2="20" y2="6" /><line x1="9" y1="12" x2="20" y2="12" /><line x1="9" y1="18" x2="20" y2="18" /><line x1="5" y1="6" x2="5" y2="6.01" /><line x1="5" y1="12" x2="5" y2="12.01" /><line x1="5" y1="18" x2="5" y2="18.01" /></svg>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Materiales
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu {!!strstr($item,':',true)=='4.0'?'show':'';!!}">
+                                    <a class="dropdown-item {!!strstr($item,'|',true)=='4.0:1'?'active font-weight-bold':'';!!}" href="/inventory">
+                                        <span class="nav-link-icon  d-lg-inline-block">
+                                            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="9" y1="6" x2="20" y2="6" /><line x1="9" y1="12" x2="20" y2="12" /><line x1="9" y1="18" x2="20" y2="18" /><line x1="5" y1="6" x2="5" y2="6.01" /><line x1="5" y1="12" x2="5" y2="12.01" /><line x1="5" y1="18" x2="5" y2="18.01" /></svg>
+                                        </span>
+                                        <span class="nav-link-title">
+                                            Ver materiales
+                                        </span>
+                                    </a>
+                                    <a class="dropdown-item {!!strstr($item,'|',true)=='4.0:2'?'active font-weight-bold':'';!!}" href="/outcomes">
+                                        <span class="nav-link-icon  d-lg-inline-block">
+                                            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+                                                <path d="M7 12h14l-3 -3m0 6l3 -3"></path>
+                                            </svg>
+                                        </span>
+                                        <span class="nav-link-title">
+                                            Solicitudes
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <a class="dropdown-item {!!strstr($item,':',true)=='4.2'?'active font-weight-bold':'';!!}" href="/incomes">
+                                <span class="nav-link-icon  d-lg-inline-block">
+                                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M20 12h-13l3 -3m0 6l-3 -3" /></svg>
+                                </span>
+                                <span class="nav-link-title">
+                                    Ingresos
+                                </span>
+                            </a>
+
+                            @if (Gate::check('transfers.index'))
+                                <a class="dropdown-item {!!strstr($item,':',true)=='4.3'?'active font-weight-bold':'';!!}" href="/transfers">
+                                    <span class="nav-link-icon  d-lg-inline-block">
+                                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M14 21l-11 -11"></path>
+                                            <path d="M3 14v-4h4"></path>
+                                            <path d="M17 14h4v-4"></path>
+                                            <line x1="10" y1="3" x2="21" y2="14"></line>
+                                        </svg>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Traspasos
+                                    </span>
+                                </a>
+                            @endif
+
+                            <a class="dropdown-item {!!strstr($item,':',true)=='4.4'?'active font-weight-bold':'';!!}" href="/inventory/parameters">
+                                <span class="nav-link-icon d-lg-inline-block">
+                                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M9 16v-8h4a2 2 0 0 1 0 4h-4"></path></svg>
+                                </span>
+                                <span class="nav-link-title">
+                                    Paramétricas
+                                </span>
+                            </a>
+                        </div>
+                    </li>
+                @endif
+
+                {{-- =================================================================================================================== --}}
+                {{--                                            CONFIGURAR FORMULARIOS                                                   --}}
+                {{-- =================================================================================================================== --}}
+                @if (Gate::check('forms.index') || Gate::check('forms.admin'))
+                    <li class="nav-item {!!strstr($item,'.',true)=='5'?'active':'';!!}">
+                        <a class="dropdown-item {!!strstr($item,'.',true)=='5'?'text-yellow font-weight-bold':'';!!}" href="/forms" >
+                            <span class="nav-link-icon  d-lg-inline-block">
+                                <i class="fas fa-clipboard-list icon"></i>
+                            </span>
+                            <span class="nav-link-title">
+                                Formularios
                             </span>
                         </a>
                     </li>
-                {{-- @endif --}}
-
+                @endif
+                {{-- =================================================================================================================== --}}
+                {{--                                                        USUARIOS                                                     --}}
+                {{-- =================================================================================================================== --}}
+                <li class="nav-item {!!strstr($item,'.',true)=='6'?'active':'';!!}">
+                    <a class="dropdown-item @if(strstr($item,'.',true)=='6') text-yellow font-weight-bold @endif" href="/users" >
+                        <span class="nav-link-icon  d-lg-inline-block">
+                            &nbsp;<i class="fa fa-users"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Usuarios
+                        </span>
+                    </a>
+                </li>
 
             </ul>
         </div>

@@ -5,8 +5,7 @@
 
             </div>
             <div class="col-12 col-lg-auto mt-3 mt-lg-0">
-                <strong>Unidad Educativa República Federal De Alemania &copy; {{ now()->year }}.</strong>
-                El Alto - Bolivia
+                <strong>Software de seguimiento técnico AMPER SRL &copy; {{ now()->year }}.</strong>
             </div>
         </div>
     </div>

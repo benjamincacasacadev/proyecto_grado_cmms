@@ -159,131 +159,131 @@
         </div>
     </div>
 
-<div class="row mt-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                {{-- REPORTES --}}
-                <div class="row mb-2">
-                    <div class="container text-right">
-                        <div class="form-group">
-                            <button type="button" class="btn btn-outline-danger border border-danger pull-right mb-2 exportUser" id="pdf" title="Exportar PDF" style="width:242px;">
-                                <i class="fas fa-file-pdf fa-lg" ></i> &nbsp;
-                                <span class="d-none d-sm-inline-block">
-                                    Reporte en PDF
-                                </span>
-                            </button>
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {{-- REPORTES --}}
+                    <div class="row mb-2">
+                        <div class="container text-right">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-outline-danger border border-danger pull-right mb-2 exportUser" id="pdf" title="Exportar PDF" style="width:242px;">
+                                    <i class="fas fa-file-pdf fa-lg" ></i> &nbsp;
+                                    <span class="d-none d-sm-inline-block">
+                                        Reporte en PDF
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="container text-right">
+                            <div class="form-group">
+                                <button class="btn btn-outline-success border border-success pull-right exportUser" type="button" id="excel" style="width:242px;">
+                                    <i class="fas fa-file-excel fa-lg " id="icon"> </i> &nbsp;&nbsp;
+                                    <span class="d-none d-sm-inline-block">
+                                        Reporte en excel
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="container text-right">
-                        <div class="form-group">
-                            <button class="btn btn-outline-success border border-success pull-right exportUser" type="button" id="excel" style="width:242px;">
-                                <i class="fas fa-file-excel fa-lg " id="icon"> </i> &nbsp;&nbsp;
-                                <span class="d-none d-sm-inline-block">
-                                    Reporte en excel
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                {{-- TABLA DE DATOS --}}
-                <div class="table-responsive">
-                    <table class="table table-vcenter table-center table-sm table-hover" id="tabla_usr">
-                        <thead>
-                            <tr>
-                                <th width="5%" style="color:transparent !important"></th>
-                                <th class="hidden"></th>
-                                <th width="20%">NOMBRE(S)</th>
-                                <th width="20%">E-MAIL</th>
-                                <th width="10%">ESTADO</th>
-                                <th width="10%">ROL</th>
-                                <th width="3%">OP.</th>
-                            </tr>
-                        </thead>
-
-                        <thead role="row">
-                            <tr class="filters">
-                                <td></td>
-                                <td class="hidden"></td>
-                                <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="nombreb"/></td>
-                                <td><input style="width: 100%;font-size:10px" id="user1" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="emailb"/></td>
-                                <td><input style="width: 100%;font-size:10px" id="user2" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="estadob"/></td>
-                                <td><input style="width: 100%;font-size:10px" id="user3" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="rolb"/></td>
-                                <td></td>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach($usersa as $user)
+                    {{-- TABLA DE DATOS --}}
+                    <div class="table-responsive">
+                        <table class="table table-vcenter table-center table-sm table-hover" id="tabla_usr">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <center>
-                                        <span class="avatar avatar-sm avatar-rounded" style="background-image: url({{ imageRouteAvatar($user->avatar,1) }}); ">
-                                            <span class="@if( $user->id == userId() ) avatar-status bg-success @endif"></span>
-                                        </span>
-                                        </center>
-                                    </td>
-                                    <td class="hidden">{{ code($user->id)}}</td>
+                                    <th width="5%" style="color:transparent !important"></th>
+                                    <th class="hidden"></th>
+                                    <th width="20%">NOMBRE(S)</th>
+                                    <th width="20%">E-MAIL</th>
+                                    <th width="10%">ESTADO</th>
+                                    <th width="10%">ROL</th>
+                                    <th width="3%">OP.</th>
+                                </tr>
+                            </thead>
 
-                                    <td style="text-align: left !important"> {!! $user->getName() !!} </td>
-                                    <td >{{ isset($user->email) ? $user->email : '-' }}</td>
-                                    <td class="text-center">
-                                        @if ( $user->active==1 )
-                                            <span class="badge badge-pill bg-green">ACTIVO</span>
-                                        @else
-                                            <span class="badge badge-pill bg-red">INACTIVO</span>
-                                        @endif
-                                    </td>
-                                    <td >{{ $user->rolUser->name }}</td>
-                                    <td>
-                                        <span class="form-operations" data-toggle="popoverOper" tabindex="0"
-                                            data-content=
-                                                '<a href="/users/{{code($user->id)}}/edit" title="Editar">
-                                                    <svg class="icon text-muted iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" /><path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" /><line x1="16" y1="5" x2="19" y2="8" /></svg>
-                                                    &nbsp;<span class="text-muted">Editar</span>
-                                                </a><br>
-                                                @if($user->id != userId())
-                                                    @if ($user->active==1)
-                                                        <a rel="modalCambioEstado" style="cursor:pointer" href="/users/modalCambEstado/{{code($user->id)}}" title="Desactivar">
-                                                            <svg class="icon text-red iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h10v6a3 3 0 0 1 -3 3h-4a3 3 0 0 1 -3 -3v-6" /><line x1="9" y1="3" x2="9" y2="7" /><line x1="15" y1="3" x2="15" y2="7" /><path d="M12 16v2a2 2 0 0 0 2 2h3" /></svg>
-                                                            &nbsp;<span class="text-red">Desactivar</span>
-                                                        </a><br>
-                                                    @else
-                                                        <a rel="modalCambioEstado" style="cursor:pointer" href="/users/modalCambEstado/{{code($user->id)}}" title="Activar">
-                                                            <svg class="icon text-green iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h10v6a3 3 0 0 1 -3 3h-4a3 3 0 0 1 -3 -3v-6" /><line x1="9" y1="3" x2="9" y2="7" /><line x1="15" y1="3" x2="15" y2="7" /><path d="M12 16v2a2 2 0 0 0 2 2h3" /></svg>
-                                                            &nbsp;<span class="text-green">Activar</span>
+                            <thead role="row">
+                                <tr class="filters">
+                                    <td></td>
+                                    <td class="hidden"></td>
+                                    <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="nombreb"/></td>
+                                    <td><input style="width: 100%;font-size:10px" id="user1" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="emailb"/></td>
+                                    <td><input style="width: 100%;font-size:10px" id="user2" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="estadob"/></td>
+                                    <td><input style="width: 100%;font-size:10px" id="user3" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="rolb"/></td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach($usersa as $user)
+                                    <tr>
+                                        <td>
+                                            <center>
+                                            <span class="avatar avatar-sm avatar-rounded" style="background-image: url({{ imageRouteAvatar($user->avatar,1) }}); ">
+                                                <span class="@if( $user->id == userId() ) avatar-status bg-success @endif"></span>
+                                            </span>
+                                            </center>
+                                        </td>
+                                        <td class="hidden">{{ code($user->id)}}</td>
+
+                                        <td style="text-align: left !important"> {!! $user->getName() !!} </td>
+                                        <td >{{ isset($user->email) ? $user->email : '-' }}</td>
+                                        <td class="text-center">
+                                            @if ( $user->active==1 )
+                                                <span class="badge badge-pill bg-green">ACTIVO</span>
+                                            @else
+                                                <span class="badge badge-pill bg-red">INACTIVO</span>
+                                            @endif
+                                        </td>
+                                        <td >{{ $user->rolUser->name }}</td>
+                                        <td>
+                                            <span class="form-operations" data-toggle="popoverOper" tabindex="0"
+                                                data-content=
+                                                    '<a href="/users/{{code($user->id)}}/edit" title="Editar">
+                                                        <svg class="icon text-muted iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" /><path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" /><line x1="16" y1="5" x2="19" y2="8" /></svg>
+                                                        &nbsp;<span class="text-muted">Editar</span>
+                                                    </a><br>
+                                                    @if($user->id != userId())
+                                                        @if ($user->active==1)
+                                                            <a rel="modalCambioEstado" style="cursor:pointer" href="/users/modalCambEstado/{{code($user->id)}}" title="Desactivar">
+                                                                <svg class="icon text-red iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h10v6a3 3 0 0 1 -3 3h-4a3 3 0 0 1 -3 -3v-6" /><line x1="9" y1="3" x2="9" y2="7" /><line x1="15" y1="3" x2="15" y2="7" /><path d="M12 16v2a2 2 0 0 0 2 2h3" /></svg>
+                                                                &nbsp;<span class="text-red">Desactivar</span>
+                                                            </a><br>
+                                                        @else
+                                                            <a rel="modalCambioEstado" style="cursor:pointer" href="/users/modalCambEstado/{{code($user->id)}}" title="Activar">
+                                                                <svg class="icon text-green iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h10v6a3 3 0 0 1 -3 3h-4a3 3 0 0 1 -3 -3v-6" /><line x1="9" y1="3" x2="9" y2="7" /><line x1="15" y1="3" x2="15" y2="7" /><path d="M12 16v2a2 2 0 0 0 2 2h3" /></svg>
+                                                                &nbsp;<span class="text-green">Activar</span>
+                                                            </a><br>
+                                                        @endif
+                                                    @endif
+                                                    @if($user->id != userId())
+                                                        <a rel="modalEliminar" style="cursor:pointer" href="/users/modalDelete/{{code($user->id)}}" data-toggle="tooltip" data-placement="top" title="Eliminar" >
+                                                            <svg class="icon text-muted iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                                                            &nbsp;<span class="text-muted">Eliminar</span>
                                                         </a><br>
                                                     @endif
-                                                @endif
-                                                @if($user->id != userId())
-                                                    <a rel="modalEliminar" style="cursor:pointer" href="/users/modalDelete/{{code($user->id)}}" data-toggle="tooltip" data-placement="top" title="Eliminar" >
-                                                        <svg class="icon text-muted iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
-                                                        &nbsp;<span class="text-muted">Eliminar</span>
-                                                    </a><br>
-                                                @endif
-                                            '>
-                                            <svg class="icon text-muted btnoper" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                <circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" />
-                                            </svg>
-                                        <span>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                                                '>
+                                                <svg class="icon text-muted btnoper" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /><circle cx="12" cy="5" r="1" />
+                                                </svg>
+                                            <span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
 
-                {{ Form::open(['route'=>'users.export','method'=>'GET','role'=>'search','id'=>'formExportUser', 'target'=>'_blank']) }}
-                    <input hidden id="tipo" name="tipo">
-                    <input hidden id="idsExport" name="idsExport">
-                    <button hidden id="btnGenerarExport" type="submit"></button>
-                {!! Form::close() !!}
+                    {{ Form::open(['route'=>'users.export','method'=>'GET','role'=>'search','id'=>'formExportUser', 'target'=>'_blank']) }}
+                        <input hidden id="tipo" name="tipo">
+                        <input hidden id="idsExport" name="idsExport">
+                        <button hidden id="btnGenerarExport" type="submit"></button>
+                    {!! Form::close() !!}
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     {{-- Modal Eliminar --}}
     <div class="modal modal-danger fade" aria-hidden="true" role="dialog" id="modalEliminar" data-backdrop="static">

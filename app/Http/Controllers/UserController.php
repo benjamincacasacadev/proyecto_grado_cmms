@@ -25,6 +25,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class UserController extends Controller
 {
     public function index(){
+        canPass();
         $userlog = User::where('id',userId())->get();
         $usersa = User::where('active',1)->where('id','!=',userId())->orderBy('ap_paterno','asc')->get();
         $usersi = User::where('active','!=',2)->where('active','!=',1)->orderBy('ap_paterno','asc')->get();
@@ -34,15 +35,16 @@ class UserController extends Controller
         $usersactive = User::where('active',1)->count();
         $usersinactive = User::where('active',0)->count();
         $usersdelete = User::where('active',2)->count();
-        Session::put('item','5.');
-        return view('users.index', compact('usersactive','usersinactive','usersdelete','usersa','usersi'));
+        Session::put('item','6.');
+        return view('users.index', compact('usersactive','usersinactive','usersdelete','usersa'));
     }
 
     public function show( Request $request, $cod){
+        canPass();
         $user = User::findOrFail(decode($cod));
 
         if($user->active != '2'){
-            Session::put('item','5.');
+            Session::put('item','6.');
             return view('users.show',compact('user'));
         }else{
             abort(404);
@@ -51,12 +53,14 @@ class UserController extends Controller
     }
 
     public function create(){
+        canPass();
         $roles = Role::get();
-        Session::put('item','5.');
+        Session::put('item','6.');
         return view('users.create',compact('roles'));
     }
 
     public function store(Request $request, FlasherInterface $flasher) {
+        canPass();
         $messages = [
             'username.required' => 'El campo nombre de usuario es requerido.',
             'password.required' => 'La contraseña es obligatoria',
@@ -126,13 +130,15 @@ class UserController extends Controller
     }
 
     public function edit($id){
+        canPass();
         $user = User::findOrFail(decode($id));
         $roles = Role::get();
-        Session::put('item','5.1:');
+        Session::put('item','6.');
         return view('users.edit',compact('user','roles'));
     }
 
     public function update(Request $request, FlasherInterface $flasher, $id){
+        canPass();
         $user = User::where('id',decode($id))->first();
         // Validacion por request
         $this->validateUpdateUser($request, $user);
@@ -146,6 +152,7 @@ class UserController extends Controller
             $user->ap_materno = $request->ap_materno;
             $user->email = $request->email;
             $user->celular = $request->celular;
+            $user->role_id = decode($request->roles);
             // PASSWORD
             if($request->auxpass == 1 && $request->password_first != null && $request->new_password != null ){
                 $user->password = bcrypt($request->new_password);
@@ -167,11 +174,13 @@ class UserController extends Controller
      * Carga la ventana de confirmacion para
      */
     public function modalCambioEstado($id){
+        canPass();
         $users = User::findOrFail(decode($id));
         return view('users.modalCambioEstado', compact('users'));
     }
 
     public function cambiarestado(FlasherInterface $flasher, $id){
+        canPass();
         $user=User::findOrFail(decode($id));
         if($user->id != userId()){
             if ($user->active=='0') {
@@ -187,11 +196,13 @@ class UserController extends Controller
     }
 
     public function modalDelete($id){
+        canPass();
         $users = User::findOrFail(decode($id));
         return view('users.modalDelete', compact('users'));
     }
 
     public function destroy(Request $request, FlasherInterface $flasher, $id){
+        canPass();
         $user = User::findOrFail(decode($id));
         $messages = [
             'userborrar.required' => 'El campo es obligatorio',
@@ -314,6 +325,93 @@ class UserController extends Controller
         }
     }
 
+
+    public function perfil(){
+        Session::put('item','6.');
+        return view('users.profile');
+    }
+
+        /**
+     * Actualiza el perfil del usuario conectado.
+     */
+    public function updateProfile(Request $request, FlasherInterface $flasher, $id){
+        $messages = [
+            'name.required'  => 'El campo Nombre(s) es obligatorio',
+            'name.max'  => 'El campo Nombre(s) debe tener al menos 2 caracteres',
+            'name.min'  => 'El campo Nombre(s) no debe tener más de 50 caracteres',
+            'ap_paterno.required'  => 'El campo Apellido Paterno es obligatorio',
+            'ap_paterno.min'  => 'El campo Apellido Paterno debe tener al menos 2 caracteres',
+            'ap_paterno.max'  => 'El campo Apellido Paterno no debe tener más de 50 caracteres',
+            'current_password.required'  => 'EL CAMPO "Contraseña Actual" ES OBLIGATORIO',
+            'password_first.min'  => 'El campo Contraseña Nueva debe contener al menos 8 caracteres.',
+            'password_first.required'  => 'EL CAMPO "Contraseña Nueva" ES OBLIGATORIO',
+            'password_first.regex'  => 'EL CAMPO "Contraseña Nueva" NO CUMPLE CON LOS REQUERIMIENTOS',
+            'password_first.required_with' => 'El campo contraseña nueva es obligatorio cuando Contraseña actual está presente.',
+            'new_password.min'  => 'El campo Confirmar Contraseña Nueva debe contener al menos 8 caracteres.',
+            'new_password.required'  => 'EL CAMPO "Confirmar Contraseña Nueva" ES OBLIGATORIO',
+            'new_password.regex'  => 'EL CAMPO "Confirmar Contraseña Nueva" NO CUMPLE CON LOS REQUERIMIENTOS',
+            'new_password.same' => 'Los campos "Contraseña nueva" y "Confirmar contraseña nueva" deben ser iguales',
+            'new_password.same' => 'Los campos "Contraseña nueva" y "Confirmar contraseña nueva" deben ser iguales',
+        ];
+
+        $validateArray = [
+            'name' => 'required|max:40|min:2',
+            'ap_paterno' => 'required|max:50|min:2',
+            'ap_materno' => 'nullable|max:50|min:2',
+            // 'email' => 'required|email:filter',
+            'celular' => 'max:20|min:3',
+        ];
+
+        if($request->auxpass == 1 ){
+            $request->validate([
+                'current_password' => ['required', function ($attribute, $value, $fail) {
+                    if (!\Hash::check($value, Auth::user()->password)) {
+                        return $fail(__('La contraseña ingresada no coincide con la almacenada en el sistema.'));
+                    }
+                }],
+                'password_first' => 'bail|required_with:current_password|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                'new_password' => 'bail|required_with:password_first|min:8|same:password_first|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                'name' => 'required|max:40|min:2',
+                'ap_paterno' => 'required|max:50|min:2',
+                'ap_materno' => 'nullable|max:50|min:2',
+                // 'email' => 'required|email:filter',
+                'celular' => 'max:20|min:3',
+            ],$messages);
+            $flasher->addFlash('success', 'Modificada con éxito', 'Contraseña');
+        }else{
+            $request->validate($validateArray,$messages);
+        }
+
+        $user = User::findOrFail(decode($id));
+
+        // CHECK DE QUITAR AVATAR
+        if ($request->checkAvatar != null) {
+            $ruta='public/general/avatar/'.$user->avatar;
+            if ($user->avatar != 'avatar0.png' && Storage::exists($ruta)){
+                $ruta_thum='public/general/avatar/thumbnail/'.$user->avatar;
+                Storage::delete($ruta);
+                Storage::delete($ruta_thum);
+            }
+            $user->avatar = 'avatar0.png';
+        }
+        if($request->auxpass == 1 && $request->current_password != null && $request->password_first != null && $request->new_password != null){
+            $user->password = bcrypt($request->new_password);
+            if(Cookie::has('login2')){
+                Cookie::queue(Cookie::forget('login2'));
+            }
+        }
+        $user->name = $request->name;
+        $user->ap_paterno = $request->ap_paterno;
+        $user->ap_materno = $request->ap_materno;
+        $user->email = $request->email;
+        $user->celular = $request->celular;
+        $user->update();
+        $flasher->addFlash('info', 'Modificados con éxito', 'Datos de perfil');
+        return  \Response::json(['success' => '1']);
+    }
+
+
+
     // ==============================================================================================================================
     //                                                VALIDACIONES LARAVEL
     // ==============================================================================================================================
@@ -328,6 +426,7 @@ class UserController extends Controller
             'ap_paterno.max' => 'El campo Apellido Paterno debe tener como máximo 50 caracteres',
             'ap_materno.min' => 'El campo Apellido Materno debe tener como mínimo 2 caracteres',
             'ap_materno.max' => 'El campo Apellido Materno debe tener como máximo 50 caracteres',
+            'roles.required' => 'Debe escoger una opción válida',
 
             // MENSAJES PASSWORD
             'password_first.min'  => 'El campo Contraseña Nueva debe contener al menos 8 caracteres.',
@@ -346,6 +445,7 @@ class UserController extends Controller
             'ap_materno' => 'bail|nullable|max:50|min:2',
             'email' => 'bail|nullable|email:filter',
             'celular' => 'nullable|min:3|max:20',
+            'roles' => 'required',
         ];
 
         $validatePassword = [

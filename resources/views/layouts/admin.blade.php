@@ -10,8 +10,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="keywords" content="U.E República Federal de Alemania" />
-    <meta name="description" content="U.E República Federal de Alemania" />
+    <meta name="keywords" content="Seg Tech AMPER" />
+    <meta name="description" content="Seg Tech AMPER" />
     <meta name="author" content="Benjamin Cacasaca" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -19,7 +19,7 @@
     @if (!empty($title_template))
         <title>{{ $title_template }}</title>
     @else
-        <title>U.E República Federal de Alemania</title>
+        <title>Seg Tech AMPER</title>
     @endif
     <link rel="shortcut icon" href="{{asset('favicon.ico?r='.rand())}}" />
     @include('layouts.assets.css')
@@ -80,7 +80,7 @@
                     </div>
                     <div class="row row-deck row-cards" id="div_gral_contenido">
                         @php
-                            $array = ['0','1.','5.','5.1:','6.1:','7.','9.'];
+                            $array = ['0', '1.', '6.'];
                         @endphp
                         @if(!in_array($item,$array))
                             <div class="col-12">

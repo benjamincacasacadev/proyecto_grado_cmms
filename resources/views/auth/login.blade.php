@@ -33,7 +33,7 @@
 
         body {
             font-family: 'nunito', sans-serif;
-            /* background-image: url("{{ asset('/background.jpg')}}"); */
+            background-image: url("{{ asset('/fondo.png')}}");
             background-color: #2e2e2c;
             -webkit-background-size: cover;
             -moz-background-size: cover;
@@ -115,9 +115,11 @@
                             <div id="login" @if($op==1) hidden @endif>
                                 <form id="loginsubmit" method="POST" action="{{ route('login') }}" style="border-radius: 30px" onsubmit="btnLogin.disabled = true; return true;">
                                     @csrf
-                                    <div class="text-center" style=" margin-bottom: 11rem !important">
+                                    <div class="text-center" style="margin-top: 2rem !important">
                                         {{-- <img src="{{asset('logo.png')}}" style="height: 11rem !important;" > <br>
                                         <b style="font-size:25px; font-weight-bolder">Unidad Educativa República Federal de Alemania</b> --}}
+                                        <img src="{{asset('logo.png')}}" style="height: 6rem !important;"> <br><br>
+                                        <b style="font-size:25px; font-weight-bolder">Sistema de gestión de mantenimiento computarizado</b>
                                     </div>
                                     <div class="card-body">
                                         @if($reset==1)
@@ -193,7 +195,7 @@
                                             </label>
                                         </div>
                                         <div class="form-footer text-center mt-4">
-                                            <button type="button" class="btn btn-yellow w-100 btn-pill text-center font-bold btn-lg" id="BtnLogin" name="btnLogin">Iniciar sesión</button>
+                                            <button type="button" class="btn btn-danger w-100 btn-pill text-center font-bold btn-lg" id="BtnLogin" name="btnLogin">Iniciar sesión</button>
                                         </div>
                                         {{-- <div class="d-flex align-items-end flex-column mt-4 mb-0" >
                                             <a id="olvido" class="float-right font-bold text-yellow">Olvidé mi contraseña</a>
@@ -441,7 +443,7 @@
 
     $(function () {
         $('#remember').iCheck({
-            checkboxClass: 'icheckbox_square-yellow',
+            checkboxClass: 'icheckbox_square-red',
             increaseArea: '20%'
         });
     });
