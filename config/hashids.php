@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'salt' => "ColegioAlemania0112358.",
+    'salt' => "AmperCMMS2024.",
 
     /*
     |--------------------------------------------------------------------------
@@ -39,6 +39,6 @@ return [
     |
     */
 
-    'alphabet' => 'ProyectoColegioAlemaniaBOLIVIA2022BCA',
+    'alphabet' => 'ProyectoAMPERCMMSBOLIVIA2024BCA',
 
 ];
