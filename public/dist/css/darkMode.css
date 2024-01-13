@@ -1,0 +1,314 @@
+
+table th{
+    background-color: #2e2e2c !important;
+    color: white !important;
+}
+.table-hover>tbody>tr:hover {
+    --tblr-table-accent-bg: rgba(247, 166, 0, 0.075) !important;
+}
+
+.text-cmms-black{
+    color: #eee !important;
+}
+
+input:disabled {
+    background-color: #4E4E4E !important;
+    cursor: not-allowed;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color: #4E4E4E !important;
+    cursor: default
+}
+.select2-container--default.select2-container--disabled .select2-selection--multiple {
+    background-color: #4E4E4E !important;
+    cursor: default
+}
+.alert{
+    background-color: #2e2e2c !important;
+}
+
+/* CALENDARIO */
+.fc-unthemed td.fc-today {
+    background: #1F1F1F !important
+}
+.fc-day-number, .fc-list-heading-main, .fc-list-heading-alt{
+    color: white !important
+}
+.fc-list-heading td {
+    background-color: #1F1F1F !important;
+}
+
+.fc-unthemed .fc-list-item:hover td {
+    background-color: #6989ad !important
+}
+.fc-popover-body{
+    background-color: #2e2e2c !important;
+}
+.fc-popover-header{
+    background-color: #1f1f1f !important;
+}
+
+.text-muted{
+    color: #aaa9a9 !important;
+}
+.text-dark{
+    color: #ededed !important
+}
+/* ESTILOS MOSTRAR OCULTAR COLUMNA DATATABLE */
+button.dt-button{
+    color: #d2d5da;
+    border-color: #d2d5da;
+    background: #1f1f1f !important;
+    font-weight: 500;
+}
+button.dt-button:hover{
+    background-color: #131921 !important;
+    color: #d2d5da;
+    border-color: #d2d5da !important;
+}
+
+/* INTRO JS TOUR */
+.introjs-tooltip {
+    background-color: #2e2e2c !important;
+}
+.introjs-arrow.top { border-bottom-color:#2e2e2c !important }
+.introjs-arrow.top-right { border-bottom-color:#2e2e2c !important}
+.introjs-arrow.top-middle { border-bottom-color:#2e2e2c !important }
+.introjs-arrow.right { border-left-color:#2e2e2c !important }
+.introjs-arrow.right-bottom { border-left-color:#2e2e2c !important }
+.introjs-arrow.bottom { border-top-color:#2e2e2c !important }
+.introjs-arrow.bottom-right { border-top-color:#2e2e2c !important }
+.introjs-arrow.bottom-middle { border-top-color:#2e2e2c !important }
+.introjs-arrow.left { border-right-color:#2e2e2c !important }
+.introjs-arrow.left-bottom { border-right-color:#2e2e2c !important }
+
+/* DATATABLE PAGINATE */
+.dataTables_paginate li.active a{
+    background-color: #f7a600 !important;
+    color: #d2d5da;
+    border-color: #aaa9a9 !important
+}
+
+.dataTables_paginate li a{
+    background-color: #2E2E2C !important;
+    color: #d2d5da !important;
+    border-color: #aaa9a9 !important
+}
+
+/* POPOVER HELP */
+.form-help {
+    color: #d2d5da;
+}
+.form-help:hover,
+.form-help[aria-describedby] {
+    color: #fff;
+    background: #2e2e2c
+}
+.popover{
+    background-color: #1f1f1f !important;
+    border-color: #aaa9a9 !important
+}
+.popover-title{
+    background-color: #2e2e2c !important
+}
+.popover.top>.arrow {   border-top-color: #aaa9a9 !important    }
+.popover.top>.arrow:after { border-top-color: #1f1f1f !important    }
+.popover.top>.arrow {   border-top-color: #aaa9a9 !important    }
+.popover.top>.arrow:after { border-top-color: #1f1f1f !important    }
+.popover.right>.arrow { border-right-color: #aaa9a9 !important  }
+.popover.right>.arrow:after {   border-right-color: #1f1f1f !important  }
+.popover.bottom>.arrow {    border-bottom-color: #aaa9a9 !important }
+.popover.bottom>.arrow:after {  border-bottom-color: #1f1f1f !important }
+.popover.left>.arrow {  border-left-color: #aaa9a9 !important   }
+.popover.left>.arrow:after {    border-left-color: #1f1f1f !important   }
+
+
+/* SELECT2 */
+.select2-search__field{
+    background-color: #4e4e4e !important;
+    color: white !important;
+}
+.form-select2 {
+    background-color: #2e2e2c !important;
+}
+.select2-dropdown--below{
+    background-color: #2e2e2c !important;
+}
+.select2-dropdown{
+    background-color: #2e2e2c !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #ededed !important;
+    color: #2e2e2c;
+}
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #f7a600 !important;
+    color: #fff;
+}
+
+.select2-search__field{
+    background-color: transparent !important;
+}
+/* TABS */
+ul.nav-tabs li a:hover {
+    color: #aaa9a9 !important
+}
+
+ul.nav-tabs li a.active {
+    color: #fff !important
+}
+
+ul.nav-tabs li a.active .icon{
+    color: #fff !important
+}
+
+/* FILE INPUT */
+.file-caption-name{
+    color: #aaa9a9 !important;
+}
+
+
+.btn-outline-secondary {
+    color: #aaa9a9;
+    background-color: transparent;
+    background-image: none;
+    border-color: #aaa9a9
+}
+
+.btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d
+}
+
+.btn-ghost-secondary{
+    color: #ededed;
+}
+
+a.scroll-top {
+    color: #fff;
+    background: #1F1F1F;
+    border: 1px solid hsla(0, 0%, 78%, 0.3)
+}
+
+.form-control-append {
+    background-color: #2e2e2c !important;
+    color: #f4f6fa !important;
+}
+
+.textWhite-darktheme{
+    filter: invert(98%) sepia(0%) saturate(1459%) hue-rotate(88deg) brightness(86%) contrast(100%) !important;
+}
+
+.theme-dark .modal-content-aux,
+.theme-dark .modal-aux {
+    background-color: #1f1f1f;
+    color: inherit
+}.offcanvas {
+    background-color: #1e2937 !important;
+}.select2-search__field{
+    color: white !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+    background-color: #2e2e2c !important;
+}
+
+.accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' stroke='%23ffffff' fill='inherit'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") !important;
+}
+
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' stroke='%23ffffff' viewBox='0 0 16 16' fill='%23232e3c'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+    /* color: #2e2e2c; */
+    color: white !important;
+}
+
+.fc-list-day-text, .fc-list-day-side-text{
+    color: #f7a600 !important;
+}
+
+.fc-daygrid-day-number{
+    color: #f7a600 !important;
+}
+
+.datos{
+    color: rgba(247, 166, 0, 0.4) !important;
+    font-weight: 600 !important;
+}
+
+
+/* ==================================================================== */
+/*                         DATETIMEPICKER                              */
+/* ==================================================================== */
+.datetimepicker table tr td span:hover {
+	background: #4E4E4E !important;
+}
+.datetimepicker thead tr:first-child th:hover,
+.datetimepicker tfoot th:hover {
+	background: #4E4E4E !important;
+}
+.datetimepicker table tr td.minute:hover {
+	background: #4E4E4E !important;
+}
+.datetimepicker table tr td.hour:hover {
+	background: #4E4E4E !important;
+}
+
+.datetimepicker table tr td.day:hover {
+	background: #4E4E4E !important;
+}
+
+/* ==================================================================== */
+/*                            DATEPICKER                                */
+/* ==================================================================== */
+.datepicker table tr td.day.focused,
+.datepicker table tr td.day:hover {
+    background: #4E4E4E !important;
+}
+.datepicker table tr td.range,
+.datepicker table tr td.range.disabled,
+.datepicker table tr td.range.disabled:hover,
+.datepicker table tr td.range:hover {
+    background: #4E4E4E !important;
+}
+.datepicker table tr td span.focused,
+.datepicker table tr td span:hover {
+    background: #4E4E4E !important;
+}
+.datepicker .datepicker-switch:hover,
+.datepicker .next:hover,
+.datepicker .prev:hover,
+.datepicker tfoot tr th:hover {
+    background: #4E4E4E !important;
+}
+
+.dt-button-collection{
+    background-color: #1f1f1f !important;
+    border: 1px solid rgb(94, 94, 94) !important;
+    border-radius: 15px !important;
+}
+
+.iti__country-list{
+    background-color: #2e2e2c;
+}
+
+.iti__country.iti__highlight {
+    background-color: rgba(100, 100, 100, 0.5) !important;
+}
+
+.card {
+    border: 1px solid #323232 !important;
+}
+
+.tui-full-calendar-popup-container, .tui-full-calendar-month-more{
+    background-color: #1f1f1f !important;
+}
+
+.tui-full-calendar-month-more-title-day, .tui-full-calendar-month-more-title-day-label{
+    color: #e5e5e5 !important;
+}

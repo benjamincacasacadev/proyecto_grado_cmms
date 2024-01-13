@@ -1,0 +1,150 @@
+.bg-custom{
+    background-color:crimson;
+}
+
+.btn-circle.btn-xs {
+    width: 22px;
+    height: 22px;
+    padding: 5px 0px;
+    border-radius: 11px;
+    text-align: center;
+    font-size: 10px;
+    line-height: 1.42857;
+}
+.btn-circle.btn-sm {
+    width: 25px;
+    height: 25px;
+    padding: 5px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+}
+
+.search-slt{
+    display: block;
+    width: 100%;
+    line-height: 1.5;
+    color: #55595c;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    height: calc(3rem + 2px) !important;
+    border-radius:0;
+}
+
+.time{
+    color: #999;
+  float: right;
+  padding: 10px;
+  font-size: 12px;
+}
+.time-label-acti > span {
+    font-weight: 600;
+    padding: 5px;
+    display: inline-block;
+    background-color: #fff;
+    border-radius: 4px;
+  }
+ .text-des {
+    display: inline-block;
+    margin-left: 5px;
+  }
+  .botones, .botonesNota{
+    float: right;
+    display: none;
+  }
+  i#iconClock{
+    position: absolute;
+  top: 60%;
+  margin-left: 8px;
+}
+/* Estilos nuevos */
+
+.timeComent{
+  font-size: 12px; 
+  color:#BDBDBD
+}
+#pShow{
+  font-size: 30px;
+  color:#55595c;
+}
+#showNom{
+  color: dodgerblue; 
+  font-size: 25px;
+}
+#con{
+  font-size: 20px; 
+  color: gray;
+}
+#dShow{width: 90%;} 
+i#ibill{
+  font-size: 30px;
+}
+@media screen and (max-width:1024px){
+    i#iconClock{
+      position: absolute;
+      top: 65%;
+      margin-left: 8px;
+    }
+    div#divInv{
+      margin-left: 0%;
+      margin-right: 0%; 
+    }
+    .timeline:before{width:3px;left:10px}
+.timeline>li>.timeline-item{margin-left:24px;margin-right:0px}
+.timeline>li>.fa,.timeline>li>.glyphicon,.timeline>li>.ion{width:20px;height:20px;font-size:10px;line-height:20px;left:2px;top:0}
+.timeComent{font-size: 10px; }
+#pShow{
+  font-size: 28px;
+  color:#55595c;
+  font-weight: 2px;
+}
+#showNom{
+  color: dodgerblue; 
+  font-size: 20px;
+}
+#con{
+  font-size: 15px; 
+  color: gray;
+}
+i#ibill{
+  font-size: 25px;
+}
+  }
+  @media screen and (max-width:1309px) {
+    #dShow{width: 72%;}
+    #pShow{
+      font-size: 20px;
+      color:#55595c;
+    }
+    #con{
+      font-size: 12px; 
+      color: gray;
+    }
+    i#ibill{
+      font-size: 15px;
+    }
+  }
+  @media screen and (max-width:991px) {
+    #dShow{width: 100%;}
+    
+  }
+@media screen and (max-width:639px){
+  .timeComent{
+    display: none;
+  }
+}
+
+.btnBorrarKd {
+  background-color: transparent;
+  color:#dd4b39;
+  font-size: 14px;
+  line-height: 1.3333333;
+  font-weight: 600;
+}
+
+.btnBorrarKd:hover {
+  background-color: #dd4b39;
+  color:#ffffff;
+}

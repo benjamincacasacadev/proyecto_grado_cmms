@@ -1,0 +1,113 @@
+.select2-selection__rendered[title="Rojo"] {
+    color: hsl(15, 73%, 48%) !important;
+    background-color: #D54E21 !important;
+    margin:3px 30px 0px 10px;
+    width: 50px !important;
+}
+.select2-results__option[id*="Rojo"] {
+    color: #D54E21;
+    background-color: #D54E21 !important;
+}
+
+.select2-selection__rendered[title="Amarillo"] {
+    color: #FFCC33 !important;
+    background-color: #FFCC33 !important;
+    margin:3px 30px 0px 10px;
+    width: 50px !important;
+}
+.select2-results__option[id*="Amarillo"] {
+    color: #FFCC33;
+    background-color: #FFCC33 !important;
+}
+
+.select2-selection__rendered[title="Verde"] {
+    color: #008D4C !important;
+    background-color: #008D4C !important;
+    margin:3px 30px 0px 10px;
+    width: 50px !important;
+}
+.select2-results__option[id*="Verde"] {
+    color: #008D4C;
+    background-color: #008D4C !important;
+}
+
+.select2-selection__rendered[title="Azul"] {
+    color: #367FA9 !important;
+    background-color: #367FA9 !important;
+    margin:3px 30px 0px 10px;
+    width: 50px !important;
+}
+.select2-results__option[id*="Azul"] {
+    color: #367FA9;
+    background-color: #367FA9 !important;
+}
+.select2-selection__rendered[title="Naranja"] {
+    color: #DE8650 !important;
+    background-color: #DE8650 !important;
+    margin:3px 30px 0px 10px;
+    width: 50px !important;
+}
+.select2-results__option[id*="Naranja"] {
+    color: #DE8650;
+    background-color: #DE8650 !important;
+}
+.select2-selection__rendered[title="Morado"] {
+    color: #A77A94 !important;
+    background-color: #A77A94 !important;
+    margin:3px 30px 0px 10px;
+    width: 50px !important;
+}
+.select2-results__option[id*="Morado"] {
+    color: #A77A94;
+    background-color: #A77A94 !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[id*="Rojo"] {
+    color: #D54E21 !important;
+    background-color: #D54E21 !important;
+}
+.select2-container--default .select2-results__option--highlighted[id*="Amarillo"] {
+    color: #FFCC33 !important;
+    background-color: #FFCC33 !important;
+}
+.select2-container--default .select2-results__option--highlighted[id*="Verde"] {
+    color: #008D4C !important;
+    background-color: #008D4C !important;
+}
+.select2-container--default .select2-results__option--highlighted[id*="Azul"] {
+    color: #367FA9 !important;
+    background-color: #367FA9 !important;
+}
+.select2-container--default .select2-results__option--highlighted[id*="Naranja"] {
+    color: #DE8650 !important;
+    background-color: #DE8650 !important;
+}
+.select2-container--default .select2-results__option--highlighted[id*="Morado"] {
+    color: #A77A94 !important;
+    background-color: #A77A94 !important;
+}
+
+.select2-container--default .select2-results__option[id*="Rojo"] {
+    color: #D54E21 !important;
+    background-color: #D54E21 !important;
+}
+.select2-container--default .select2-results__option[id*="Amarillo"] {
+    color: #FFCC33 !important;
+    background-color: #FFCC33 !important;
+}
+.select2-container--default .select2-results__option[id*="Verde"] {
+    color: #008D4C !important;
+    background-color: #008D4C !important;
+}
+.select2-container--default .select2-results__option[id*="Azul"] {
+    color: #367FA9 !important;
+    background-color: #367FA9 !important;
+}
+.select2-container--default .select2-results__option[id*="Naranja"] {
+    color: #DE8650 !important;
+    background-color: #DE8650 !important;
+}
+.select2-container--default .select2-results__option[id*="Morado"] {
+    color: #A77A94 !important;
+    background-color: #A77A94 !important;
+}

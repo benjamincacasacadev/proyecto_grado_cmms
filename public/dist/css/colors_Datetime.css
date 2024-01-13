@@ -1,0 +1,167 @@
+
+
+
+.bg-amarillo {
+    background-color: #ecec00 !important
+}
+.bg-verdeclaro {
+    background-color: #9EC055 !important
+}
+.bg-warning {
+    background-color: #f1c40f !important;
+}
+.bg-danger {
+    background-color: #cd201f !important;
+}
+.bg-info {
+    background-color: #1594ef !important;
+}
+.bg-success {
+    background-color: #5eba00 !important;
+}
+.bg-secondary {
+    background-color: #868e96 !important;
+}
+
+.badge-success {
+  color: #fff;
+  background-color: #5eba00;
+}
+.badge-success[href]:hover, .badge-success[href]:focus {
+  color: #fff;
+  text-decoration: none;
+  background-color: #448700;
+}
+.badge-info {
+  color: #fff;
+  background-color: #45aaf2;
+}
+
+.badge-info[href]:hover, .badge-info[href]:focus {
+  color: #fff;
+  text-decoration: none;
+  background-color: #1594ef;
+}
+
+.badge-warning {
+  color: #fff;
+  background-color: #f1c40f;
+}
+.badge-warning[href]:hover, .badge-warning[href]:focus {
+  color: #fff;
+  text-decoration: none;
+  background-color: #c29d0b;
+}
+
+.badge-danger {
+  color: #fff;
+  background-color: #cd201f;
+}
+.badge-danger[href]:hover, .badge-danger[href]:focus {
+  color: #fff;
+  text-decoration: none;
+  background-color: #a11918;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+label{
+  font-weight: 600;
+}
+
+.form-control-append{
+    border-radius: 0;
+    box-shadow: none;
+    border-color: #d2d6de;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+}
+
+.datepicker-days, .datepicker-months, .datepicker-years{
+    margin-left:10px;
+}
+.daterangepicker table{
+    width: 100% !important;
+}
+
+.input-group-addon {
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #555;
+    text-align: center;
+    background-color: #eee;
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-radius: 4px;
+    white-space: nowrap;
+    vertical-align: middle;
+    display: table-cell;
+}
+.datetimepicker table{
+    margin-left: 10px !important;
+}
+@media (min-width:768px) {
+    .form-inline .form-group {
+        display: inline-block;
+        margin-bottom: 0;
+        vertical-align: middle
+    }
+    .form-inline .form-control {
+        display: inline-block;
+        width: auto;
+        vertical-align: middle
+    }
+    .form-inline .form-control-static {
+        display: inline-block
+    }
+    .form-inline .input-group {
+        display: inline-table;
+        vertical-align: middle
+    }
+    .form-inline .input-group .form-control,
+    .form-inline .input-group .input-group-addon,
+    .form-inline .input-group .input-group-btn {
+        width: auto
+    }
+    .form-inline .input-group>.form-control {
+        width: 100%
+    }
+    .form-inline .control-label {
+        margin-bottom: 0;
+        vertical-align: middle
+    }
+    .form-inline .checkbox,
+    .form-inline .radio {
+        display: inline-block;
+        margin-top: 0;
+        margin-bottom: 0;
+        vertical-align: middle
+    }
+    .form-inline .checkbox label,
+    .form-inline .radio label {
+        padding-left: 0
+    }
+
+    .form-inline .checkbox input[type=checkbox],
+    .form-inline .radio input[type=radio] {
+        position: relative;
+        margin-left: 0
+    }
+
+    .form-inline .has-feedback .form-control-feedback {
+        top: 0
+    }
+}

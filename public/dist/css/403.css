@@ -1,0 +1,491 @@
+@keyframes floating {
+    to {
+        top: 1.5rem;
+    }
+}
+
+.gandalf {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+    top: 1rem;
+    animation: floating 1s infinite alternate ease-in-out;
+}
+
+.gandalf div {
+    position: absolute;
+}
+
+.gandalf::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 400px;
+    background-color: #1a2130;
+    border-radius: 50%;
+}
+
+.gandalf .fireball {
+    bottom: -10px;
+    left: 50px;
+    width: 300px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(#EFAC41, #DE8531, #6C1305, black);
+    border: 5px solid #000;
+}
+
+.gandalf .skirt {
+    bottom: 50px;
+    left: 100px;
+    border-bottom: 230px solid #ededed;
+    border-left: 100px solid transparent;
+    border-right: 100px solid transparent;
+    filter: drop-shadow(0 0 6px #d4d4d4);
+}
+
+.gandalf .skirt::before {
+    content: "";
+    position: absolute;
+    background-color: #ededed;
+    width: 100px;
+    height: 21px;
+    top: 230px;
+    left: 0px;
+    border-bottom-right-radius: 180%;
+    border-bottom-left-radius: 100%;
+}
+
+.gandalf .skirt::after {
+    content: "";
+    position: absolute;
+    background-color: #ededed;
+    width: 100px;
+    height: 28px;
+    top: 230px;
+    left: -100px;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 180%;
+}
+
+.gandalf .sleeves::before,
+.gandalf .sleeves::after {
+    content: "";
+    position: absolute;
+    border-bottom: 70px solid #ededed;
+    filter: drop-shadow(0 0 6px #d4d4d4);
+}
+
+.gandalf .sleeves::before {
+    top: 130px;
+    left: 191px;
+    border-left: 100px solid transparent;
+    border-right: 40px solid transparent;
+    transform: rotate(-34deg);
+}
+
+.gandalf .sleeves::after {
+    top: 127px;
+    left: 70px;
+    border-left: 40px solid transparent;
+    border-right: 100px solid transparent;
+    transform: rotate(41deg);
+}
+
+.gandalf .shoulders {
+    background-color: #ededed;
+    border-radius: 50%;
+    width: 100px;
+    height: 130px;
+    left: 150px;
+    top: 120px;
+}
+
+.gandalf .shoulders .hand {
+    width: 33px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: #ffd8ad;
+    top: -6px;
+}
+
+.gandalf .shoulders .left {
+    left: -70px;
+    transform: rotate(-20deg);
+}
+
+.gandalf .shoulders .left::after {
+    content: "";
+    position: absolute;
+    background-color: #e6e6e6;
+    width: 126px;
+    height: 8px;
+    border-radius: 4px;
+    transform: rotate(-105deg);
+    transform-origin: bottom;
+    top: -48px;
+    left: -56px;
+}
+
+.gandalf .shoulders .right {
+    right: -70px;
+    transform: rotate(20deg);
+}
+
+.gandalf .shoulders .right::after {
+    content: "";
+    position: absolute;
+    background-color: #bf5507;
+    width: 250px;
+    height: 5px;
+    border-radius: 2.5px;
+    transform: rotate(-78deg);
+    transform-origin: left;
+    bottom: -100px;
+    left: 0;
+}
+
+.gandalf .head {
+    width: 80px;
+    height: 90px;
+    top: 80px;
+    left: 160px;
+    background-color: #ffd8ad;
+    border-radius: 50%;
+}
+
+.gandalf .head::before,
+.gandalf .head::after {
+    content: "";
+    position: absolute;
+    background-color: #000;
+}
+
+.gandalf .head::before {
+    width: 13px;
+    height: 5px;
+    border-radius: 3px;
+    top: 42px;
+    left: 22px;
+    transform: rotate(19deg);
+}
+
+.gandalf .head::after {
+    width: 13px;
+    height: 5px;
+    border-radius: 3px;
+    top: 42px;
+    right: 22px;
+    transform: rotate(-19deg);
+}
+
+.gandalf .head .hair {
+    width: 70px;
+    height: 30px;
+    background-color: #c2beb5;
+    border-radius: 50%;
+    top: 0px;
+    left: 5px;
+}
+
+.gandalf .head .hair::before,
+.gandalf .head .hair::after {
+    content: "";
+    position: absolute;
+    background-color: #c2beb5;
+    filter: drop-shadow(2px 5px 0 #aba599);
+}
+
+.gandalf .head .hair::before {
+    top: 13px;
+    left: -16px;
+    width: 25px;
+    height: 100px;
+    border-top-left-radius: 34px;
+    border-top-right-radius: 15px;
+    border-bottom-left-radius: 100px;
+    border-bottom-right-radius: 20px;
+    transform: rotate(8deg);
+}
+
+.gandalf .head .hair::after {
+    top: 13px;
+    right: -16px;
+    width: 25px;
+    height: 100px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 34px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 100px;
+    transform: rotate(-10deg);
+}
+
+.gandalf .head .beard {
+    top: 64px;
+    left: 5px;
+    border-top: 80px solid #c2beb5;
+    border-left: 35px solid transparent;
+    border-right: 35px solid transparent;
+    border-radius: 30px;
+    filter: drop-shadow(2px 5px 0 #aba599);
+}
+
+.gandalf .head .beard::before {
+    content: "";
+    position: absolute;
+    background-color: pink;
+    width: 20px;
+    height: 5px;
+    border-radius: 40%;
+    top: -70px;
+    left: -9px;
+}
+
+@media (max-width: 500px) {
+    .gandalf {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+        top: 1rem;
+        animation: floating 1s infinite alternate ease-in-out;
+    }
+
+    .gandalf div {
+        position: absolute;
+    }
+
+    .gandalf::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background-color: #1a2130;
+        border-radius: 50%;
+    }
+
+    .gandalf .fireball {
+        bottom: -5px;
+        left: 25px;
+        width: 150px;
+        height: 50px;
+        border-radius: 50%;
+        background: radial-gradient(#EFAC41, #DE8531, #6C1305, black);
+        border: 5px solid #000;
+    }
+
+    .gandalf .skirt {
+        bottom: 25px;
+        left: 50px;
+        border-bottom: 115px solid #ededed;
+        border-left: 50px solid transparent;
+        border-right: 50px solid transparent;
+        filter: drop-shadow(0 0 6px #d4d4d4);
+    }
+
+    .gandalf .skirt::before {
+        content: "";
+        position: absolute;
+        background-color: #ededed;
+        width: 50px;
+        height: 10.5px;
+        top: 115px;
+        left: 0px;
+        border-bottom-right-radius: 180%;
+        border-bottom-left-radius: 100%;
+    }
+
+    .gandalf .skirt::after {
+        content: "";
+        position: absolute;
+        background-color: #ededed;
+        width: 50px;
+        height: 14px;
+        top: 115px;
+        left: -50px;
+        border-bottom-right-radius: 80%;
+        border-bottom-left-radius: 180%;
+    }
+
+    .gandalf .sleeves::before,
+    .gandalf .sleeves::after {
+        content: "";
+        position: absolute;
+        border-bottom: 40px solid #ededed;
+        filter: drop-shadow(0 0 6px #d4d4d4);
+    }
+
+    .gandalf .sleeves::before {
+        top: 62px;
+        left: 85px;
+        border-left: 50px solid transparent;
+        border-right: 20px solid transparent;
+        transform: rotate(-34deg);
+    }
+
+    .gandalf .sleeves::after {
+        top: 63.5px;
+        left: 30px;
+        border-left: 20px solid transparent;
+        border-right: 50px solid transparent;
+        transform: rotate(41deg);
+    }
+
+    .gandalf .shoulders {
+        background-color: #ededed;
+        border-radius: 50%;
+        width: 50px;
+        height: 65px;
+        left: 75px;
+        top: 60px;
+    }
+
+    .gandalf .shoulders .hand {
+        width: 16.5px;
+        height: 13px;
+        border-radius: 50%;
+        background-color: #ffd8ad;
+        top: -3px;
+    }
+
+    .gandalf .shoulders .left {
+        left: -35px;
+        transform: rotate(-20deg);
+    }
+
+    .gandalf .shoulders .left::after {
+        content: "";
+        position: absolute;
+        background-color: #e6e6e6;
+        width: 63px;
+        height: 4px;
+        border-radius: 2px;
+        transform: rotate(-105deg);
+        transform-origin: bottom;
+        top: -24px;
+        left: -28px;
+    }
+
+    .gandalf .shoulders .right {
+        right: -35px;
+        transform: rotate(20deg);
+    }
+
+    .gandalf .shoulders .right::after {
+        content: "";
+        position: absolute;
+        background-color: #bf5507;
+        width: 125px;
+        height: 2.5px;
+        border-radius: 1.25px;
+        transform: rotate(-78deg);
+        transform-origin: left;
+        bottom: -50px;
+        left: 0;
+    }
+
+    /*********************************************/
+
+    .gandalf .head {
+        width: 40px;
+        height: 45px;
+        top: 40px;
+        left: 80px;
+        background-color: #ffd8ad;
+        border-radius: 50%;
+    }
+
+    .gandalf .head::before,
+    .gandalf .head::after {
+        content: "";
+        position: absolute;
+        background-color: #000;
+    }
+
+    .gandalf .head::before {
+        width: 6.5px;
+        height: 2.5px;
+        border-radius: 3px;
+        top: 21px;
+        left: 11px;
+        transform: rotate(19deg);
+    }
+
+    .gandalf .head::after {
+        width: 6.5px;
+        height: 2.5px;
+        border-radius: 3px;
+        top: 21px;
+        left: 22px;
+        transform: rotate(-19deg);
+    }
+
+    .gandalf .head .hair {
+        width: 35px;
+        height: 15px;
+        background-color: #c2beb5;
+        border-radius: 50%;
+        top: 0px;
+        /**/
+        left: 2.5px;
+    }
+
+    .gandalf .head .hair::before,
+    .gandalf .head .hair::after {
+        content: "";
+        position: absolute;
+        background-color: #c2beb5;
+        filter: drop-shadow(2px 5px 0 #aba599);
+    }
+
+    .gandalf .head .hair::before {
+        top: 6.5px;
+        left: -8px;
+        width: 12.5px;
+        height: 50px;
+        border-top-left-radius: 17px;
+        /**/
+        border-top-right-radius: 7.5px;
+        border-bottom-left-radius: 50px;
+        border-bottom-right-radius: 10px;
+        transform: rotate(8deg);
+    }
+
+    .gandalf .head .hair::after {
+        top: 6.5px;
+        left: 28px;
+        width: 12.5px;
+        height: 50px;
+        border-top-left-radius: 7.5px;
+        border-top-right-radius: 17px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 50px;
+        transform: rotate(-10deg);
+    }
+
+    .gandalf .head .beard {
+        top: 32px;
+        left: 2.5px;
+        border-top: 40px solid #c2beb5;
+        border-left: 17.5px solid transparent;
+        border-right: 17.5px solid transparent;
+        border-radius: 15px;
+        filter: drop-shadow(2px 5px 0 #aba599);
+    }
+
+    .gandalf .head .beard::before {
+        content: "";
+        position: absolute;
+        background-color: pink;
+        width: 10px;
+        height: 2.5px;
+        border-radius: 40%;
+        top: -35px;
+        left: -4.5px;
+    }
+}

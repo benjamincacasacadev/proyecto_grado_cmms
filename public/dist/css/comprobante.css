@@ -1,0 +1,62 @@
+
+/*PARA EL CUERPO DEL COMPROBANTE*/
+table.report td.haber{
+    padding-left: 30px;
+
+   
+}
+table.report{
+
+    width:100%;
+  
+ 
+}
+table.report th ,table.report td{
+    padding: 3px;
+    border: 0.5px solid black;
+
+}
+
+
+
+
+/*PARA EL ENCABEZADO DEL COMPROBANTE*/
+table.encabezado{
+
+    width: 100%;
+}
+table.encabezado td{
+    width: 50%;
+}
+
+
+table.report td.totales{
+    text-align:right;
+
+   
+}
+
+
+td.izq{
+    text-align:left;
+}
+td.der{
+    text-align:right;
+}
+.cen{
+    text-align:center;
+}
+
+/*tabla DATOS para el pie del comprobante*/
+table.datos{
+    width: 100%;
+    padding-top: 500px;
+}
+table.datos tr td.linsup {
+    border-top: 0.5px solid black;
+    padding-bottom: 25px;
+}
+
+table.not-break tr, table.not-break tr {
+    page-break-inside: avoid !important;
+}
