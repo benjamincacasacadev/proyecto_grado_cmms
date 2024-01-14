@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\StAssets;
+use App\WorkOrders;
 use Illuminate\Http\Request;
 use Flasher\Prime\FlasherInterface;
 use Illuminate\Validation\Rule;
@@ -170,13 +171,13 @@ class StAssetsController extends Controller
 
     public function modalDelete($id){
         $asset = StAssets::findOrFail(decode($id));
-        $count = 0;
+        $count = WorkOrders::where('asset_id',$asset->id)->count();
         return view('assets.modalDelete', compact('asset','count'));
     }
 
     public function destroy(FlasherInterface $flasher, $id){
         $asset = StAssets::findOrFail(decode($id));
-        $count = 0;
+        $count = WorkOrders::where('asset_id',$asset->id)->count();
         if($count > 0){
             $flasher->addFlash('warning', 'Tiene órdenes de trabajo asociadas', 'No se puede eliminar al activo '.$asset->cod);
             return redirect()->route('assets.index');

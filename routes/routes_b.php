@@ -66,3 +66,16 @@ Route::get('/work_orders/editmodal/{id}', 'WorkOrdersController@modalEdit')->nam
 Route::post('/work_orders/update/{id}', 'WorkOrdersController@update')->name('workorders.update');
 Route::get('/work_orders/deletemodal/{id}', 'WorkOrdersController@modalDelete')->name('workorders.deletemodal');
 Route::delete('/work_orders/delete/{id}','WorkOrdersController@destroy')->name('workorders.destroy');
+
+// ========================================================================================
+//                                   ORDENES DE TRABAJO
+// ========================================================================================
+Route::get('/forms', 'StFormController@index')->name('forms.index');
+Route::post('/table_forms', 'StFormController@tableForms')->name('forms.table');
+
+Route::get('/forms/modalCreate', 'StFormController@modalCreate')->name('forms.createmodal');
+Route::post('/store_forms', 'StFormController@store')->name('forms.store');
+Route::get('/forms/editmodal/{id}', 'StFormController@modalEdit')->name('forms.editmodal');
+Route::post('/forms/update/{id}', 'StFormController@update')->name('forms.update');
+Route::get('/forms/deletemodal/{id}', 'StFormController@modalDelete')->name('forms.deletemodal');
+Route::delete('/forms/delete/{id}','StFormController@destroy')->name('forms.destroy');
