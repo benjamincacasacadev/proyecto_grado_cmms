@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class StAssets extends Model
 {
@@ -50,18 +51,6 @@ class StAssets extends Model
             case '10': return 'Tablero de transferencia ATS';   break;
         }
     }
-
-    // <option value="0">Aire Acondicionado de confort</option>
-    // <option value="1">Aires de precision</option>
-    // <option value="2">Banco de baterias de litio</option>
-    // <option value="3">Equipo inversor</option>
-    // <option value="4">Equipo rectificador</option>
-    // <option value="5">Equipo UPS</option>
-    // <option value="6">Estabilizador</option>
-    // <option value="7">Grupos Electrógenos</option>
-    // <option value="8">Reconectador de media tension</option>
-    // <option value="9">Tablero Banco de capacitores</option>
-    // <option value="10">Tablero de transferencia ATS</option>
 
     public function getDatosActivoAttribute(){
         $salida = "<span style='color:#A6ACAF;'>Marca: </span><b> ".$this->marca.'</b><br>';
@@ -124,6 +113,48 @@ class StAssets extends Model
             </svg>
         </span>';
         return $operaciones;
+    }
+
+    public function getInfoAssets($swAdjunto = ''){
+        $attach = isset($this->attach) ? $this->attach : 'X';
+        $imagen =  '<img src="/imagenes/noImageBlack.png">';
+        if(themeMode() != 'D'){
+            $imagen =  '<img src="/storage/noimage.png">';
+        }
+        if(Storage::exists('/public/assets/'.$attach)){
+            $ruta = '/storage/assets/'.$attach;
+            $imagen = '<a href="'.$ruta.'" target="_blank"><img src="'.$ruta.'"></a>';
+        }
+
+        $serie = "<b>Nro de serie: </b>".$this->nro_serie.'<br>';
+        $cliente = "<b>Cliente: </b>".$this->cliente->nombre.'<br>';
+        $categoria = "<b>Categoria: </b>".$this->categoriaLiteral.'<br>';
+        $ubicacion = "<b>Ubicación: </b>".$this->ubicacion.'<br>';
+        $ciudad = "<b>Ciudad: </b>".$this->ciudadLiteral;
+
+
+        if($swAdjunto == ""){
+            return
+            '<div class="text-sm mt-2">'
+                .$serie.$cliente.$categoria.$ubicacion.$ciudad.
+            '</div>';
+        }
+
+        if($swAdjunto == 'img'){
+            return
+            '<div class="row">
+                <div class="col-2 divImageSelect2" >
+                    <div class="container d-flex h-100">
+                        <div class=" justify-content-center align-self-center">'.
+                            $imagen
+                        .'</div>
+                    </div>
+                </div>
+                <div class="col-10 text-sm">'
+                    .$serie.$cliente.$categoria.$ubicacion.$ciudad.
+                '</div>
+            </div>';
+        }
     }
 
     // ==========================================================================

@@ -225,3 +225,9 @@ function limpiarTexto($texto,$type){
     }
     return $txt;
 }
+
+function randAvatar(){
+    $arr = ["bg-green-lt","bg-red-lt","bg-yellow-lt","bg-blue-lt","bg-purple-lt"];
+    shuffle($arr);
+    return $arr[0];
+}

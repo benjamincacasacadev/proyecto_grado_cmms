@@ -48,12 +48,16 @@ class User extends Authenticatable
         return $this->belongsTo(Roles::class, 'role_id');
     }
 
-        // =====================================================================
+    // =====================================================================
     //                          FUNCIONES
     // =====================================================================
 
+    public function getFullNameAttribute(){
+        return $this->name.' '.$this->ap_paterno.' '.$this->ap_materno;
+    }
+
     public function getName(){
-        return '<a href="/users/show/'.code($this->id).'" target="_blank" class="text-yellowdark font-weight-bold">'.userFullName($this->id).'</a>';
+        return '<a href="/users/show/'.code($this->id).'" target="_blank" class="text-yellowdark font-weight-bold">'.$this->fullName.'</a>';
     }
 
     // =====================================================================

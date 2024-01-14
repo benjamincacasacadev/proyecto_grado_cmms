@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="{{asset('/dist/css/general.css?1')}}">
 <link rel="stylesheet" href="{{asset('/dist/css/generalLineaGrafica.css?1')}}">
 <link rel="stylesheet" href="{{asset('/plugins/toastr.min.css')}}">
+<link rel="stylesheet" href="{{asset('/dist/css/datetimepicker.css')}}">
 
 <style>
     .offcanvas {

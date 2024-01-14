@@ -16,7 +16,7 @@
 <script src="{{asset('/plugins/datatables.net-bs/js/datatables.mark.js')}}"></script>
 <script src="{{asset('/plugins/datatables.net/js/dataTables.fixedColumns.min.js')}}"></script>
 <script src="{{asset('/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
-
+<script src="{{asset('/dist/js/datetimepicker.js')}}"></script>
 
     <script>
         window.onload = function () {

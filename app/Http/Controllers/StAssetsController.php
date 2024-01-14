@@ -268,4 +268,27 @@ class StAssetsController extends Controller
         return $request->validate($validateArray, [], $aliasArray);
     }
 
+    public function listAssetsDetailsAjax(Request $request) {
+        $request['search'] = limpiarTexto($request->search,'s2');
+        $search = ($request->search == '') ? '-----' : $request->search;
+
+        $assets = StAssets::where( function ($query) use($search) {
+            $query->where('cod','LIKE','%'.$search.'%')
+            ->orwhere('nombre','LIKE','%'.$search.'%');
+        })->orderBy('cod','desc')
+        ->limit(20)
+        ->get();
+
+        $array = [];
+        $array['results'][0]['id'] = "";
+        $array['results'][0]['text'] = "Seleccione una opción";
+        $array['results'][0]['info'] = "";
+        foreach ($assets as $k => $asset) {
+            $array['results'][$k + 1]['id'] = code($asset->id);
+            $array['results'][$k + 1]['text'] = $asset->cod.' - '.$asset->nombre;
+            $array['results'][$k + 1]['info'] = $asset->getInfoAssets('img');
+        }
+        $array['pagination']['more'] = false;
+        return response()->json($array);
+    }
 }
