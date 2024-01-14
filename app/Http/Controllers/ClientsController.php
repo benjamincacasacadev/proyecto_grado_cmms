@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Clients;
+use App\StAssets;
 use Illuminate\Http\Request;
 use Flasher\Prime\FlasherInterface;
 use Illuminate\Validation\Rule;
@@ -108,13 +109,13 @@ class ClientsController extends Controller
 
     public function modalDelete(Request $request, $id){
         $cliente = Clients::findOrFail(decode($id));
-        $count = 0;
+        $count = StAssets::where('client_id',$cliente->id)->count();
         return view('clients.modalDelete', compact('cliente','count'));
     }
 
     public function destroy(FlasherInterface $flasher, $id){
         $cliente = Clients::findOrFail(decode($id));
-        $count = 0;
+        $count = StAssets::where('client_id',$cliente->id)->count();
         if($count > 0){
             $flasher->addFlash('warning', 'Tiene activos asociados', 'No se puede eliminar al cliente '.$cliente->nombre);
             return redirect()->route('clients.index');

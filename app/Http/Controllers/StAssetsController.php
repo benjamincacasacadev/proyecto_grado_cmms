@@ -6,6 +6,7 @@ use App\StAssets;
 use Illuminate\Http\Request;
 use Flasher\Prime\FlasherInterface;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image as InterventionImage;
 use Session;
 
@@ -115,6 +116,99 @@ class StAssetsController extends Controller
         echo json_encode($json_data);
     }
 
+    public function modalEdit($id){
+        $asset = StAssets::findOrFail(decode($id));
+        return view('assets.modalEdit', compact('asset'));
+    }
+
+    public function update(Request $request, FlasherInterface $flasher, $id){
+        $this->validateAssets($request, $id);
+
+        $asset = StAssets::findOrFail(decode($id));
+        $asset->client_id = decode($request->clienteedit);
+        $asset->nombre = $request->nombreedit;
+        $asset->categoria = $request->categoriaedit;
+        $asset->ubicacion = $request->ubicacionedit;
+        $asset->ciudad = $request->ciudadedit;
+        $asset->nro_serie = $request->nro_serie;
+        $asset->marca = $request->marcaedit;
+        $asset->modelo = $request->modeloedit;
+        $asset->capacidad = $request->capacidadedit;
+        $asset->estado = 1;
+        if ($request->hasFile('fileAssetsedit')) {
+            $rutaFile = 'public/assets/'.$asset->attach;
+            if (Storage::exists($rutaFile)){
+                Storage::delete($rutaFile);
+            }
+
+            $archivo = $request->file('fileAssetsedit');
+            $extension = $archivo->getClientOriginalExtension();
+            $ext = strtolower($extension);
+            $nombreConExtension = $archivo->getClientOriginalName();
+            $nombreConExtension = delete_charspecial($nombreConExtension);
+            $asset->attach = $asset->cod . '_' . strtolower($nombreConExtension);
+
+            $archivo->storeAs("public/assets/", $asset->attach);
+            if($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'png'){
+                $size = getimagesize($archivo);
+                if($size[0]<=1024 && $size[1]<=1024){
+                    InterventionImage::make($archivo)->resize(function ($constraint){
+                        $constraint->aspectRatio();
+                    })->save(storage_path().'/app/public/assets/'.$asset->attach, 90);
+                }else{
+                    InterventionImage::make($archivo)->resize(1024,1024, function ($constraint){
+                        $constraint->aspectRatio();
+                    })->save(storage_path().'/app/public/assets/'.$asset->attach, 80);
+                }
+            }
+        }
+        $asset->update();
+
+        $flasher->addFlash('info', 'Modificado con éxito', 'Activo '.$asset->cod);
+        return  \Response::json(['success' => '1']);
+    }
+
+    public function modalDelete($id){
+        $asset = StAssets::findOrFail(decode($id));
+        $count = 0;
+        return view('assets.modalDelete', compact('asset','count'));
+    }
+
+    public function destroy(FlasherInterface $flasher, $id){
+        $asset = StAssets::findOrFail(decode($id));
+        $count = 0;
+        if($count > 0){
+            $flasher->addFlash('warning', 'Tiene órdenes de trabajo asociadas', 'No se puede eliminar al activo '.$asset->cod);
+            return redirect()->route('assets.index');
+        }
+        $rutaFile = 'public/assets/'.$asset->attach;
+        if (Storage::exists($rutaFile)){
+            Storage::delete($rutaFile);
+        }
+        $asset->delete();
+        $flasher->addFlash('error', 'Eliminado correctamente', 'Activo '.$asset->cod);
+        return redirect()->route('assets.index');
+    }
+
+    function changeEstado(FlasherInterface $flasher, $id, $estado){
+        $asset = StAssets::where('id',decode($id) )->first();
+        if ($estado == 1) {
+            $asset->estado = '0';
+            $asset->update();
+            $flasher->addFlash('warning', 'Inhabilitado correctamente', 'Activo '.$asset->nombre);
+        } else {
+            ##PREGUNTAMOS SI ALGUIEN YA TIENE ESE NIT
+            $asset_nro_iden = StAssets::where('estado','1')->where('nro_serie',$asset->nro_serie)->first();
+            if($asset_nro_iden){
+                $flasher->addFlash('info', 'Número de serie "'.$asset->nro_serie.'"', 'Ya existe un activo con el');
+                return redirect()->route('assets.index');
+            }
+            $asset->estado = '1';
+            $asset->update();
+            $flasher->addFlash('success', 'Habilitado correctamente', 'Activo '.$asset->nombre);
+        }
+        return redirect()->route('assets.index');
+    }
 
     public function validateAssets(Request $request, $id = ''){
         $edit = $id != '' ? 'edit' : '';
@@ -140,6 +234,11 @@ class StAssetsController extends Controller
             })];
         }
 
+        $valFile = 'mimes:jpg,jpeg,png|max:2048';
+        if($request->cambioarchivo == 1){
+            $valFile = 'required|mimes:jpg,jpeg,png|max:2048';
+        }
+
         $validateArray = [
             $cliente => 'required',
             $nombre => 'bail|required|min:2|max:255',
@@ -150,7 +249,7 @@ class StAssetsController extends Controller
             $marca => 'bail|required|min:2|max:255',
             $modelo => 'bail|required|min:2|max:255',
             $capacidad => 'bail|required|min:2|max:255',
-            $fileAssets => 'mimes:jpg,jpeg,png|max:2048'
+            $fileAssets => $valFile,
         ];
 
         $aliasArray = [

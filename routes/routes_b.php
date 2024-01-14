@@ -31,7 +31,6 @@ Route::post('/validar_user','UserController@validarUsername')->name('users.valid
 Route::get('/clients', 'ClientsController@index')->name('clients.index');
 Route::post('/table_clients', 'ClientsController@tableClients')->name('clients.table');
 
-Route::get('/clients/estadomodal/{id}/{estado}', 'ClientsController@modalEstado')->name('clients.modalEstado');
 Route::get('/clients/estado/{id}/{estado}', 'ClientsController@changeEstado')->name('clients.cambioEstado');
 
 Route::get('/clients/modalCreate', 'ClientsController@modalCreate')->name('clientS.createmodal');
@@ -48,6 +47,8 @@ Route::get('/list_of_clients', 'ClientsController@listClients')->name('clients.l
 Route::get('/assets', 'StAssetsController@index')->name('assets.index');
 Route::get('/assets/show/{id}', 'StAssetsController@show')->name('assets.show');
 Route::post('/table_assets', 'StAssetsController@tableAssets')->name('assets.table');
+
+Route::get('/assets/estado/{id}/{estado}', 'StAssetsController@changeEstado')->name('assets.cambioEstado');
 
 Route::get('/assets/modalCreate', 'StAssetsController@modalCreate')->name('assets.createmodal');
 Route::post('/store_assets', 'StAssetsController@store')->name('assets.store');

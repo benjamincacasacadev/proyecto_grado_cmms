@@ -240,6 +240,6 @@
         });
     });
 
-    var campos = ['cliente','nombre','ciudad','ubicacion','categoria','nro_serie','marca','modelo','capacidad'];
+    var campos = ['cliente','nombre','ciudad','ubicacion','categoria','nro_serie','marca','modelo','capacidad','fileAssets'];
     ValidateAjax("formCreateAssets",campos,"btnSubmit","{{route('assets.store')}}","POST","/assets");
 </script>
