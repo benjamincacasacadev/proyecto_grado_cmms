@@ -39,6 +39,6 @@ Route::get('/clients/modalCreate', 'ClientsController@modalCreate')->name('clien
 Route::post('/store_clients', 'ClientsController@store')->name('clients.store');
 Route::get('/clients/editmodal/{id}', 'ClientsController@modalEdit')->name('clients.editmodal');
 Route::post('/clients/update/{id}', 'ClientsController@update')->name('clients.update');
-Route::post('/clients_avatar', 'ClientsController@uploadAvatar')->name('clients.avatar');
-Route::get('/clients/modaldelete/{id}', 'ClientsController@modalDeleteAvatar')->name('clients.modalDeleteAvatar');
-Route::delete('/clients/delete_avatar/{id}', 'ClientsController@destroyAvatar')->name('clients.destroyAvatar');
+Route::get('/clients/deletemodal/{id}', 'ClientsController@modalDelete')->name('clients.deletemodal');
+Route::delete('/clients/delete/{id}','ClientsController@destroy')->name('clients.destroy');
+

@@ -71,7 +71,7 @@
                             <span class="input-icon-addon">
                                 <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="10" y="4" width="4" height="4" rx="1" /><rect x="3" y="17" width="4" height="4" rx="1" /><rect x="17" y="17" width="4" height="4" rx="1" /><line x1="6.5" y1="17.1" x2="11.5" y2="8" /><line x1="17.5" y1="17.1" x2="12.5" y2="8" /><line x1="7" y1="19" x2="17" y2="19" /></svg>
                             </span>
-                            <input class="form-control" type="text" name="cargo" placeholder="Cargo ">
+                            <input class="form-control" type="text" name="cargo" placeholder="Cargo">
                         </div>
                         <span id="cargo-error" class="text-red"></span>
                     </div>
@@ -84,7 +84,7 @@
                             <span class="input-icon-addon">
                                 <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="7" y="4" width="10" height="16" rx="1" /><line x1="11" y1="5" x2="13" y2="5" /><line x1="12" y1="17" x2="12" y2="17.01" /></svg>
                             </span>
-                            <input class="form-control" type="text" name="celular" placeholder="Celular" max="12">
+                            <input class="form-control" type="text" name="celular" placeholder="Celular">
                         </div>
                         <span id="celular-error" class="text-red"></span>
                     </div>
@@ -97,7 +97,7 @@
                             <span class="input-icon-addon">
                                 <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="4" /><path d="M16 12v1.5a2.5 2.5 0 0 0 5 0v-1.5a9 9 0 1 0 -5.5 8.28" /></svg>
                             </span>
-                            <input class="form-control" type="text" name="email" placeholder="ejemplo@mail.com " maxlength="50" value="{{(isset($req->portal_data['email']))? $req->portal_data['email'] : ''}}">
+                            <input class="form-control" type="text" name="email" placeholder="ejemplo@mail.com">
                         </div>
                         <span id="email-error" class="text-red"></span>
                     </div>

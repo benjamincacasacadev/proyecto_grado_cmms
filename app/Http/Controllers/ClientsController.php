@@ -82,11 +82,73 @@ class ClientsController extends Controller
         echo json_encode($json_data);
     }
 
+    public function modalEdit(Request $request, $id){
+        $cliente = Clients::findOrFail(decode($id));
+        return view('clients.modalEdit', compact('cliente'));
+    }
+
+    public function update(Request $request, FlasherInterface $flasher, $id){
+        $this->validateClients($request, $id);
+
+        $client = Clients::findOrFail(decode($id));
+        $client->nombre = $request->nombreedit;
+        $client->nit = $request->nit;
+        $client->tipo = $request->tipoedit;
+        $client->caracteristicas = $request->caracteristicasedit;
+        $client->direccion = $request->direccionedit;
+        $client->nombre_contacto = $request->nombreContactoedit;
+        $client->cargo_contacto = $request->cargoedit;
+        $client->celular_contacto = $request->celularedit;
+        $client->email_contacto = $request->emailedit;
+        $client->update();
+
+        $flasher->addFlash('info', 'Modificado con éxito', 'Cliente '.$client->nombre);
+        return  \Response::json(['success' => '1']);
+    }
+
+    public function modalDelete(Request $request, $id){
+        $cliente = Clients::findOrFail(decode($id));
+        $count = 0;
+        return view('clients.modalDelete', compact('cliente','count'));
+    }
+
+    public function destroy(FlasherInterface $flasher, $id){
+        $cliente = Clients::findOrFail(decode($id));
+        $count = 0;
+        if($count > 0){
+            $flasher->addFlash('warning', 'Tiene activos asociados', 'No se puede eliminar al cliente '.$cliente->nombre);
+            return redirect()->route('clients.index');
+        }
+        $cliente->delete();
+        $flasher->addFlash('error', 'Eliminado correctamente', 'Cliente '.$cliente->nombre);
+        return redirect()->route('clients.index');
+    }
+
+    function changeEstado(FlasherInterface $flasher, $id, $estado){
+        $cliente = Clients::where('id',decode($id) )->first();
+        if ($estado == 1) {
+            $cliente->estado = '0';
+            $cliente->update();
+            $flasher->addFlash('warning', 'Inactivado correctamente', 'Cliente '.$cliente->nombre);
+        } else {
+            ##PREGUNTAMOS SI ALGUIEN YA TIENE ESE NIT
+            $cliente_nro_iden = Clients::where('estado','1')->where('nit',$cliente->nit)->first();
+            if($cliente_nro_iden){
+                $flasher->addFlash('info', 'NIT "'.$cliente->nit.'"', 'Ya existe un cliente activo con el');
+                return redirect()->route('clients.index');
+            }
+            $cliente->estado = '1';
+            $cliente->update();
+            $flasher->addFlash('success', 'Activado correctamente', 'Cliente '.$cliente->nombre);
+        }
+        return redirect()->route('clients.index');
+    }
+
     public function validateClients(Request $request, $id = ''){
         $edit = $id != '' ? 'edit' : '';
 
         $nombre = 'nombre'.$edit;
-        $nit = 'nit'.$edit;
+        $nit = 'nit';
         $tipo = 'tipo'.$edit;
         $caracteristicas = 'caracteristicas'.$edit;
         $direccion = 'direccion'.$edit;
@@ -95,14 +157,15 @@ class ClientsController extends Controller
         $celular = 'celular'.$edit;
         $email = 'email'.$edit;
 
-
         $validateNit = ['required', Rule::unique('clients')->where(function ($query) {
             $query->where('estado','1');
         })];
 
-        // $validateNit = ['required',Rule::unique('clients')->ignore(decode($this->route('id')))->where(function ($query) {
-        //     $query->where('empresa_id',empresaId())->where('activo','1')->where('tipo_identificacion','!=','07');
-        // })];
+        if($id != ''){
+            $validateNit = ['required', Rule::unique('clients')->ignore(decode($id))->where(function ($query) {
+                $query->where('estado','1');
+            })];
+        }
 
         $validateArray = [
             $nombre => 'bail|required|min:2|max:255',

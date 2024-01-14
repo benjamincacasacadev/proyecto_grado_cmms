@@ -39,7 +39,7 @@ class Clients extends Model
             </a>';
             if (permisoAdmin()){
                 $estado =
-                '<a rel="modalEstado" href="/clients/estadomodal/'.code($this->id).'/1" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
+                '<a href="/clients/estado/'.code($this->id).'/1" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
                     <span class="text-yellow" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px;\'> Si desea desactivar el cliente haga clic. </span>" data-original-title="<span style=\'font-size: 12px;\'><b>CLIENTE ACTIVO</b></span>">
                         <i class="fas fa-check-circle fa-lg"></i>
                     </span>
