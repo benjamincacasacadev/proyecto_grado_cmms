@@ -141,7 +141,7 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <input class="form-control" name="titulo" type="text" placeholder="Titulo de orden de trabajo" value="{{(isset($req->title))? $req->title : ''}}">
+                                    <input class="form-control" name="titulo" type="text" placeholder="Titulo de orden de trabajo">
                                     <span id="titulo-error" class="text-red"></span>
                                 </div>
                             </div>

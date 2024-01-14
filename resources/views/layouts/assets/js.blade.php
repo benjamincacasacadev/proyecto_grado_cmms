@@ -74,11 +74,11 @@
                         modal.show();
                     }
                     if(textStatus == 'error'){
-                        flasher.error("<b>No puede realizar la acción solicitada</b><br>La página se recargará en un momento.");
+                        alert('No puede realizar la acción solicitada. La página se recargará en un momento');
                         setTimeout(function () {
                             if (hrefReload === undefined || hrefReload === null)    location.reload(true);
                             else window.location.href = hrefReload;
-                        }, 5000);
+                        }, 500);
                     }
                 });
             });

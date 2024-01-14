@@ -109,7 +109,7 @@ class WorkOrders extends Model
     }
 
     public function getEmergencySpan($color){
-        $emergency = $this->emergency == 'E' ? '<br><b class="'.$color.' cursor-zoom-in"> <i class="fas fa-info-circle fa-md"></i>&nbsp;Emergencia</b>' : '';
+        $emergency = $this->emergencia == 'E' ? '<br><b class="'.$color.' cursor-zoom-in"> <i class="fas fa-info-circle fa-md"></i>&nbsp;Emergencia</b>' : '';
         return $emergency;
     }
 
@@ -245,6 +245,19 @@ class WorkOrders extends Model
             </span>';
         }
         return $operaciones;
+    }
+
+    public function getResponsableIdAttribute(){
+        $responsable = DB::table('user_work_orders')->where('responsable','1')->where('work_orders_id',$this->id)->first();
+        return isset($responsable->user_id) ? $responsable->user_id : '';
+    }
+
+    public function getTechAddsAttribute(){
+        return DB::table('user_work_orders')->where('responsable','0')->where('work_orders_id',$this->id)->get();
+    }
+
+    public function getCanEditAttribute(){
+        return $this->estado == 'P' && permisoAdmin();
     }
 
     // ======================================================================================================

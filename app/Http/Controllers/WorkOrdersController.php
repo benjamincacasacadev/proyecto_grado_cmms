@@ -34,8 +34,6 @@ class WorkOrdersController extends Controller
         $registroMaximo = WorkOrders::select('cod')->where('cod', 'LIKE', "%OT%")->max('cod');
         $cod = generateCode($registroMaximo,'OT000001','OT',2,6);
 
-        $campos = ['activo','emergency','titulo','formulario','fecha_ven','prioridad','descripcion','tecresponsable','asignados','fileWO'];
-
         $fechaSave = Carbon::createFromFormat('d/m/Y H:i', $request->fecha_ven);
 
         DB::beginTransaction();
@@ -159,18 +157,105 @@ class WorkOrdersController extends Controller
         echo json_encode($json_data);
     }
 
+    public function modalEdit(Request $request, $id){
+        $workorder = WorkOrders::findOrFail(decode($id));
+        if(!$workorder->canEdit){
+            abort(403);
+        }
+        $users = User::where('active','1')->get();
+        return view('work_orders.modalEdit', compact('workorder','users'));
+    }
+
+    public function update(Request $request, FlasherInterface $flasher, $id) {
+        $this->validateWorkorders($request, $id);
+
+        $fechaSave = Carbon::createFromFormat('d/m/Y H:i', $request->fecha_ven);
+
+        DB::beginTransaction();
+        try {
+            $workorder = WorkOrders::findOrFail(decode($id));
+            $workorder->asset_id = decode($request->activo);
+            $workorder->form_id = $request->formulario;
+            $workorder->titulo = $request->titulo;
+            $workorder->fecha = $fechaSave;
+            $workorder->prioridad = $request->prioridad;
+            $workorder->descripcion = $request->descripcion;
+            $workorder->emergencia = $request->emergency;
+            $workorder->update();
+
+            // Buscar y eliminar técnicos duplicados
+            $resp = $request->tecresponsable != null ? $request->tecresponsable : '';
+            $techhAddArray = $request->asignados != null ? $request->asignados : [];
+            $pos = array_search($resp, $techhAddArray);
+            if( in_array($resp, $techhAddArray) ){
+                unset($techhAddArray[$pos]);
+            }
+            // Armar array para tabla pivote con los técnicos a cargo
+            $array = [$resp];
+            $array = array_merge($array, $techhAddArray);
+            // Borrar técnicos duplicados y reordenar
+            $array = array_unique($array);
+            $new_array = array_values($array);
+
+            // Adjuntar campo responsable al array de técnicos
+            $sync_data = [];
+            for($i = 0; $i < count($new_array); $i++){
+                if($i == 0){
+                    $sync_data[$new_array[$i]] = ['responsable' => 1];
+                }else{
+                    $sync_data[$new_array[$i]] = ['responsable' => 0];
+                }
+            }
+            // Guardar técnicos en tabla pivote
+            $workorder->usuarios()->sync($sync_data);
+
+            $flasher->addFlash('info', 'Modificada con éxito', 'Orden de trabajo '.$workorder->cod);
+            DB::commit();
+            return  \Response::json(['success' => '1']);
+        }catch (\Exception $e) {
+            DB::rollback();
+            return $e->getMessage();
+        }
+    }
+
+    public function modalDelete(Request $request, $id){
+        $workorder = WorkOrders::findOrFail(decode($id));
+        if(!$workorder->canEdit){
+            abort(403);
+        }
+        $users = User::where('active','1')->get();
+        return view('work_orders.modalDelete', compact('workorder','users'));
+    }
+
+    public function destroy(FlasherInterface $flasher, $id) {
+        $workorder = WorkOrders::findOrFail(decode($id));
+        if(!$workorder->canEdit){
+            $flasher->addFlash('warning', 'Debido al estado del informe', 'No se puede eliminar '.$workorder->cod);
+            return redirect()->route('workorders.index');
+        }
+
+        $rutaFile = 'public/workorders/'.$workorder->attach;
+        if (Storage::exists($rutaFile)){
+            Storage::delete($rutaFile);
+        }
+        $workorder->usuarios()->sync([]);
+        $workorder->delete();
+
+        $flasher->addFlash('error', 'Eliminada correctamente', 'Orden de trabajo '.$workorder->cod);
+        return redirect()->route('workorders.index');
+    }
+
     public function validateWorkorders(Request $request, $id = ''){
-        $edit = $id != '' ? 'edit' : '';
-        $activo = 'activo'.$edit;
-        $emergency = 'emergency'.$edit;
-        $titulo = 'titulo'.$edit;
-        $formulario = 'formulario'.$edit;
-        $fecha_ven = 'fecha_ven'.$edit;
-        $prioridad = 'prioridad'.$edit;
-        $descripcion = 'descripcion'.$edit;
-        $tecresponsable = 'tecresponsable'.$edit;
-        $asignados = 'asignados'.$edit;
-        $fileWO = 'fileWO'.$edit;
+        $activo = 'activo';
+        $emergency = 'emergency';
+        $titulo = 'titulo';
+        $formulario = 'formulario';
+        $fecha_ven = 'fecha_ven';
+        $prioridad = 'prioridad';
+        $descripcion = 'descripcion';
+        $tecresponsable = 'tecresponsable';
+        $asignados = 'asignados';
+        $fileWO = 'fileWO';
 
         $validateArray = [
             $activo => 'required',
