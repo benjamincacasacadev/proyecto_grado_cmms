@@ -23,3 +23,22 @@ Route::get('/perfil_usuario','UserController@perfil')->name('perfil');
 Route::post('updateprofile/{user}','UserController@updateprofile')->name('updateprofile');
 Route::post('/useravatar', 'UserController@uploadAvatarImagen')->name('users.avatar');
 Route::post('/validar_user','UserController@validarUsername')->name('users.validar');
+
+
+// ========================================================================================
+//                                      CLIENTES
+// ========================================================================================
+Route::get('/clients', 'ClientsController@index')->name('clients.index');
+Route::get('/clients/show/{id}', 'ClientsController@show')->name('clients.show');
+Route::post('/table_clients', 'ClientsController@tableClients')->name('clients.table');
+
+Route::get('/clients/estadomodal/{id}/{estado}', 'ClientsController@modalEstado')->name('clients.modalEstado');
+Route::get('/clients/estado/{id}/{estado}', 'ClientsController@changeEstado')->name('clients.cambioEstado');
+
+Route::get('/clients/modalCreate', 'ClientsController@modalCreate')->name('cliente.create');
+Route::post('/store_clients', 'ClientsController@store')->name('clients.store');
+Route::get('/clients/editmodal/{id}', 'ClientsController@modalEdit')->name('clients.editmodal');
+Route::post('/clients/update/{id}', 'ClientsController@update')->name('clients.update');
+Route::post('/clients_avatar', 'ClientsController@uploadAvatar')->name('clients.avatar');
+Route::get('/clients/modaldelete/{id}', 'ClientsController@modalDeleteAvatar')->name('clients.modalDeleteAvatar');
+Route::delete('/clients/delete_avatar/{id}', 'ClientsController@destroyAvatar')->name('clients.destroyAvatar');

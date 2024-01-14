@@ -232,10 +232,11 @@
                 var formData = new FormData($("#"+idform+"")[0]);
                 // var formData = registerForm.serialize();
                 $.each(fields, function( indice, valor ) {
+                    valor = valor.replace('.','___');
                     $("#"+valor+"-error").html( "" );
                     var inputtype = $("[name="+valor+"]").attr("type");
                     if(inputtype != 'radio')    $("[name="+valor+"]").removeClass('is-invalid').addClass('is-valid');
-                    $("select[name="+valor+"]").removeClass('is-invalid').addClass('is-valid').removeClass('select2-selection');
+                    $("select[name="+valor+"]").removeClass('is-invalid-select').addClass('is-valid-select').removeClass('select2-selection');
                     $("#"+idform+" #"+valor+"-sel2 .select2-selection").removeClass('is-invalid-select').addClass('is-valid-select');
                     $("#"+idform+" #"+valor+"-sel2 .select2-selection").css('border','1px solid #5eba00');
                 });
@@ -250,22 +251,29 @@
                     success:function(data) {
                         $("#"+idform+" .divWaitingMessage").hide();
                         if(data.alerta) {
-                            flasher.error(data.mensaje);
+                            toastr.error(data.mensaje);
                             $("[name="+buttonname+"]").attr('disabled',false)
                         }else if(data.success) {
-                            if (urlback === undefined || urlback === null)    location.reload(true);
-                            else window.location.href = urlback;
+                            if(data.urlReload){
+                                window.location.href = data.urlReload;
+                            }else{
+                                if (urlback === undefined || urlback === null){
+                                    location.reload(true);
+                                }else{
+                                    window.location.href = urlback;
+                                }
+                            }
                             $("[name="+buttonname+"]").attr('disabled',true)
                         } else if(typeof(data.status) == "undefined"){
-                            // window.location.href = '/login';
+                            // window.location.reload();
                         }
-
                     },
                     error: function(data){
                         $("#"+idform+" .divWaitingMessage").hide();
                         if(data.responseJSON.errors) {
                             var msjmail = ""; var sw_mail = 0;
                             $.each(data.responseJSON.errors, function( index, value ) {
+                                index = index.replace('.','___');
                                 $('#'+index+'-error' ).html( '&nbsp;<i class="fa fa-ban"></i> '+value );
                                 $('#'+index+'').addClass('has-error');
                                 var inputtype = $("[name="+index+"]").attr("type");
@@ -283,18 +291,18 @@
                                 camposaux[j] = valor;
                             });
                             var menor = Math.min.apply(null, indexaux);
-                            menor = isFinite(menor) ? menor : 0;
                             $('#'+camposaux[menor]+'--label')[0].scrollIntoView({behavior: 'smooth'});
                         }
                         setTimeout(function(){
                             $("[name="+buttonname+"]").attr('disabled',false);
                         }, 500)
                         if(typeof(data.status) != "undefined" && data.status != null && data.status == '401'){
-                            // window.location.href = '/login';
+                            // window.location.reload();
                         }
                     }
                 });
             });
         }
+
     </script>
 

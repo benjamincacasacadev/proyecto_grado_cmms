@@ -102,7 +102,7 @@
                 {{--                                                    CLIENTES                                                         --}}
                 {{-- =================================================================================================================== --}}
                 <li class="nav-item {!!strstr($item,'.',true)=='3'?'active':'';!!}">
-                    <a class="dropdown-item {!!strstr($item,'.',true)=='3'?'text-yellow font-weight-bold':'';!!}" href="/work_orders" >
+                    <a class="dropdown-item {!!strstr($item,'.',true)=='3'?'text-yellow font-weight-bold':'';!!}" href="/clients" >
                         <span class="nav-link-icon  d-lg-inline-block">
                             <i class="far fa-building icon"></i>
                         </span>
@@ -172,7 +172,6 @@
                                 </span>
                             </a>
 
-                            @if (Gate::check('transfers.index'))
                                 <a class="dropdown-item {!!strstr($item,':',true)=='4.3'?'active font-weight-bold':'';!!}" href="/transfers">
                                     <span class="nav-link-icon  d-lg-inline-block">
                                         <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -187,7 +186,6 @@
                                         Traspasos
                                     </span>
                                 </a>
-                            @endif
 
                             <a class="dropdown-item {!!strstr($item,':',true)=='4.4'?'active font-weight-bold':'';!!}" href="/inventory/parameters">
                                 <span class="nav-link-icon d-lg-inline-block">
@@ -204,7 +202,6 @@
                 {{-- =================================================================================================================== --}}
                 {{--                                            CONFIGURAR FORMULARIOS                                                   --}}
                 {{-- =================================================================================================================== --}}
-                @if (Gate::check('forms.index') || Gate::check('forms.admin'))
                     <li class="nav-item {!!strstr($item,'.',true)=='5'?'active':'';!!}">
                         <a class="dropdown-item {!!strstr($item,'.',true)=='5'?'text-yellow font-weight-bold':'';!!}" href="/forms" >
                             <span class="nav-link-icon  d-lg-inline-block">
@@ -215,7 +212,6 @@
                             </span>
                         </a>
                     </li>
-                @endif
                 {{-- =================================================================================================================== --}}
                 {{--                                                        USUARIOS                                                     --}}
                 {{-- =================================================================================================================== --}}
