@@ -8,7 +8,7 @@
     <div class="modal-body">
         {!! Form::open( array('route' =>'clients.store','method'=>'POST','autocomplete'=>'off','files'=>'true','id'=>'formEditClients', 'onsubmit'=>'btnSubmitEdit.disabled = true; return true;'))!!}
         <div class="row">
-            {!! datosRegistro('create') !!}
+            {!! datosRegistro('edit') !!}
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label class="col-form-label" id="nombreedit--label">* Nombre comercial</label> <br>

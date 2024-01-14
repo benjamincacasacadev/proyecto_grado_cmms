@@ -29,16 +29,30 @@ Route::post('/validar_user','UserController@validarUsername')->name('users.valid
 //                                      CLIENTES
 // ========================================================================================
 Route::get('/clients', 'ClientsController@index')->name('clients.index');
-Route::get('/clients/show/{id}', 'ClientsController@show')->name('clients.show');
 Route::post('/table_clients', 'ClientsController@tableClients')->name('clients.table');
 
 Route::get('/clients/estadomodal/{id}/{estado}', 'ClientsController@modalEstado')->name('clients.modalEstado');
 Route::get('/clients/estado/{id}/{estado}', 'ClientsController@changeEstado')->name('clients.cambioEstado');
 
-Route::get('/clients/modalCreate', 'ClientsController@modalCreate')->name('cliente.create');
+Route::get('/clients/modalCreate', 'ClientsController@modalCreate')->name('clientS.createmodal');
 Route::post('/store_clients', 'ClientsController@store')->name('clients.store');
 Route::get('/clients/editmodal/{id}', 'ClientsController@modalEdit')->name('clients.editmodal');
 Route::post('/clients/update/{id}', 'ClientsController@update')->name('clients.update');
 Route::get('/clients/deletemodal/{id}', 'ClientsController@modalDelete')->name('clients.deletemodal');
 Route::delete('/clients/delete/{id}','ClientsController@destroy')->name('clients.destroy');
+Route::get('/list_of_clients', 'ClientsController@listClients')->name('clients.listClients');
+
+// ========================================================================================
+//                                      ACTIVOS
+// ========================================================================================
+Route::get('/assets', 'StAssetsController@index')->name('assets.index');
+Route::get('/assets/show/{id}', 'StAssetsController@show')->name('assets.show');
+Route::post('/table_assets', 'StAssetsController@tableAssets')->name('assets.table');
+
+Route::get('/assets/modalCreate', 'StAssetsController@modalCreate')->name('assets.createmodal');
+Route::post('/store_assets', 'StAssetsController@store')->name('assets.store');
+Route::get('/assets/editmodal/{id}', 'StAssetsController@modalEdit')->name('assets.editmodal');
+Route::post('/assets/update/{id}', 'StAssetsController@update')->name('assets.update');
+Route::get('/assets/deletemodal/{id}', 'StAssetsController@modalDelete')->name('assets.deletemodal');
+Route::delete('/assets/delete/{id}','StAssetsController@destroy')->name('assets.destroy');
 

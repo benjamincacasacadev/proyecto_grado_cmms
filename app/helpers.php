@@ -215,3 +215,13 @@ function canPass(){
         return abort(403);
     }
 }
+
+function limpiarTexto($texto,$type){
+    if($type == 's2'){
+        $find = array('â','ê','î','ô','û','ã','õ','ç');
+        $repl = array('a','e','i','o','u','a','o','c');
+        $texto = str_replace($find, $repl, $texto);
+        $txt = trim(preg_replace('([^A-_a-z!-@ñ ])', '-*', $texto));
+    }
+    return $txt;
+}

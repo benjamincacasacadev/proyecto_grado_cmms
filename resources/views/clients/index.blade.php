@@ -1,6 +1,12 @@
 @extends ('layouts.admin', ['title_template' => "Clientes"])
 @section('extracss')
 <style>
+    table#tablaClientes th{
+        font-size:12px;
+    }
+    table#tablaClientes td{
+        font-size: 13px;
+    }
     .left{
         text-align: left !important;
     }

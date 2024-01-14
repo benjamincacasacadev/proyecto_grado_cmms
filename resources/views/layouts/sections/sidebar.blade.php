@@ -82,7 +82,7 @@
                 {{--                                                    ACTIVOS                                                          --}}
                 {{-- =================================================================================================================== --}}
                 <li class="nav-item {!!strstr($item,'.',true)=='2'?'active':'';!!}">
-                    <a class="dropdown-item {!!strstr($item,'.',true)=='2'?'text-yellow font-weight-bold':'';!!}" href="/work_orders" >
+                    <a class="dropdown-item {!!strstr($item,'.',true)=='2'?'text-yellow font-weight-bold':'';!!}" href="/assets" >
                         <span class="nav-link-icon  d-lg-inline-block">
                             <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

@@ -4,23 +4,69 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Clients extends Model
+class StAssets extends Model
 {
+
+    // ==========================================================================
+    // RELACIONES
+    // ==========================================================================
+    public function cliente(){
+        return $this->belongsTo(Clients::class, 'client_id');
+    }
+
     // ==========================================================================
     // FUNCIONES
     // ==========================================================================
-    public function getTipoLiteralAttribute(){
-        switch ($this->tipo) {
-            case 'I':   return 'Integrador';        break;
-            case 'F':   return 'Cliente final';     break;
-            case 'D':   return 'Distribuidor';      break;
+    public function getCod(){
+        return $this->cod;
+    }
+
+    public function getCiudadLiteralAttribute(){
+        switch ($this->ciudad) {
+            case '0': return 'Beni';            break;
+            case '1': return 'Chuquisaca';      break;
+            case '2': return 'Cochabamba';      break;
+            case '3': return 'La Paz';          break;
+            case '4': return 'Oruro';           break;
+            case '5': return 'Pando';           break;
+            case '6': return 'Potosi';          break;
+            case '7': return 'Santa Cruz';      break;
+            case '8': return 'Tarija';          break;
         }
     }
-    public function getDatosContactoAttribute(){
-        $salida = "<span style='color:#A6ACAF;'>Nombre: </span><b> ".$this->nombre_contacto.'</b><br>';
-        $salida .= "<span style='color:#A6ACAF;'>Cargo: </span><b> ".$this->cargo_contacto.'</b><br>';
-        $salida .= "<span style='color:#A6ACAF;'>Celular: </span><b> ".$this->celular_contacto.'</b><br>';
-        $salida .= "<span style='color:#A6ACAF;'>Email: </span><b> ".$this->email_contacto.'</b>';
+
+    public function getCategoriaLiteralAttribute(){
+        switch ($this->categoria) {
+            case '0': return 'Aire Acondicionado de confort';   break;
+            case '1': return 'Aires de precisión';              break;
+            case '2': return 'Banco de baterias de litio';      break;
+            case '3': return 'Equipo inversor';                 break;
+            case '4': return 'Equipo rectificador';             break;
+            case '5': return 'Equipo UPS';                      break;
+            case '6': return 'Estabilizador';                   break;
+            case '7': return 'Grupos Electrógenos';             break;
+            case '8': return 'Reconectador de media tension';   break;
+            case '9': return 'Tablero Banco de capacitores';    break;
+            case '10': return 'Tablero de transferencia ATS';   break;
+        }
+    }
+
+    // <option value="0">Aire Acondicionado de confort</option>
+    // <option value="1">Aires de precision</option>
+    // <option value="2">Banco de baterias de litio</option>
+    // <option value="3">Equipo inversor</option>
+    // <option value="4">Equipo rectificador</option>
+    // <option value="5">Equipo UPS</option>
+    // <option value="6">Estabilizador</option>
+    // <option value="7">Grupos Electrógenos</option>
+    // <option value="8">Reconectador de media tension</option>
+    // <option value="9">Tablero Banco de capacitores</option>
+    // <option value="10">Tablero de transferencia ATS</option>
+
+    public function getDatosActivoAttribute(){
+        $salida = "<span style='color:#A6ACAF;'>Marca: </span><b> ".$this->marca.'</b><br>';
+        $salida .= "<span style='color:#A6ACAF;'>Modelo: </span><b> ".$this->modelo.'</b><br>';
+        $salida .= "<span style='color:#A6ACAF;'>Capacidad/Potencia: </span><b> ".$this->capacidad.'</b><br>';
 
         return $salida;
     }
@@ -36,7 +82,7 @@ class Clients extends Model
             </a>';
             if (permisoAdmin()){
                 $estado =
-                '<a href="/clients/estado/'.code($this->id).'/1" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
+                '<a href="/assets/estado/'.code($this->id).'/1" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
                     <span class="text-yellow" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px;\'> Si desea desactivar el cliente haga clic. </span>" data-original-title="<span style=\'font-size: 12px;\'><b>CLIENTE ACTIVO</b></span>">
                         <i class="fas fa-check-circle fa-lg"></i>
                     </span>
@@ -52,7 +98,7 @@ class Clients extends Model
             </a>';
             if (permisoAdmin()){
                 $estado =
-                '<a href="/clients/estado/'.code($this->id).'/0" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
+                '<a href="/assets/estado/'.code($this->id).'/0" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
                     <span class="text-pink" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px; \' class=\'text-pink\'> Si desea activar el cliente haga clic. </span>" data-original-title="<span style=\'font-size: 12px;\' class=\'text-pink\'><b>CLIENTE INACTIV0</b></span>">
                         <i class="fas fa-exclamation-circle fa-lg"></i>
                     </span>
@@ -84,44 +130,57 @@ class Clients extends Model
     // SCOPES
     // ==========================================================================
 
+    public function scopeCod($query, $val){
+        if ($val != ''){
+            $query->where('cod', 'like', "%{$val}%");
+        }
+    }
+
+    public function scopeCliente($query, $val)
+    {
+        if ($val != '') {
+            $query->whereHas('cliente', function ($q1) use ($val) {
+                $q1->where('nombre', 'like', "%{$val}%");
+            });
+        }
+    }
+
     public function scopeNombre($query, $val){
         if ($val != ''){
             $query->where('nombre', 'like', "%{$val}%");
         }
     }
 
-    public function scopeNit($query, $val){
+    public function scopeCategoria($query, $val){
         if ($val != ''){
-            $query->where('nit', 'like', "%{$val}%");
+            $query->where('categoria', $val);
         }
     }
 
-    public function scopeTipo($query, $val){
+    public function scopeUbicacion($query, $val){
         if ($val != ''){
-            $val = substr($val, 0, 1);
-            $query->where('tipo', $val);
+            $query->where('ubicacion', 'like', "%{$val}%");
         }
     }
 
-    public function scopeCaracteristicas($query, $val){
+    public function scopeCiudad($query, $val){
         if ($val != ''){
-            $query->where('caracteristicas', 'like', "%{$val}%");
+            $query->where('ciudad', $val);
         }
     }
 
-    public function scopeDireccion($query, $val){
+    public function scopeSerie($query, $val){
         if ($val != ''){
-            $query->where('direccion', 'like', "%{$val}%");
+            $query->where('nro_serie', 'like', "%{$val}%");
         }
     }
 
-    public function scopeContacto($query, $val){
+    public function scopeDatosActivo($query, $val){
         if ($val != ''){
             $query->where(function ($q1) use ($val) {
-                $q1->where('nombre_contacto', 'LIKE', "%$val%")
-                    ->orWhere('cargo_contacto', 'LIKE', "%$val%")
-                    ->orWhere('celular_contacto', 'LIKE', "%$val%")
-                    ->orWhere('email_contacto', 'LIKE', "%$val%");
+                $q1->where('marca', 'LIKE', "%$val%")
+                    ->orWhere('modelo', 'LIKE', "%$val%")
+                    ->orWhere('capacidad', 'LIKE', "%$val%");
             });
         }
     }

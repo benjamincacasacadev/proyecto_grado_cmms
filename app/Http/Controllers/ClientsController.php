@@ -192,6 +192,27 @@ class ClientsController extends Controller
         ];
 
         return $request->validate($validateArray, [], $aliasArray);
+    }
 
+    public function listClients(Request $request) {
+
+        $request['search'] = limpiarTexto($request->search,'s2');
+        $search = ($request->search == '') ? '-----' : $request->search;
+
+        $clients = Clients::where('nombre','LIKE','%'.$search.'%')
+        ->where('estado', '1')
+        ->orderBy('nombre','asc')
+        ->limit(40)
+        ->get();
+
+        $array = [];
+        $array['results'][0]['id'] = '';
+        $array['results'][0]['text'] = 'Seleccione una opción';
+        foreach ($clients as $k => $client) {
+            $array['results'][$k + 1]['id'] = code($client->id);
+            $array['results'][$k + 1]['text'] = $client->nombre;
+        }
+        $array['pagination']['more'] = false;
+        return response()->json($array);
     }
 }
