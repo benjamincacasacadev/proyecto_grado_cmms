@@ -1554,6 +1554,41 @@ class StFormController extends Controller{
         return $request->validate($validateArray,$messages);
     }
 
+    // =====================================================================================================
+    // =====================================================================================================
+    //                                              FORMS CARTA
+    // =====================================================================================================
+    // =====================================================================================================
+    public function indexLetter(Request $request, $id){
+        $forms = StForms::findOrFail(decode($id));
+        Session::put('item','5.');
+        return view("forms.letter", compact('forms'));
+    }
+
+    public function storeLetter(Request $request, FlasherInterface $flasher, $id){
+        // VALIDACION DE ESPACIOS
+        $cartaaux = $request->letter_body;
+        $request['letter_body'] = str_replace(["&nbsp;","\n","\r","\t",'<p>','</p>','<strong>','</strong>','<em>','</em>'], "", $request->letter_body);
+
+        $messages = [
+            'letter_body.required'  => 'El cuerpo de la carta es obligatorio.',
+        ];
+        $request->validate([
+            'letter_body' =>'required'],$messages);
+
+        $request['letter_body'] = $cartaaux;
+
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            return  \Response::json(['success' => '1']);
+        }
+
+        $form->letter_body = $request->letter_body;
+        $form->update();
+        $flasher->addFlash('info', 'Modificado con éxito', 'Carta');
+        return  \Response::json(['success' => '1']);
+    }
+
     // ================================================================================================
     // FUNCIONES AJAX
 

@@ -121,3 +121,5 @@ Route::delete('/forms/maintenance/destroy/{idcampo}/{id}', 'StFormController@des
 // Graficos y series
 Route::get('/forms/series/modalcreate/{id}', 'StFormController@modalCreateSerie')->name('forms.serie.modalcreate');
 Route::post('/forms/storeSerie/{id}', 'StFormController@storeSerie')->name('forms.serie.store');
+
+Route::post('/storeletter/{id}', 'StFormController@storeLetter')->name('letter.store');
