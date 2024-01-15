@@ -791,6 +791,338 @@ class StFormController extends Controller{
         return  \Response::json(['success' => '1','contid'=> $contid,'subconte'=> $subconte]);
     }
 
+    public function modalEditMaintenance($idcampo, $id){
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            abort(404);
+        }
+        $nombre_campo = $form->maintenance[$idcampo]['mostrar'];
+        $type = $form->maintenance[$idcampo]['type'];
+
+        if($type == 'text' || $type == 'textarea' || $type == 'date' || $type == 'time' || $type == 'datetime' || $type == 'number' || $type == 'money'){
+            return view("forms.maintenance.modalEditTextField", compact('nombre_campo','id','idcampo','type'));
+        }elseif($type == 'radio'){
+            $radioDep = 0;
+            $options = isset($form->maintenance[$idcampo]['options']) ? collect($form->maintenance[$idcampo]['options'])->sortBy('orden') : [];
+            foreach($form->maintenance as $campos){
+                if(isset($campos['clase_padre'])){
+                    $padre = explode(" ",$campos['clase_padre']);
+                    if(in_array($idcampo,$padre)){
+                        $radioDep = 1;
+                        break;
+                    }
+                }
+            }
+            return view("forms.maintenance.modalEditRadioField", compact('nombre_campo','id','idcampo','type','radioDep','options'));
+        }
+        elseif($type == 'checkbox'){
+            $options = isset($form->maintenance[$idcampo]['options']) ? collect($form->maintenance[$idcampo]['options'])->sortBy('ordencheck') : [];
+            return view("forms.maintenance.modalEditCheckField", compact('nombre_campo','id','idcampo','type','options'));
+        }
+        elseif($type == 'select' || $type == 'select2'){
+            $options = isset($form->maintenance[$idcampo]['options']) ? collect($form->maintenance[$idcampo]['options'])->sortBy('orden') : [];
+            $multiple = isset($form->maintenance[$idcampo]['multiple']) ? $form->maintenance[$idcampo]['multiple'] : "0";
+            if($multiple == 'multiple') $type = 'multiple';
+            return view("forms.maintenance.modalEditSelectField", compact('nombre_campo','id','idcampo','type','options','multiple'));
+        }
+        elseif($type == 'serie'){
+            return view("forms.maintenance.modalEditSerieField", compact('nombre_campo','id','idcampo','type'));
+        }
+        abort(404);
+    }
+
+    public function updateTextfield(Request $request, FlasherInterface $flasher, $idcampo, $id){
+        $messages = [
+            'nombretextEdit.required'  => 'El nombre de campo es obligatorio',
+            'texto_tipoedit.required' => 'Debe escoger un tipo de texto válido',
+        ];
+        $validateArray = [
+            'nombretextEdit' =>'required',
+            'texto_tipoedit' =>'required',
+        ];
+        $request->validate($validateArray,$messages);
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            return \Response::json(['success' => '1']);
+        }
+        $maintenance = $form->maintenance;
+        if(isset($maintenance[$idcampo])){
+            $contid = $maintenance[$idcampo]['container'];
+            $subconte = $maintenance[$idcampo]['subcontainer'];
+            $maintenance[$idcampo]['mostrar'] = $request->nombretextEdit;
+            $maintenance[$idcampo]['type'] = $request->texto_tipoedit;
+            $form->maintenance = $maintenance;
+            $form->update();
+            $flasher->addFlash('info', 'Actualizado con éxito', 'Campo');
+            return  \Response::json(['success' => '1','contid'=> $contid,'subconte'=> $subconte]);
+        }else
+            $flasher->addFlash('error', 'Error al guardar datos', 'Hubo en problema');
+        return  \Response::json(['success' => '1']);
+    }
+
+    public function updateRadiofield(Request $request, FlasherInterface $flasher, $idcampo, $id){
+        $messages = [
+            'nombreradioEdit.required'  => 'El nombre de campo es obligatorio',
+        ];
+        $validateArray = [
+            'nombreradioEdit' =>'required',
+            'myOptionsRadioedit.*' => 'required',
+        ];
+        $request->validate($validateArray,$messages);
+        $myOptions = $request->myOptionsRadioedit;
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            return \Response::json(['success' => '1']);
+        }
+        $maintenance = $form->maintenance;
+        if(isset($maintenance[$idcampo])){
+            $contid = $maintenance[$idcampo]['container'];
+            $subconte = $maintenance[$idcampo]['subcontainer'];
+
+            $ordradio = 1;
+            $swmsg_rad = 0;
+            $optradio_u = array_unique($myOptions);
+            $options = [];
+            $campo = $maintenance[$idcampo]['id'];
+            foreach ($optradio_u as $key => $opcion) {
+                if ($opcion != ""){
+                    $optradio = strtolower(str_replace(" ","_",$opcion));
+                    $options[$campo.'|'.$optradio]['val'] = $optradio;
+                    $options[$campo.'|'.$optradio]['mostraropt'] = $opcion;
+                    $options[$campo.'|'.$optradio]['orden'] = $ordradio;
+                    $ordradio++;
+                    $color = strtolower(str_replace(" ","_",$request->myOptionsColorEdit[$key]));
+                    switch ($color) {
+                        case 'rojo':
+                            $options[$campo.'|'.$optradio]['color'] = 'red';
+                            $options[$campo.'|'.$optradio]['hex'] = '#D54E21';
+                        break;
+                        case 'amarillo':
+                            $options[$campo.'|'.$optradio]['color'] = 'yellow';
+                            $options[$campo.'|'.$optradio]['hex'] = '#FFCC33';
+                        break;
+                        case 'verde':
+                            $options[$campo.'|'.$optradio]['color'] = 'green';
+                            $options[$campo.'|'.$optradio]['hex'] = '#008D4C';
+                        break;
+                        case 'azul':
+                            $options[$campo.'|'.$optradio]['color'] = 'blue';
+                            $options[$campo.'|'.$optradio]['hex'] = '#367FA9';
+                        break;
+                        case 'naranja':
+                            $options[$campo.'|'.$optradio]['color'] = 'orange';
+                            $options[$campo.'|'.$optradio]['hex'] = '#DE8650';
+                        break;
+                        case 'morado':
+                            $options[$campo.'|'.$optradio]['color'] = 'purple';
+                            $options[$campo.'|'.$optradio]['hex'] = '#A77A94';
+                        break;
+                        default:
+                        break;
+                    }
+                }else $swmsg_rad = 1;
+                if (count($optradio_u) != count($myOptions)) $swmsg_rad = 1;
+            }
+            $maintenance[$idcampo]['mostrar'] = $request->nombreradioEdit;
+            $maintenance[$idcampo]['options'] = $options;
+            $form->maintenance = $maintenance;
+            $form->update();
+            $flasher->addFlash('info', 'Actualizado con éxito', 'Campo');
+            return  \Response::json(['success' => '1','contid'=> $contid,'subconte'=> $subconte]);
+        }else
+            $flasher->addFlash('error', 'Error al guardar datos', 'Hubo en problema');
+        return  \Response::json(['success' => '1']);
+    }
+
+    public function updateCheckfield(Request $request, FlasherInterface $flasher, $idcampo, $id){
+        $messages = [
+            'nombrecheckEdit.required'  => 'El nombre de campo es obligatorio',
+        ];
+        $validateArray = [
+            'nombrecheckEdit' =>'required',
+            'myOptionsCheckedit.*' => 'required',
+        ];
+        $request->validate($validateArray,$messages);
+        $myOptions = $request->myOptionsCheckedit;
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            return \Response::json(['success' => '1']);
+        }
+        $maintenance = $form->maintenance;
+        if(isset($maintenance[$idcampo])){
+            $contid = $maintenance[$idcampo]['container'];
+            $subconte = $maintenance[$idcampo]['subcontainer'];
+
+            $options = [];
+            $swmsg_check = 0;
+            $optcheck_u = array_unique($myOptions);
+            $ord_check = 0;
+            foreach ($myOptions as $key => $opcion) {
+                if($opcion != ""){
+                    $save = strtolower(str_replace(" ","_",$opcion));
+                    $options[$save]['val'] =$save;
+                    $options[$save]['mostraropt'] = $opcion;
+                    $options[$save]['ordencheck'] = $ord_check;
+                    $ord_check++;
+                }else $swmsg_check = 1;
+
+                if (count($optcheck_u) != count($myOptions)) $swmsg_check = 1;
+            }
+            $maintenance[$idcampo]['mostrar'] = $request->nombrecheckEdit;
+            $maintenance[$idcampo]['options'] = $options;
+            $form->maintenance = $maintenance;
+            $form->update();
+            $flasher->addFlash('info', 'Actualizado con éxito', 'Campo');
+            return  \Response::json(['success' => '1','contid'=> $contid,'subconte'=> $subconte]);
+        }else
+            $flasher->addFlash('error', 'Error al guardar datos', 'Hubo en problema');
+        return  \Response::json(['success' => '1']);
+    }
+
+    public function updateSelectfield(Request $request, FlasherInterface $flasher, $idcampo, $id){
+        $messages = [
+            'nombreselectEdit.required'  => 'El nombre de campo es obligatorio',
+            'tiposelectedit.required' => 'Debe escoger un tipo de select válido',
+        ];
+        $validateArray = [
+            'nombreselectEdit' =>'required',
+            'tiposelectedit' =>'required',
+            'myOptionsSelectedit.*' => 'required',
+        ];
+        $request->validate($validateArray,$messages);
+        $myOptions = $request->myOptionsSelectedit;
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            return \Response::json(['success' => '1']);
+        }
+        $maintenance = $form->maintenance;
+        if(!isset($maintenance[$idcampo])){
+            $flasher->addFlash('error', 'Error al guardar datos', 'Hubo en problema');
+            return  \Response::json(['success' => '1']);
+        }
+
+        $contid = $maintenance[$idcampo]['container'];
+        $subconte = $maintenance[$idcampo]['subcontainer'];
+        $ordselect = 1;
+        if($request->tiposelectedit == "multiple"){
+            $maintenance[$idcampo]['multiple'] = 'multiple';
+            $maintenance[$idcampo]['type'] = 'select2';
+        }elseif($request->tiposelectedit == "select2"){
+            $maintenance[$idcampo]['type'] = 'select2';
+            unset($maintenance[$idcampo]['multiple']);
+        }else{
+            $maintenance[$idcampo]['type'] = 'select';
+            unset($maintenance[$idcampo]['multiple']);
+        }
+
+        $swmsg_select = 0;
+        $optselect_u = array_unique($myOptions);
+        $options = [];
+        foreach ($myOptions as $key => $opcion) {
+            if($opcion != ""){
+                $save = strtolower(str_replace(" ","_",$opcion));
+                $options[$save]['val'] = $save;
+                $options[$save]['mostraropt'] = $opcion;
+                $options[$save]['orden'] = $ordselect;
+                $ordselect++;
+            }else{
+                $swmsg_select = 1;
+            }
+            if (count($optselect_u) != count($myOptions)){
+                $swmsg_select = 1;
+            }
+        }
+        $maintenance[$idcampo]['mostrar'] = $request->nombreselectEdit;
+        $maintenance[$idcampo]['options'] = $options;
+        $form->maintenance = $maintenance;
+
+        $form->update();
+        $flasher->addFlash('info', 'Actualizado con éxito', 'Campo');
+        return  \Response::json(['success' => '1','contid'=> $contid,'subconte'=> $subconte]);
+    }
+
+    public function updateSeriefield(Request $request, FlasherInterface $flasher, $idcampo, $id){
+        $messages = [
+            'nombreSerieEdit.required'  => 'El nombre de campo es obligatorio',
+        ];
+        $validateArray = [
+            'nombreSerieEdit' =>'required',
+        ];
+        $request->validate($validateArray,$messages);
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            return \Response::json(['success' => '1']);
+        }
+        $maintenance = $form->maintenance;
+        if(isset($maintenance[$idcampo])){
+            $contid = $maintenance[$idcampo]['container'];
+            $subconte = $maintenance[$idcampo]['subcontainer'];
+            $maintenance[$idcampo]['mostrar'] = $request->nombreSerieEdit;
+            $form->maintenance = $maintenance;
+            $form->update();
+            $flasher->addFlash('info', 'Actualizado con éxito', 'Campo');
+            return  \Response::json(['success' => '1','contid'=> $contid,'subconte'=> $subconte]);
+        }else
+            $flasher->addFlash('error', 'Error al guardar datos', 'Hubo en problema');
+        return  \Response::json(['success' => '1']);
+    }
+
+    public function modalDeleteMaintenance($idcampo, $id){
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            abort(404);
+        }
+        $collectDep = collect($form->maintenance)->where('clase_padre','!=',null);
+        $k = 0;
+        $campos_dep = [];
+        foreach($collectDep as $fo){
+            $arrayPadre = explode(" ",$fo['clase_padre']);
+            foreach($arrayPadre as $aP){
+                if($aP == $idcampo){
+                    $campos_dep[$k] = $fo['mostrar'];
+                    $k++;
+                    break;
+                }
+            }
+        }
+
+        $nombre_campo = $form->maintenance[$idcampo]['mostrar'];
+        $mostrar = $form->maintenance[$idcampo]['mostrar'];
+        return view("forms.maintenance.modalDeleteMaintenance", compact('nombre_campo','id','idcampo','mostrar','campos_dep'));
+    }
+
+    public function destroyMaintenance(FlasherInterface $flasher, $idcampo, $id){
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            abort(404);
+        }
+        $info = $form->maintenance;
+        $contid = isset($info[$idcampo]['container']) ? $info[$idcampo]['container'] : "";
+
+        // eliminar campos dependientes
+        $sw_dep = 0;
+        $collectDep = collect($form->maintenance)->where('clase_padre','!=',null);
+        foreach($collectDep as $fo){
+            $arrayPadre = explode(" ",$fo['clase_padre']);
+            foreach($arrayPadre as $aP){
+                if($aP == $idcampo){
+                    unset($info[ $fo['id'] ]);
+                    $sw_dep = 1;
+                    break;
+                }
+            }
+        }
+
+        unset($info[$idcampo]);
+        $form->maintenance = $info;
+        $form->update();
+        $flasher->addFlash('error', 'Eliminado correctamente', 'Campo');
+        return Redirect()->route('forms.maintenance', ['id' => $id, 'contid' => $contid]);
+    }
+
+    // ================================================================================================
+    // FUNCIONES AJAX
+
     public function ajaxSubcontainer(Request $request){
         $query = $request->query;
         if(!isset($query)){
@@ -814,6 +1146,60 @@ class StFormController extends Controller{
             $salida .= '<option value="'.$cont['val'].'" '.$selected.'>'.$cont['mostrar'].'</option>';
         }
         return response()->json(array('selectxd1' => $salida, 'formxd' => $query, 'contsub' => $contsub), 200);
+    }
+
+    public function ajaxSelectForms(Request $request){
+        $request['search'] = limpiarTexto($request->search,'s2');
+        $array = [];
+        if($request->sw == 'filter'){
+            $area = (decode($request->area) > 0) ? decode($request->area) : '';
+            $category = (decode($request->category) > 0) ? decode($request->category) : '';
+            $forms = StForms::select('id','name')
+                    ->whereIn('state',['1','2'])
+                    ->Name($request->search)
+                    ->TypeAS($request->typeot)
+                    ->AreaId($area)
+                    ->CategoryId($category)
+                    ->orderBy('name')
+                    ->get();
+
+            $array['results'][0]['id'] = "t";
+            $array['results'][0]['text'] = "Todos";
+        }else{
+            if($request->type == '2' ){
+                $aux = StForms::select('id','name')->where('category_id','0')->whereIn('state',['1','2'])->orderBy('name')->get();
+            }else{
+                if($request->asset == '0'){
+                    $aux = StForms::select('id','name')->where('category_id','0')->whereIn('state',['1','2']);
+                }else{
+                    $assetid = decode($request->asset);
+                    $assets = StAssets::where('id',$assetid)->first();
+                    $idCat = isset($assets->categories->id)? $assets->categories->id : '-1';
+                    $aux = StForms::select('id','name')->where('category_id',$idCat)->whereIn('state',['1','2']);
+                }
+                $aux = $aux->orderBy('name')->get();
+            }
+
+            $search = $request->search;
+            $forms = collect($aux)->filter(function ($form) use ($search) {
+                if(isset($search) && $search != "")
+                    return false !== stripos($form->name, $search);
+                else
+                    return $form;
+            })->sortBy('name');
+
+            $array['results'][0]['id'] = "";
+            $array['results'][0]['text'] = "Seleccione una opción";
+        }
+
+        $k = 0;
+        foreach($forms as $form){
+            $array['results'][$k+1]['id'] = code($form->id);
+            $array['results'][$k+1]['text'] = $form->name;
+            $k++;
+        }
+        $array['pagination']['more'] = false;
+        return response()->json($array);
     }
 
     public function ajaxSelectCont(Request $request, $id){

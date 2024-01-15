@@ -777,14 +777,6 @@
                                                                                                         }
                                                                                                     $generadoseriesalida_xy .='
                                                                                                 </div>';
-                                                                                                $generadoseriesalida_xy .='
-                                                                                                <script>
-                                                                                                    $(document).on("click", ".remove_input_prev", function (e) {
-                                                                                                        e.preventDefault();
-                                                                                                        var lastClass = $(this).parent("div").attr("class").split(" ").pop();
-                                                                                                        $("."+lastClass+"").remove();
-                                                                                                    })
-                                                                                                </script>';
                                                                                             }
                                                                                         }
                                                                                         $generadoseriesalida_xy .='
@@ -813,12 +805,6 @@
                                                                                                         }
                                                                                                     $generadoseriesalida_xy .=
                                                                                                 '</div>';
-                                                                                                $generadoseriesalida_xy .='
-                                                                                                <script>
-                                                                                                    $(".remove_input_prev'.$keje.'").on("click", function (e) {
-                                                                                                        $(this).parent("div").remove();
-                                                                                                    });
-                                                                                                </script>';
                                                                                                 if(isset($datos_ejex[$keje]))   $datos_graficoxy .= "[".$datos_ejex[$keje]." , ".$_ejey."],";
                                                                                             }
                                                                                         }

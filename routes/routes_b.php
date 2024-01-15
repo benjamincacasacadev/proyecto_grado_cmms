@@ -118,5 +118,3 @@ Route::post('/forms/maintenance/updateSelectfield/{idcampo}/{id}/', 'StFormContr
 Route::post('/forms/maintenance/updateSeriefield/{idcampo}/{id}/', 'StFormController@updateSeriefield')->name('forms.seriefield.update');
 Route::get('/forms/maintenance/deletemodal/{idcampo}/{id}', 'StFormController@modalDeleteMaintenance')->name('maintenance.deletemodal');
 Route::delete('/forms/maintenance/destroy/{idcampo}/{id}', 'StFormController@destroyMaintenance')->name('maintenance.destroy');
-Route::get('/forms/maintenance/deleteStateModal/{id}', 'StFormController@modalDeleteState')->name('maintenance.deletemodal.state');
-Route::delete('/forms/maintenance/destroyState/{id}', 'StFormController@destroyState')->name('maintenance.destroy.state');
