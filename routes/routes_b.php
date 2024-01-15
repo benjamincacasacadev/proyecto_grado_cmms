@@ -27,7 +27,6 @@ Route::post('updateprofile/{user}','UserController@updateprofile')->name('update
 Route::post('/useravatar', 'UserController@uploadAvatarImagen')->name('users.avatar');
 Route::post('/validar_user','UserController@validarUsername')->name('users.validar');
 
-
 // ========================================================================================
 //                                      CLIENTES
 // ========================================================================================
@@ -79,3 +78,33 @@ Route::get('/forms/editmodal/{id}', 'StFormController@modalEdit')->name('forms.e
 Route::post('/forms/update/{id}', 'StFormController@update')->name('forms.update');
 Route::get('/forms/deletemodal/{id}', 'StFormController@modalDelete')->name('forms.deletemodal');
 Route::delete('/forms/delete/{id}','StFormController@destroy')->name('forms.destroy');
+
+// Contenedores
+Route::get('/forms/container/{id}', 'StFormController@indexContainer')->name('forms.container');
+// Mantenimiento
+Route::get('/forms/maintenance/{id}', 'StFormController@indexMaintenance')->name('forms.maintenance');
+// PDF
+Route::get('/forms/export/{id}', 'StFormController@export')->name('forms.pdf');
+// Carta
+Route::get('/forms/letter/{id}', 'StFormController@indexLetter')->name('forms.letter');
+
+// ADMINISTRAR
+// Contenedores
+Route::post('/storecontainer/{id}', 'StFormController@storeContainer')->name('container.store');
+Route::get('/forms/container/editmodal/{idcont}/{id}/', 'StFormController@modalEditContainer')->name('container.editmodal');
+Route::post('/forms/container/update/{idcont}/{id}/', 'StFormController@updateContainer')->name('forms.container.update');
+Route::get('/forms/subcontainer/editmodal/{idcont}/{idsubc}/{id}/', 'StFormController@modalEditSubContainer')->name('subcontainer.editmodal');
+Route::post('/forms/subcontainer/update/{idcont}/{idsubc}/{id}/', 'StFormController@updateSubContainer')->name('forms.subcontainer.update');
+Route::get('/forms/container/ordermodal/{id}/', 'StFormController@modalOrderContainer')->name('container.ordermodal');
+Route::post('/forms/container/orderUpdate/', 'StFormController@ajaxOrderContainer')->name('forms.orderContainer');
+Route::get('/forms/subcontainer/ordermodal/{idcont}/{id}/', 'StFormController@modalOrderSubContainer')->name('subcontainer.ordermodal');
+Route::post('/forms/subcontainer/orderUpdate/', 'StFormController@ajaxOrderSubContainer')->name('forms.orderSubContainer');
+Route::delete('/forms/container/destroy/{idcont}/{idsubc}/{id}/{sw}', 'StFormController@destroyContainer')->name('container.destroy');
+Route::get('/forms/container/deletemodal/{idcont}/{idsubc}/{id}/{sw}', 'StFormController@modalDeleteContainer')->name('container.deletemodal');
+Route::delete('/forms/container/destroy/{idcont}/{idsubc}/{id}/{sw}', 'StFormController@destroyContainer')->name('container.destroy');
+Route::post('/forms/contAjax/{id}', 'StFormController@ajaxSelectCont')->name('forms.contajax');
+Route::post('/forms/subcontAjax/{id}', 'StFormController@ajaxSelectSubCont')->name('forms.subcontajax');
+// Mantenimiento
+Route::post('/forms/subcontainerAjax/', 'StFormController@ajaxSubcontainer')->name('forms.subcontainerajax');
+Route::post('/forms/selectdepAjax/', 'StFormController@ajaxSelectDependiente')->name('forms.selectDepAjax');
+Route::post('/storemaintenance/{id}', 'StFormController@storeMaintenance')->name('maintenance.store');

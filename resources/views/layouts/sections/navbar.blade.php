@@ -5,7 +5,7 @@
     }
 </style>
 <div class="sticky-top">
-    <header class="navbar navbar-expand-md navbar-dark d-none d-lg-flex d-print-none" style="background-color: rgba(247,166,0, 0.8) !important">
+    <header class="navbar navbar-expand-md navbar-light d-none d-lg-flex d-print-none" >
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu">
             <span class="navbar-toggler-icon"></span>

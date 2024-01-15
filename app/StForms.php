@@ -18,9 +18,25 @@ class StForms extends Model
         return $this->belongsTo(StFormType::class, 'type_id');
     }
 
-        // =========================================================================================
+    // =========================================================================================
     //                                          FUNCIONES
     // =========================================================================================
+    public function getCategoriaLiteralAttribute(){
+        switch ($this->category_id) {
+            case '0': return 'Aire Acondicionado de confort';   break;
+            case '1': return 'Aires de precisión';              break;
+            case '2': return 'Banco de baterias de litio';      break;
+            case '3': return 'Equipo inversor';                 break;
+            case '4': return 'Equipo rectificador';             break;
+            case '5': return 'Equipo UPS';                      break;
+            case '6': return 'Estabilizador';                   break;
+            case '7': return 'Grupos Electrógenos';             break;
+            case '8': return 'Reconectador de media tension';   break;
+            case '9': return 'Tablero Banco de capacitores';    break;
+            case '10': return 'Tablero de transferencia ATS';   break;
+        }
+    }
+
     public function getOperations(){
         $operaciones = '';
         // if($this->state != "1"){
@@ -29,7 +45,6 @@ class StForms extends Model
         if(!permisoAdmin()){
             return '';
         }
-        $text = $this->state == '0' ? 'Activar' : 'Inactivar';
 
         $editar =
         '<a style=\'cursor:pointer\' rel=\'modalEdit\' href=\'/forms/editmodal/'. code($this->id).' \' >
