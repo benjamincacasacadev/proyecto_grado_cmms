@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\StForms;
 use App\StFormType;
+use App\User;
 use App\WorkOrders;
 use Session;
 use Flasher\Prime\FlasherInterface;
@@ -466,6 +467,329 @@ class StFormController extends Controller{
         $form->update();
     }
 
+    // =========================================================================================================
+    // =========================================================================================================
+    //                                       INFORMES DE MANTENIMIENTO
+    // =========================================================================================================
+    // =========================================================================================================
+    public function indexMaintenance(Request $request,$id){
+        $form = StForms::findOrFail(decode($id));
+        $maintenance = isset($form->maintenance) ? $form->maintenance : [];
+        $containers = collect($form->containers)->sortBy('orden');
+        $subcontainers = $containers->first();
+        $subcontainers = isset($subcontainers['subcontainer']) ? $subcontainers['subcontainer'] : [];
+
+        $collectserie = collect($maintenance)->where('type','serie');
+        $nombre_serie = [];
+        if (isset($collectserie)) {
+            foreach($collectserie as $x=>$ser){
+                $nombre_serie[$x] = $ser['mostrar'];
+            }
+        }
+        $estados = collect($form->form_states);
+        $tecnicos = User::where('active',1)->orderBy('ap_paterno','asc')->get();
+
+        Session::put('item','5.');
+        return view("forms.maintenance.maintenance", compact('form','maintenance','containers','subcontainers','nombre_serie','estados','tecnicos'));
+    }
+
+    public function storeMaintenance(Request $request, FlasherInterface $flasher, $id){
+        $messages = [
+            'contenedorid.required'  => 'Debe escoger un Contenedor válido',
+            'subcontenedorprinc.required'  => 'Debe escoger un Sub Contenedor válido',
+            'inputType.required'  => 'Debe escoger un Tipo de Campo válido',
+            'field_name.required'  => 'El campo "Nombre de Campo" es obligatorio',
+            'tiposelect.required' => 'Debe escoger una opción válida',
+            'texto_tipo.required' => 'Debe escoger un tipo de texto válido',
+        ];
+
+        $validateArray = [
+            'contenedorid' =>'required',
+            'subcontenedorprinc' =>'required',
+            'inputType' => 'required',
+        ];
+        $validateFields = [
+            'field_name' => 'required',
+        ];
+        $validateRadio = [
+            'myOptionsRadio.*' => 'required',
+            'myOptionsRadio' => 'min:2',
+        ];
+        $validateCheck = [
+            'myOptionsCheck.*' => 'required',
+            'myOptionsCheck' => 'min:2',
+        ];
+        $validateSelect = [
+            'myOptionsSelect.*' => 'required',
+            'tiposelect' => 'required',
+            'myOptionsSelect' => 'min:2',
+        ];
+        $validateText = [
+            'texto_tipo' => 'required',
+        ];
+        $tipocampo = $request->inputType;
+        if(isset($tipocampo)) $validateArray = array_merge($validateArray,$validateFields);
+        if($tipocampo == 'radio') $validateArray = array_merge($validateArray,$validateRadio);
+        if($tipocampo == 'checkbox') $validateArray = array_merge($validateArray,$validateCheck);
+        if($tipocampo == 'select') $validateArray = array_merge($validateArray,$validateSelect);
+        if($tipocampo == 'texto') $validateArray = array_merge($validateArray,$validateText);
+        $request->validate($validateArray,$messages);
+
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            return  \Response::json(['success' => '1']);
+        }
+        $campo = $this->limpiar($request->field_name);
+
+        // Para ordenar los inputs segun se vayan generando ya que al guardar en JSON no se ordena asi
+        $orden = 0;
+        $form_info_main = $form->maintenance;
+        if(isset($form->maintenance)){
+            foreach ($form->maintenance as $max) {
+                if($max['orden']>$orden) $orden = $max['orden'];
+            }
+        } $orden++;
+
+        // Validar que el nombre de campo sea único añadiendo un index si el nombre ya existe
+        $keynom = []; $ki=0;
+        if(isset($form->maintenance)){
+            foreach ($form->maintenance as $key => $value) {
+                $auxname = explode("__",$value['id']);
+                $keyname = isset($auxname[1]) ? $auxname[1] : 0;
+                $keynom[$ki] = ++$keyname;
+                $ki++;
+            }
+            foreach ($form->maintenance as $key => $value) {
+                $auxname = explode("__",$value['id']);
+                if($campo == $auxname[0] ){
+                    $campo = $auxname[0]."__".max($keynom);
+                }
+            }
+        }
+
+        // Generar el JSON para almacenarlo
+        $info_main = [];
+        $info_main[$campo]['id'] = $campo;
+        $info_main[$campo]['type'] = $request->inputType;
+        $info_main[$campo]['mostrar'] = preg_replace('/\s+/', ' ',$request->field_name);
+        $info_main[$campo]['container'] = $request->contenedorid;
+        $info_main[$campo]['subcontainer'] = $request->subcontenedorprinc;
+        $info_main[$campo]['orden'] = $orden;
+        // Obtener el array de inputs si es que se escogio un tipo de input multiple
+        switch ($request->opt) {
+            case 'check':  $myOptions = $request->myOptionsCheck;     break;
+            case 'select': $myOptions = $request->myOptionsSelect;    break;
+            case 'text':   $myOptions = "";                           break;
+            case 'radio':  $myOptions = $request->myOptionsRadio;     break;
+            default: return back(); break;
+        }
+
+        // Campos para radio dependientes
+        $swdep=0;
+        $savedepend = [];
+        if( $request->inputType == 'radio'){
+            $camposdep = [];
+            foreach($request->all() as $reqra){
+                if(!is_array($reqra)){
+                    $swcampd = explode("|||",$reqra);
+                    if(isset($swcampd[1])){
+                        $campoDep = $swcampd[0];
+                        $optPadre = $this->limpiar($swcampd[1]);
+                        $camposdep[$optPadre][$campoDep] = $campoDep;
+                        $swdep = 1;
+                    }
+                }
+            }
+        }
+        // =====================================================================================================
+        //                                Añadir a JSON segun tipo de campo
+        // =====================================================================================================
+        switch ($request->inputType){
+            case 'radio':
+                $ordradio = 1;
+                $swmsg_rad = 0;
+                $optradio_u = array_unique($myOptions);
+                foreach ($optradio_u as $key => $opcion) {
+                    if ($opcion != ""){
+                        $optradio = $this->limpiar($opcion);
+                        $info_main[$campo]['options'][$campo.'|'.$optradio]['val'] = $optradio;
+                        $info_main[$campo]['options'][$campo.'|'.$optradio]['mostraropt'] = $opcion;
+                        $info_main[$campo]['options'][$campo.'|'.$optradio]['orden'] = $ordradio;
+                        $ordradio++;
+                        $color = strtolower(str_replace(" ","_",$request->myOptionsColor[$key]));
+                        switch ($color) {
+                            case 'rojo':
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'red';
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#D54E21';
+                            break;
+                            case 'amarillo':
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'yellow';
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#FFCC33';
+                            break;
+                            case 'verde':
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'green';
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#008D4C';
+                            break;
+                            case 'azul':
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'blue';
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#367FA9';
+                            break;
+                            case 'naranja':
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'orange';
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#DE8650';
+                            break;
+                            case 'morado':
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'purple';
+                                $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#A77A94';
+                            break;
+                            default:
+                            break;
+                        }
+                    }else $swmsg_rad = 1;
+                    if (count($optradio_u) != count($myOptions)) $swmsg_rad = 1;
+                    if ($swmsg_rad == 1) $flasher->addFlash('warning', 'Las opciones Radio con nombres vacíos o que estén repetidos NO se registraron', 'No permitido');
+                }
+                // =================================================================
+                //                            CAMPOS DEPENDIENTES
+                $dependAnidados = [];
+                foreach($camposdep as $kcd=>$cdep){
+                    $keyrpadre = isset($info_main[$campo]['options'][$campo.'|'.$kcd]['val'])
+                                    ? $info_main[$campo]['options'][$campo.'|'.$kcd]['val']
+                                    : null;
+                    foreach($cdep as $campod){
+                        if(isset($form->maintenance[$campod])){
+                            $savedepend[$campod] = $form->maintenance[$campod];
+                            $savedepend[$campod]['radiopadre_id'] = $campo.'___'.$keyrpadre;
+                            $savedepend[$campod]['clase_padre'] = $campo;
+                            $savedepend[$campod]['orden'] = $form->maintenance[$campod]['orden'] + 1;
+
+                            $depenAux = collect($form->maintenance)->filter(function ($cont) use ($campod) {
+                                if(isset($campod) && $campod != ""){
+                                    if(isset($cont['clase_padre'])){
+                                        $arrayPadre = explode(" ",$cont['clase_padre']);
+                                        return in_array($campod, $arrayPadre);
+                                    }
+                                }
+                                return [];
+                            })->sortBy('orden');
+                            $auxOrdDep = $form->maintenance[$campod]['orden'] + 1 + 0.01;
+                            foreach($depenAux as $keyAux => $dAux){
+                                $savedepend[$keyAux] = $form->maintenance[$keyAux];
+                                $savedepend[$keyAux]['orden'] = $auxOrdDep;
+                                $dependAnidados[$keyAux] = $form->maintenance[$keyAux];
+                                $dependAnidados[$keyAux]['orden'] = $auxOrdDep;
+                                $auxOrdDep = $auxOrdDep + 0.01;
+                            }
+                        }
+                    }
+                }
+
+            break;
+            case 'checkbox':
+                $swmsg_check = 0;
+                $optcheck_u = array_unique($myOptions);
+                $ord_check = 0;
+                foreach ($myOptions as $key => $opcion) {
+                    if($opcion != ""){
+                        $save = $this->limpiar($opcion);
+                        $info_main[$campo]['options'][$save]['val'] =$save;
+                        $info_main[$campo]['options'][$save]['mostraropt'] = $opcion;
+                        $info_main[$campo]['options'][$save]['ordencheck'] = $ord_check;
+                        $ord_check++;
+                    }else $swmsg_check = 1;
+
+                    if (count($optcheck_u) != count($myOptions)) $swmsg_check = 1;
+                    if($swmsg_check == 1) $flasher->addFlash('warning', 'Las opciones con nombres vacíos o que estén repetidos NO se registraron', 'No permitido');
+                }
+            break;
+            case 'texto':
+                $info_main[$campo]['type'] = $request->texto_tipo;
+            break;
+            case 'select':
+                $ordselect = 1;
+                if($request->tiposelect == "multiple"){
+                    $info_main[$campo]['multiple'] = $request->tiposelect;
+                    $info_main[$campo]['type'] = 'select2';
+                }
+                elseif($request->tiposelect == "select2") $info_main[$campo]['type'] = $request->tiposelect;
+                else $info_main[$campo]['type'] = $request->inputType;
+
+                $swmsg_select = 0;
+                $optselect_u = array_unique($myOptions);
+                foreach ($myOptions as $key => $opcion) {
+                    if($opcion != ""){
+                        $save = $this->limpiar($opcion);
+                        $info_main[$campo]['options'][$save]['val'] =$save;
+                        $info_main[$campo]['options'][$save]['mostraropt'] = $opcion;
+                        $info_main[$campo]['options'][$save]['orden'] = $ordselect;
+                        $ordselect++;
+                    }else $swmsg_select = 1;
+
+                    if (count($optselect_u) != count($myOptions)) $swmsg_select = 1;
+                    if($swmsg_select == 1) $flasher->addFlash('warning', 'Las opciones con nombres vacíos o que estén repetidos NO se registraron', 'No permitido');
+                }
+            break;
+            default: break;
+        }
+        $guardar = ( isset($savedepend) && count($savedepend)>0 ) ? array_merge($savedepend, $info_main) : $info_main;
+        $guardar = isset($form->maintenance) ? array_merge($form_info_main, $guardar) : $guardar;
+        // ================================================================================================
+        //                       CAMPOS DEPENDIENTES CON más DE UN NIVEL (ORDENAR)
+        // ================================================================================================
+        if($swdep == 1){
+            $minDepend = collect($savedepend)->sortBy('orden')->first();
+            $maxDepend = collect($savedepend)->sortBy('orden')->last();
+            $ordenMin = isset($minDepend['orden']) ? $minDepend['orden'] - 1 : $orden;
+            $ordenMax = isset($maxDepend['orden']) ? $maxDepend['orden'] + 1  : $orden;
+
+            if(isset($guardar[$campo])){
+                $guardar[$campo]['orden'] = $ordenMin;
+            }
+
+            $camposDepend = collect($info_main)
+            ->merge(collect($savedepend)
+            ->sortBy('orden'));
+
+            $subContainersDep = collect($guardar)
+            ->where('container',$request->contenedorid)
+            ->where('subcontainer',$request->subcontenedorprinc)
+            ->sortBy('orden');
+
+            $subContainersDep = $subContainersDep->where('orden', '>', $ordenMin);
+            $camposNoDepend = $subContainersDep->diffKeys($camposDepend)->sortBy('orden');
+            $dependAnidados = collect($dependAnidados)->sortBy('orden');
+
+            foreach($camposNoDepend as $campoNo){
+                $guardar[$campoNo['id']]['orden'] = $ordenMax++;
+                if(isset($campoNo['clase_padre'])){
+                    foreach($camposDepend as $depend){
+                        $padres = explode(" ",$campoNo['clase_padre']);
+                        if(in_array($depend['id'],$padres)){
+                            $guardar[$campoNo['id']]['clase_padre'] = $campo." ".$campoNo['clase_padre'];
+                        }
+                    }
+                }
+            }
+
+            foreach($dependAnidados as $campoNo){
+                if(isset($campoNo['clase_padre'])){
+                    foreach($camposDepend as $depend){
+                        $padres = explode(" ",$campoNo['clase_padre']);
+                        if(in_array($depend['id'],$padres)){
+                            $guardar[$campoNo['id']]['clase_padre'] = $campo." ".$campoNo['clase_padre'];
+                        }
+                    }
+                }
+            }
+        }
+        $form->maintenance = $guardar;
+        $form->update();
+
+        $contid = $request->contenedorid;
+        $subconte = delete_charspecial($request->subcontenedorprinc);
+        $flasher->addFlash('success', 'Registrado con éxito', 'Campo');
+        return  \Response::json(['success' => '1','contid'=> $contid,'subconte'=> $subconte]);
+    }
 
     public function ajaxSubcontainer(Request $request){
         $query = $request->query;
@@ -490,6 +814,92 @@ class StFormController extends Controller{
             $salida .= '<option value="'.$cont['val'].'" '.$selected.'>'.$cont['mostrar'].'</option>';
         }
         return response()->json(array('selectxd1' => $salida, 'formxd' => $query, 'contsub' => $contsub), 200);
+    }
+
+    public function ajaxSelectCont(Request $request, $id){
+        $form = StForms::findOrFail(decode($id));
+        $aux = collect($form->containers)->sortBy('orden');
+
+        $request['search'] = limpiarTexto($request->search,'s2');
+        $search = $request->search;
+        $containers = collect($aux)->filter(function ($cont) use ($search) {
+            if(isset($search) && $search != ""){
+                return false !== stripos($cont['mostrar'], $search);
+            }
+            return $cont;
+        })->sortBy('orden');
+
+
+        $array = [];
+        $array['results'][0]['id'] = "";
+        $array['results'][0]['text'] = "Seleccione una opción";
+        $k = 0;
+        foreach($containers as $cont){
+            $array['results'][$k+1]['id'] = $cont['id'];
+            $array['results'][$k+1]['text'] = $cont['mostrar'];
+            $k++;
+        }
+        $array['pagination']['more'] = false;
+        return response()->json($array);
+    }
+
+    public function ajaxSelectSubCont(Request $request, $id){
+        $query = $request->container;
+        $form = StForms::findOrFail(decode($id));
+        $containers = collect($form->containers)->where('id',$query);
+        $aux = $containers->first();
+        $aux = isset($aux['subcontainer']) ? collect($aux['subcontainer'])->sortBy('orden') : collect();
+
+        $request['search'] = limpiarTexto($request->search,'s2');
+        $search = $request->search;
+        $subcontainers = collect($aux)->filter(function ($subcont) use ($search) {
+            if(isset($search) && $search != "")
+                return false !== stripos($subcont['mostrar'], $search);
+            else
+                return $subcont;
+        })->sortBy('orden');
+
+
+        $array = [];
+        $array['results'][0]['id'] = "";
+        $array['results'][0]['text'] = "Seleccione una opción";
+        $k = 0;
+        foreach($subcontainers as $subcont){
+            $array['results'][$k+1]['id'] = $subcont['val'];
+            $array['results'][$k+1]['text'] = $subcont['mostrar'];
+            $k++;
+        }
+        $array['pagination']['more'] = false;
+        return response()->json($array);
+    }
+
+    public function ajaxSelectDependiente(Request $request){
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            if($query != ""){
+                $stforms = StForms::where('id',decode($request->get('idform')))->first();
+                $stformsjson = json_decode($stforms, true);
+                $campos_array = $stformsjson['maintenance'];
+                $campos_array = collect($campos_array)->sortBy('orden');
+                $index = $request->get('index');
+                $salida = "";
+                $arrayids = []; $ai=0;
+                if(isset($campos_array)){
+                    foreach ($campos_array as $campos) {
+                        if (isset($campos['subcontainer']) && $campos['subcontainer'] == $query && !isset($campos['radiopadre_id']) ){
+                            $salida .=
+                            '<label class="radioajax">
+                                <input class="bluedependiente radioprueba1 grupo_'.$index.'" type="radio" name="'.$campos['id'].'" value="'.$campos['id'].'" id="grupo_'.$index.'" >
+                                <span class="text-yellowdark">'.$campos['mostrar'].'</span>
+                            </label><br>';
+                            $arrayids[$ai] = $campos['id'];
+                            $ai++;
+                        }
+                    }
+                }
+            }
+            return response()->json(array('selectxd1' =>$salida, 'arrayids' => $arrayids), 200);
+        }
     }
 
     public function limpiar($string){

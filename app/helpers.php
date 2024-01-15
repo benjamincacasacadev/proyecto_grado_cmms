@@ -231,3 +231,281 @@ function randAvatar(){
     shuffle($arr);
     return $arr[0];
 }
+
+function highchartHeatMap($idcontainer,$titulo,$datos,$max,$min,$cantd ){
+    if($cantd <= 6){
+        $heightchart = 160;
+        $symbolHeight = 60;
+    }elseif($cantd >6 && $cantd< 13 ){
+        $heightchart = 200;
+        $symbolHeight = 110;
+    }elseif($cantd >12 && $cantd< 19 ){
+        $heightchart = 250;
+        $symbolHeight = 160;
+    }elseif($cantd >18 && $cantd< 25 ){
+        $heightchart = 300;
+        $symbolHeight = 210;
+    }elseif($cantd >24 && $cantd< 31 ){
+        $heightchart = 350;
+        $symbolHeight = 260;
+    }elseif($cantd >30 && $cantd< 37 ){
+        $heightchart = 400;
+        $symbolHeight = 310;
+    }else{
+        $heightchart = 470;
+        $symbolHeight = 360;
+    }
+    $highchart = "
+    Highcharts.chart('".$idcontainer."', {
+        chart: {
+            type: 'heatmap',
+            marginTop: 50,
+            plotBorderWidth: 1,
+            height: ".$heightchart.",
+            width:500
+        },
+        title: { text: ".$titulo.", },
+        yAxis: {
+            title: {
+                text: null,
+                rotation: 270,
+                x: 18
+            },
+            labels: {
+                enabled: false
+            },
+            opposite: true,
+        },
+        xAxis: {
+            opposite: true,
+            labels: {
+                y: -5
+            },
+        },
+        exporting: { enabled: false },
+        credits: false,
+        colorAxis: {
+            min: ".$min.",
+            max: ".$max.",
+            stops: [
+            [0.0, '#B02418'],
+            [0.2, '#B02418'],
+            [0.4, '#DF8244'],
+            [0.6, '#FFFE55'],
+            [0.8, '#7EAB55'],
+            [1, '#008F39']
+            ],
+        },
+        legend: {
+            align: 'right',
+            layout: 'vertical',
+            margin: 0,
+            verticalAlign: 'top',
+            y: 40,
+            symbolHeight: ".$symbolHeight."
+        },
+        series: [{
+            name: ".$titulo.",
+            borderWidth: 1,
+            data: [".$datos." ],
+            dataLabels: {
+                enabled: true,
+                color: '#ffffff',
+                style:{
+                    fontSize: '14px'
+                }
+            }
+        }],
+    });
+    ";
+    return $highchart;
+}
+
+function highchartXY($idcontainer,$titulo,$tituloejex,$tituloejey,$datos, $tipo_graf ){
+    $highchart = "
+        Highcharts.chart('".$idcontainer."', {
+            chart: {
+                type: '".$tipo_graf."'
+            },
+            title: { text: '".$titulo."', },
+            yAxis: {
+                title: {
+                    enabled: true,
+                    text: '".$tituloejey."',
+                },
+            },
+            xAxis: {
+                title: {
+                    enabled: true,
+                    text: '".$tituloejex."',
+                },
+            },
+            legend: {
+                symbolWidth: 80
+            },
+            plotOptions: {
+                series: {
+                    color: '#368BB9',
+                    animation: false
+                },
+            },
+            tooltip: {
+                headerFormat: '<span>{series.name}</span>: {point.x:,.2f}<br>',
+                pointFormat: '<b>".$tituloejey.": {point.name}</b> <b>{point.y:,.2f}</b>'
+            },
+            exporting: { enabled: false },
+            credits: false,
+            series: [{
+                name: '".$tituloejex."',
+                data: [
+                    ".$datos."
+                ]
+            }]
+        });
+    ";
+    return $highchart;
+}
+
+function tipoCampoSerie($namecampo,$valor,$label,$tipocampo,$options, $href, $contaux, $multiple){
+
+    $salida = "";
+    $cols = ($tipocampo == "radio" || $tipocampo == "checkbox") ? "col-lg-12 col-md-12 col-sm-12 col-xs-12" : "col-lg-4 col-md-4 col-sm-12 col-xs-12";
+    $salida .=
+    '<div class="'.$cols.'" style="height:90px;margin-top:10px;margin-bottom:10px" >
+        <label class="label_serie" title="'.$label.'">';
+            if( isset($href) && $contaux>1){
+                $salida .=
+                '<a rel="modalEditarSerie" href="/forms/series/editmodal/'.$href.'" title="Editar campo" style="cursor:pointer">
+                    <svg  class="icon iconhover text-primary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" /><path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" /><line x1="16" y1="5" x2="19" y2="8" /></svg>
+                </a>
+                <a rel="modalEliminarSerie" data-modpop="popover" data-trigger="hover" href="/forms/series/deletemodal/'.$href.'" data-content="<span class=\'text-justify\' style=\'font-size: 11px;\'><b>Eliminar Campo</b></span>" style="cursor:pointer">
+                    <svg class="icon text-muted iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" /><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    </svg>
+                </a>';
+            }
+        $salida .=$label.'</label><br>';
+    switch ($tipocampo) {
+        case 'text':
+            $salida .='<input type="text" class="form-control"  name="'.$namecampo.'" value="'.$valor.'" style="width:100%; ">';
+        break;
+        case 'number':
+            $salida .='<input type="text" class="numero form-control" name="'.$namecampo.'" value="'.$valor.'" style="width:100%">';
+        break;
+        case 'money':
+            $salida .='<input type="text" class="moneda form-control" name="'.$namecampo.'" value="'.$valor.'" style="width:100%">';
+        break;
+        case 'textarea':
+            $salida .='<textarea name="'.$namecampo.'" style="width:100%; resize:none" rows="2" class="form-control">'.$valor.'</textarea>';
+        break;
+        case 'date':
+            $salida .=
+            '<div class="input-icon">
+                <span class="input-icon-addon">
+                    <i id="iconForm" class="far fa-calendar-alt"></i>
+                </span>
+                <input class="form-control input-incon datepicker" placeholder="dd/mm/YYYY" name="'.$namecampo.'" value="'.$valor.'" style="width:100%">
+            </div>';
+        break;
+        case 'time':
+            $salida .='
+            <div class="input-icon">
+                <span class="input-icon-addon">
+                    <i id="iconForm" class="far fa-clock"></i>
+                </span>
+                <input class="form-control input-incon timepicker" placeholder="HH:mm" name="'.$namecampo.'" value="'.$valor.'" style="width:100%">
+            </div>';
+        break;
+        case 'select':
+            if(empty($options)) $salida .= 'Campo incompleto, no se registrará';
+            else{
+                $salida .=
+                '<div class="row" style="padding-right:20px; padding-left:20px;">
+                    <select class="form-control" name="'.$namecampo.'">
+                        <option value="" hidden>Seleccionar</option>';
+                foreach ($options as $opcion) {
+                    if($opcion['val'] == $valor)
+                        $salida .= '<option value="'.$opcion['val'].'" selected>'.$opcion['mostraropt'].'</option>';
+                    else
+                        $salida .= '<option value="'.$opcion['val'].'">'.$opcion['mostraropt'].'</option>';
+                }
+                        $salida .=
+                    '</select>
+                </div>';
+            }
+        break;
+        case 'select2':
+            if(empty($options)) $salida .= 'Campo incompleto, no se registrará';
+            else{
+                $salida .= '<div class="row" style="padding-right:20px; padding-left:20px;">';
+                if($multiple == 'multiple'){
+                    $salida .= '<select class="form-control selector" name="'.$namecampo.'[]" style="width:100%" multiple data-placeholder="Seleccione uno ó más">';
+                    $valorselect = is_array($valor) ? $valor : [];
+                    foreach($options as $opcion){
+                        if(in_array($opcion['val'],$valorselect))
+                            $salida .= '<option value="'.$opcion['val'].'" selected>'.$opcion['mostraropt'].'</option>';
+                        else
+                            $salida .= '<option value="'.$opcion['val'].'">'.$opcion['mostraropt'].'</option>';
+                    }
+                    $salida .= '</select>';
+                }else{
+                    $salida .=
+                    '<select class="form-control selector" name="'.$namecampo.'" style="width:100%">
+                        <option value="" hidden>Seleccionar</option>';
+                    foreach($options as $opcion){
+                        if($opcion['val'] == $valor)
+                            $salida .= '<option value="'.$opcion['val'].'" selected>'.$opcion['mostraropt'].'</option>';
+                        else
+                            $salida .= '<option value="'.$opcion['val'].'">'.$opcion['mostraropt'].'</option>';
+                    }
+                    $salida .= '</select>';
+                }
+                $salida .= '</div>';
+            }
+        break;
+        case 'checkbox':
+            if(empty($options)) $salida .= 'Campo incompleto, no se registrará';
+            else{
+                $check_order = collect($options)->sortBy('orden');
+                $salida .='<div class="checkbox text-center">';
+                $valorcheck = is_array($valor) ? $valor : [];
+                foreach($check_order as $opcion){
+                    if(in_array($opcion['val'],$valorcheck))
+                        $salida .=
+                        '<label>
+                            <input class="checkboxid" type="checkbox" name="'. $namecampo .'[]" value="'. $opcion['val'] .'" checked>
+                            <b>'.$opcion['mostraropt'].'</b>
+                        </label>';
+                    else
+                        $salida .=
+                        '<label>
+                            <input class="checkboxid" type="checkbox" name="'. $namecampo .'[]" value="'. $opcion['val'] .'">
+                            <b>'.$opcion['mostraropt'].'</b>
+                        </label>';
+                }
+                $salida .='</div>';
+            }
+        break;
+        case 'radio':
+            if(empty($options)) $salida .= 'Campo incompleto, no se registrará';
+            else{
+                $salida .='<div class="checkbox text-center">';
+                foreach($options as $opcion){
+                    $checkradio =($valor == $opcion['val']) ? "checked" : "";
+                    $colorradio = isset($opcion['color']) ? $opcion['color'] : "blue";
+                    $hexradio = isset($opcion['hex']) ? $opcion['hex'] : "";
+                    $salida .=
+                    '<label>
+                        <input class="'.$colorradio.' radiobuttonval" type="radio" name="'. $namecampo .'" value="'. $opcion['val'] .'___'.$hexradio.'" '.$checkradio.' >
+                        <b style="color:'.$hexradio.'">'.$opcion['mostraropt'].'</b>
+                    </label>';
+                }
+                $salida .='</div>';
+            }
+        break;
+        default: $salida .=""; break;
+    }
+    $salida .='</div>';
+
+    return $salida;
+}

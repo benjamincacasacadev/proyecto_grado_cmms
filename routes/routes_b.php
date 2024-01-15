@@ -108,3 +108,15 @@ Route::post('/forms/subcontAjax/{id}', 'StFormController@ajaxSelectSubCont')->na
 Route::post('/forms/subcontainerAjax/', 'StFormController@ajaxSubcontainer')->name('forms.subcontainerajax');
 Route::post('/forms/selectdepAjax/', 'StFormController@ajaxSelectDependiente')->name('forms.selectDepAjax');
 Route::post('/storemaintenance/{id}', 'StFormController@storeMaintenance')->name('maintenance.store');
+Route::post('/storemaintenance/{id}', 'StFormController@storeMaintenance')->name('maintenance.store');
+// Editar campos de procedimientos
+Route::get('/forms/maintenance/editmodal/{idcampo}/{id}', 'StFormController@modalEditMaintenance')->name('maintenance.editmodal');
+Route::post('/forms/maintenance/updateTextfield/{idcampo}/{id}/', 'StFormController@updateTextfield')->name('forms.textfield.update');
+Route::post('/forms/maintenance/updateRadiofield/{idcampo}/{id}/', 'StFormController@updateRadiofield')->name('forms.radiofield.update');
+Route::post('/forms/maintenance/updateCheckfield/{idcampo}/{id}/', 'StFormController@updateCheckfield')->name('forms.checkfield.update');
+Route::post('/forms/maintenance/updateSelectfield/{idcampo}/{id}/', 'StFormController@updateSelectfield')->name('forms.selectfield.update');
+Route::post('/forms/maintenance/updateSeriefield/{idcampo}/{id}/', 'StFormController@updateSeriefield')->name('forms.seriefield.update');
+Route::get('/forms/maintenance/deletemodal/{idcampo}/{id}', 'StFormController@modalDeleteMaintenance')->name('maintenance.deletemodal');
+Route::delete('/forms/maintenance/destroy/{idcampo}/{id}', 'StFormController@destroyMaintenance')->name('maintenance.destroy');
+Route::get('/forms/maintenance/deleteStateModal/{id}', 'StFormController@modalDeleteState')->name('maintenance.deletemodal.state');
+Route::delete('/forms/maintenance/destroyState/{id}', 'StFormController@destroyState')->name('maintenance.destroy.state');
