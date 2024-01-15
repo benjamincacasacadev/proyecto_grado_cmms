@@ -1121,15 +1121,450 @@ class StFormController extends Controller{
     }
 
     // ================================================================================================
+    //                       GRAFICOS Y SERIES
+    // ================================================================================================
+    public function modalCreateSerie(Request $request, $id){
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            abort(404);
+        }
+        $maintenance = isset($form->maintenance) ? $form->maintenance : [];
+        $containers = collect($form->containers)->sortBy('orden');
+        $collectserie = collect($maintenance)->where('type','serie');
+        $nombre_serie = [];
+        if (isset($collectserie)) {
+            foreach($collectserie as $x=>$ser){
+                $nombre_serie[$x] = $ser['mostrar'];
+            }
+        }
+        return view("forms.maintenance.modalCreateSerie", compact('form','containers','nombre_serie'));
+    }
+
+    public function storeSerie(Request $request, FlasherInterface $flasher, $id){
+        $form = StForms::findOrFail(decode($id));
+        if($form->state != "1"){
+            return \Response::json(['success' => '1']);
+        }
+        $maintenance = isset($form->maintenance) ? $form->maintenance : [];
+        $collectserie = collect($maintenance)->where('type','serie');
+        $this->validateStoreSerie($request, count($collectserie));
+        // ==============================================================================================
+                                    // ordenar los inputs segun se vayan generando
+        $orden = 0;
+        if(isset($form->maintenance)){
+            foreach ($form->maintenance as $max) {
+                if($max['orden']>$orden) $orden = $max['orden'];
+            }
+        } $orden++;
+
+        $camposerie = $this->limpiar($request->name_new_serie);
+
+        // ==============================================================================================
+                    // Validar que el nombre de campo de SERIE sea único añadiendo index si el nombre existe
+        $keynom = array(); $ki=0;
+        if(isset($request->name_new_serie)){
+            if(isset($form->maintenance) ){
+                foreach ($form->maintenance as $key => $value) {
+                    $auxname = explode("__",$value['id']);
+                    $keyname = isset($auxname[1]) ? $auxname[1] : 0;
+                    if($camposerie == $auxname[0]){
+                        $keynom[$ki] = ++$keyname;
+                        $ki++;
+                    }
+                }
+                foreach ($form->maintenance as $key => $value) {
+                    $auxname = explode("__",$value['id']);
+                    if($camposerie == $auxname[0]){
+                        $camposerie = $auxname[0]."__".max($keynom);
+                    }
+                }
+                $keyindex = !empty($keynom) ? max($keynom) : 1;
+
+                if($camposerie == 'recomendaciones' || $camposerie =='fecha_de_realizacion_inicio' || $camposerie == 'fecha_de_realizacion_final' || $camposerie == '&nro_tecnicos_time&' ){
+                    $camposerie = $camposerie."__".$keyindex;
+                }
+            }
+        }
+        $campo = $this->limpiar($request->seriefield_name);
+        // ==============================================================================================
+        //                      Generar los campos adicionales que iran en la serie
+        $swFields = $request->checkaddfields;
+        if($request->seriesw == 'add_serie')    $swFields = "1";
+        if($request->selectgrafico == 'serie_simple')    $swFields = "1";
+        $info_main = [];
+        if($swFields == "1"){
+            $salidaserie = [];
+            $campo_aux = $this->limpiar($request->seriefield_name);
+            $collectserie = collect($form->maintenance)->where('type','serie')->where('id',$request->nombreserie);
+            foreach ($collectserie as $k => $col) {
+                if (count($collectserie) > 0){
+                    foreach ($collectserie as $k => $col) {
+                        $salidaserie[$k] = $col;
+                        // ==============================================================================================
+                        // Validar que el nombre de CAMPO ASOCIADO A LA SERIE sea único añadiendo index si el nombre existe
+                        if( isset($col['campos']) ){
+                            foreach ($col['campos'] as $key => $colser) {
+                                $auxname = explode("__",$colser['id']);
+                                $keyname = isset($auxname[1]) ? $auxname[1] : 0;
+                                $keyname++;
+                                if($campo_aux == $auxname[0]){
+                                    $campo = $auxname[0]."__".$keyname;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $info_main[$campo]['id'] = $campo;
+            $info_main[$campo]['type'] = $request->serieinputType;
+            $info_main[$campo]['mostrar'] = $request->seriefield_name;
+            // Obtener el array de inputs si es que se escogio un tipo de input multiple
+            switch ($request->serieinputType) {
+                case 'checkbox':  $myOptions = $request->seriemyOptionsCheck;     break;
+                case 'select': $myOptions = $request->seriemyOptionsSelect;    break;
+                case 'text':   $myOptions = "";                                break;
+                case 'radio':  $myOptions = $request->seriemyOptionsRadio;     break;
+                default: break;
+            }
+            switch ($request->serieinputType){
+                case 'radio':
+                    $ordradio = 1;
+                    $swmsg_rad = 0;
+                    $optradio_u = array_unique($myOptions);
+                    foreach ($optradio_u as $key => $opcion) {
+                        if ($opcion != ""){
+                            $optradio = $this->limpiar($opcion);
+                            $info_main[$campo]['options'][$campo.'|'.$optradio]['val'] =$optradio;
+                            $info_main[$campo]['options'][$campo.'|'.$optradio]['mostraropt'] = $opcion;
+                            $info_main[$campo]['options'][$campo.'|'.$optradio]['orden'] = $ordradio;
+                            $ordradio++;
+                            $color = strtolower(str_replace(" ","_",$request->myOptionsColorSerie[$key]));
+                            switch ($color) {
+                                case 'rojo':
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'red';
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#D54E21';
+                                break;
+                                case 'amarillo':
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'yellow';
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#FFCC33';
+                                break;
+                                case 'verde':
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'green';
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#008D4C';
+                                break;
+                                case 'azul':
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'blue';
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#367FA9';
+                                break;
+                                case 'naranja':
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'orange';
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#DE8650';
+                                break;
+                                case 'morado':
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['color'] = 'purple';
+                                    $info_main[$campo]['options'][$campo.'|'.$optradio]['hex'] = '#A77A94';
+                                break;
+                                default:
+                                break;
+                            }
+                        }else $swmsg_rad = 1;
+                        if (count($optradio_u) != count($myOptions)) $swmsg_rad = 1;
+                    }
+
+
+                break;
+                case 'checkbox':
+                    $swmsg_check = 0;
+                    $optcheck_u = array_unique($myOptions);
+                    $ordcheck = 1;
+                    foreach ($myOptions as $key => $opcion) {
+                        if($opcion != ""){
+                            $save = $this->limpiar($opcion);
+                            $info_main[$campo]['options'][$save]['val'] =$save;
+                            $info_main[$campo]['options'][$save]['mostraropt'] = $opcion;
+                            $info_main[$campo]['options'][$save]['orden'] = $ordcheck;
+                            $ordcheck++;
+                        }else $swmsg_check = 1;
+
+                        if (count($optcheck_u) != count($myOptions)) $swmsg_check = 1;
+                    }
+                break;
+                case 'select':
+                    $ordselect = 1;
+                    if($request->serietiposelect == "multiple"){
+                        $info_main[$campo]['multiple'] = $request->serietiposelect;
+                        $info_main[$campo]['type'] = 'select2';
+                    }
+                    elseif($request->serietiposelect == "select2") $info_main[$campo]['type'] = $request->serietiposelect;
+                    else $info_main[$campo]['type'] = $request->serieinputType;
+
+                    $swmsg_select = 0;
+                    $optselect_u = array_unique($myOptions);
+                    foreach ($myOptions as $key => $opcion) {
+                        if($opcion != ""){
+                            $save = $this->limpiar($opcion);
+                            $info_main[$campo]['options'][$save]['val'] =$save;
+                            $info_main[$campo]['options'][$save]['mostraropt'] = $opcion;
+                            $info_main[$campo]['options'][$save]['orden'] = $ordselect;
+                            $ordselect++;
+                        }else $swmsg_select = 1;
+
+                        if (count($optselect_u) != count($myOptions)) $swmsg_select = 1;
+                    }
+                break;
+                case 'texto':
+                    $info_main[$campo]['type'] = $request->serietexto_tipo;
+                break;
+                default: break;
+            }
+        }
+        // ==============================================================================================
+                        // Si se añade un campo a una serie que ya existe
+        // ==============================================================================================
+        if ($request->seriesw == 'add_serie') {
+            $guardar = [];
+            if( isset($form->maintenance[$request->nombreserie]) ){
+                $collectserie = $form->maintenance[$request->nombreserie];
+                $max = isset($collectserie['campos']) ? collect($collectserie['campos'])->sortBy('orden_serie') : [];
+                $max = count($max)>0 ? $max->last() : [];
+                $max = isset($max['orden_serie']) ? $max['orden_serie'] : "0";
+                $info_main[$campo]['orden_serie'] = $max+1;
+
+                if(isset($collectserie['campos'])){
+                    $auxCampos = $collectserie['campos'];
+                    $camposAsociados = array_merge($auxCampos, $info_main);
+                }else{
+                    $camposAsociados = $info_main;
+                }
+                $collectserie['campos'] = $camposAsociados;
+
+                $idSerie = $collectserie['id'];
+                $contid = $collectserie['container'] ? $collectserie['container'] : "";
+                $subc = $collectserie['subcontainer'] ? $collectserie['subcontainer'] : "";
+                $salidaserie[$idSerie] = $collectserie;
+                $guardar = isset($form->maintenance) ? array_merge($form->maintenance, $salidaserie) : $salidaserie;
+            }
+        }
+        // ==============================================================================================
+                                            // NUEVA SERIE
+        // ==============================================================================================
+        else{
+            $campserie = $camposerie;
+            $seriemain = [];
+            $seriemain[$campserie]['id'] = $campserie;
+            $seriemain[$campserie]['type'] = 'serie';
+            $seriemain[$campserie]['mostrar'] = $request->name_new_serie;
+            $seriemain[$campserie]['orden'] = $orden;
+            $seriemain[$campserie]['container'] = $request->seriecontenedorid;
+            $seriemain[$campserie]['subcontainer'] = $request->subcontenedor;
+
+            if($request->selectgrafico == "xvsy_graf"){
+                $seriemain[$campserie]['nombre_eje_x'] = $request->nombre_eje_x;
+                $seriemain[$campserie]['nombre_eje_y'] = $request->nombre_eje_y;
+                $seriemain[$campserie]['tipo_de_grafico_xy'] = $request->tipo_grafico_xy;
+                $seriemain[$campserie]['tipografico'] = $request->selectgrafico;
+                if(is_array($request->nombre_eje_more) &&  count($request->nombre_eje_more)>0 ){
+                    foreach($request->nombre_eje_more as $kno_em => $ejemore){
+                        $seriemain[$campserie]['eje_more']['nombre_eje_more'][$kno_em] = $ejemore;
+                    }
+                }
+                // Añadir orden campos adicionales de serie
+
+                $salida = [];
+                foreach ($seriemain as $key => $value) {
+                    $salida[$key] = $value;
+                    if($swFields == "1"){
+                        $salida[$key]['campos'] = $info_main;
+                        $salida[$key]['campos'][$campo]['orden_serie'] = 0;
+                    }
+                }
+                $guardar = isset($form->maintenance) ? array_merge($form->maintenance, $salida) : $salida;
+            }elseif($request->selectgrafico == "serie_graf"){
+
+                $seriemain[$campserie]['valmin'] = $request->valmin;
+                $seriemain[$campserie]['valmax'] = $request->valmax;
+                $seriemain[$campserie]['tipografico'] = $request->selectgrafico;
+
+                $input_texto = [];
+                $input_texto['nro_x_serie']['id'] = 'nro_x_serie';
+                $input_texto['nro_x_serie']['type'] = 'text';
+                $input_texto['nro_x_serie']['mostrar'] = 'Numero de Series';
+
+                $input_texto2 = [];
+                $input_texto2['campos_x_serie']['id'] = 'campos_x_serie';
+                $input_texto2['campos_x_serie']['type'] = 'text';
+                $input_texto2['campos_x_serie']['mostrar'] = 'Campos Por Serie';
+
+                $info_main = array_merge($info_main,$input_texto, $input_texto2 );
+                $salida = [];
+                foreach ($seriemain as $key => $value) {
+                    $salida[$key] = $value;
+                    $salida[$key]['campos'] = $info_main;
+                    if($swFields == "1")    $salida[$key]['campos'][$campo]['orden_serie'] = 0;
+                }
+                $guardar = isset($form->maintenance) ? array_merge($form->maintenance, $salida) : $salida;
+            }elseif($request->selectgrafico == "serie_simple"){
+                $seriemain[$campserie]['tipografico'] = $request->selectgrafico;
+                $input_texto = [];
+                $input_texto['&nro_x_serie_simple&']['id'] = '&nro_x_serie_simple&';
+                $input_texto['&nro_x_serie_simple&']['type'] = 'number';
+                $input_texto['&nro_x_serie_simple&']['mostrar'] = $request->name_new_serie;
+
+                $info_main = array_merge($info_main,$input_texto );
+                $salida = [];
+                foreach ($seriemain as $key => $value) {
+                    $salida[$key] = $value;
+                    $salida[$key]['campos'] = $info_main;
+                    $salida[$key]['campos'][$campo]['orden_serie'] = 0;
+                }
+                $guardar = isset($form->maintenance) ? array_merge($form->maintenance, $salida) : $salida;
+
+            }elseif($request->selectgrafico == "serie_multiple"){
+                $seriemain[$campserie]['tipografico'] = $request->selectgrafico;
+                $seriemain[$campserie]['&nombre_mult1&'] = $request->nombre_mult_1;
+                $seriemain[$campserie]['&nombre_mult2&'] = $request->nombre_mult_2;
+
+                if(is_array($request->nombre_multiple_more) &&  count($request->nombre_multiple_more)>0 ){
+                    foreach($request->nombre_multiple_more as $kno_em => $ejemore){
+                        $seriemain[$campserie]['&multmore&']['nombre_mult_more'][$kno_em] = $ejemore;
+                    }
+                }
+
+                $input_texto = [];
+                $input_texto['&nro_x_serie_mult&']['id'] = '&nro_x_serie_mult&';
+                $input_texto['&nro_x_serie_mult&']['type'] = 'text';
+                $input_texto['&nro_x_serie_mult&']['mostrar'] = 'Numero de Bancos';
+
+                $input_texto2 = [];
+                $input_texto2['&campos_x_serie_mult&']['id'] = '&campos_x_serie_mult&';
+                $input_texto2['&campos_x_serie_mult&']['type'] = 'text';
+                $input_texto2['&campos_x_serie_mult&']['mostrar'] = 'Numero de Celdas';
+
+                $info_main = array_merge($info_main,$input_texto, $input_texto2 );
+                $salida = [];
+                foreach ($seriemain as $key => $value) {
+                    $salida[$key] = $value;
+                    $salida[$key]['campos'] = $info_main;
+                    $salida[$key]['campos'][$campo]['orden_serie'] = 0;
+                }
+                $guardar = isset($form->maintenance) ? array_merge($form->maintenance, $salida) : $salida;
+
+            }
+            $contid = $request->seriecontenedorid;
+            $subc = $request->subcontenedor;
+        }
+        $form->maintenance = $guardar;
+        $form->update();
+        $flasher->addFlash('success', 'Registrado con éxito', 'Gráfico');
+        return  \Response::json(['success' => '1','contid'=> $contid,'subconte'=> $subc]);
+    }
+
+    public function validateStoreSerie( $request, $count){
+        $messages = [
+            'seriesw.required' => 'Debe escoger una opción válida',
+            'name_new_serie.required'  => 'El campo Nombre de serie es obligatorio',
+            'seriecontenedorid.required' => 'Debe escoger un contenedor válido',
+            'subcontenedor.required' => 'Debe escoger un sub contenedor válido',
+            'selectgrafico.required' => 'Debe escoger un tipo de serie válido',
+            'valmin.required'  => 'El campo valor mínimo es obligatorio',
+            'valmin.lt' => 'El campo debe ser menor a '.$request->valmax,
+            'valmax.required'  => 'El campo valor máximo es obligatorio',
+            'tipo_grafico_xy.required' => 'Debe escoger un tipo de gráfico válido',
+            'nombre_eje_x.required'  => 'El campo Nombre de eje X es obligatorio',
+            'nombre_eje_y.required'  => 'El campo Nombre de eje Y es obligatorio',
+            'serieinputType.required'  => 'Debe escoger un tipo de campo válido',
+            'seriefield_name.required'  => 'El campo "Nombre del Campo asignado a la Serie" es obligatorio',
+            'serietexto_tipo.required'  => 'Debe escoger un tipo de texto válido',
+            'serietiposelect.required'  => 'Debe escoger un tipo de select válido',
+            'nombreserie.required'  => 'Debe escoger un campo serie válido',
+        ];
+        if($count>0)
+            $validateArray = [
+                'seriesw' =>'required',
+            ];
+        else
+            $validateArray = [
+                'name_new_serie' =>'required',
+                'seriecontenedorid' =>'required',
+                'subcontenedor' =>'required',
+                'selectgrafico' =>'required',
+            ];
+
+        $validateNewSerie = [
+            'name_new_serie' =>'required',
+            'seriecontenedorid' =>'required',
+            'subcontenedor' =>'required',
+            'selectgrafico' =>'required',
+        ];
+        $validateAddSerie = [
+            'nombreserie' =>'required',
+        ];
+        $validateSerieGrafica = [
+            'valmin' =>'bail|required|numeric|lt:valmax',
+            'valmax' =>'bail|required|numeric',
+        ];
+        $validateSerieXY = [
+            'tipo_grafico_xy' =>'required',
+            'nombre_eje_x' =>'required',
+            'nombre_eje_y' =>'required',
+        ];
+        $validateInputType = [
+            'serieinputType' => 'required',
+        ];
+        $validateFields = [
+            'seriefield_name' => 'required',
+        ];
+        $validateRadio = [
+            'seriemyOptionsRadio.*' => 'required',
+        ];
+        $validateCheck = [
+            'seriemyOptionsCheck.*' => 'required',
+        ];
+        $validateSelect = [
+            'seriemyOptionsSelect.*' => 'required',
+            'serietiposelect' => 'required',
+        ];
+        $validateText = [
+            'serietexto_tipo' => 'required',
+        ];
+
+        $swPrinc = $request->seriesw; // nueva, añadir
+        $swtiposerie = $request->selectgrafico; // simple, grafica, xvsy
+        $swFields = $request->checkaddfields; // check añadir campos
+        $tipocampo = $request->serieinputType; // campos radio, select etc
+        if($swPrinc == 'new_serie') $validateArray = array_merge($validateArray,$validateNewSerie);
+
+        elseif($swPrinc == 'add_serie'){
+            $validateArray = array_merge($validateArray,$validateAddSerie);
+            $swFields = "1";
+        }
+        if($swtiposerie == 'serie_simple')  $swFields = "1";
+        if($swtiposerie == 'serie_graf') $validateArray = array_merge($validateArray,$validateSerieGrafica);
+        elseif($swtiposerie == 'xvsy_graf') $validateArray = array_merge($validateArray,$validateSerieXY);
+
+        if($swFields == "1" ){
+            $validateArray = array_merge($validateArray,$validateInputType);
+            if(isset($tipocampo)) $validateArray = array_merge($validateArray,$validateFields);
+            if($tipocampo == 'radio') $validateArray = array_merge($validateArray,$validateRadio);
+            if($tipocampo == 'checkbox') $validateArray = array_merge($validateArray,$validateCheck);
+            if($tipocampo == 'select') $validateArray = array_merge($validateArray,$validateSelect);
+            if($tipocampo == 'texto') $validateArray = array_merge($validateArray,$validateText);
+        }
+        return $request->validate($validateArray,$messages);
+    }
+
+    // ================================================================================================
     // FUNCIONES AJAX
 
     public function ajaxSubcontainer(Request $request){
-        $query = $request->query;
+        $query = $request->get('query');
         if(!isset($query)){
             $salida = $query = ""; $contsub = -1;
             return response()->json(array('selectxd1' =>$salida, 'formxd' => $query, 'contsub' => $contsub), 200);
         }
         $form = StForms::where('id',decode($request->get('idform')))->first();
+
         $containers = collect($form->containers)->where('id',$query);
         $subcontainers = $containers->first();
 

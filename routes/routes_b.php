@@ -118,3 +118,6 @@ Route::post('/forms/maintenance/updateSelectfield/{idcampo}/{id}/', 'StFormContr
 Route::post('/forms/maintenance/updateSeriefield/{idcampo}/{id}/', 'StFormController@updateSeriefield')->name('forms.seriefield.update');
 Route::get('/forms/maintenance/deletemodal/{idcampo}/{id}', 'StFormController@modalDeleteMaintenance')->name('maintenance.deletemodal');
 Route::delete('/forms/maintenance/destroy/{idcampo}/{id}', 'StFormController@destroyMaintenance')->name('maintenance.destroy');
+// Graficos y series
+Route::get('/forms/series/modalcreate/{id}', 'StFormController@modalCreateSerie')->name('forms.serie.modalcreate');
+Route::post('/forms/storeSerie/{id}', 'StFormController@storeSerie')->name('forms.serie.store');

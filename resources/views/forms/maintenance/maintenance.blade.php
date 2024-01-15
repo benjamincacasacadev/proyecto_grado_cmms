@@ -31,9 +31,7 @@
         white-space:nowrap;
         text-overflow: ellipsis;
     }
-    .opt_depcont{
-        display: none;
-    }
+
     .highcharts-container {
         margin: 0 auto;
     }
@@ -195,9 +193,8 @@
                                 <label class="opt_depcont"><input type="radio" name="inputType" id="checkin" value="checkbox"> <b>Checkbox</b>  </label>
                                 <label class="opt_depcont"><input type="radio" name="inputType" id="textoin" value="texto"> <b>Texto</b>  </label>
                                 <label class="opt_depcont"><input type="radio" name="inputType" id="selectin" value="select"> <b>Select</b>  </label>
-                                <label><input type="radio" name="inputType" id="estadoin" value="estado" href="/forms/estados/modalcreate/{{code($form->id)}}"> <b>Estado principal</b></label>
                                 <label>
-                                    <input type="radio" name="inputType" id="seriein" value="serie" href="/forms/series/modalcreate/{{code($form->id)}}"> <b>Serie</b>
+                                    <input type="radio" name="inputType" id="seriein" value="serie" href="/forms/series/modalcreate/{{code($form->id)}}"> <b>Gráficos</b>
                                 </label>
                             </div>
                             <center><span id="inputType-error" class="text-red font-weight-bold"></span></center>
@@ -356,7 +353,7 @@
 {{-- VISTA PREVIA --}}
 <div class="row">
     <div class=" col-lg-12 col-md-offset-0 col-md-12 col-sm-12 col-xs-12">
-        <div class="text-center text-yellow" style="font-size:20px"><b> Vista previa del procedimiento</b></div> <br>
+        <div class="text-center text-yellow" style="font-size:20px"><b> Vista previa del formulario</b></div> <br>
 
         @if ( (is_array($maintenance) && count($maintenance)>0) || count($estados)>0 )
             {{-- CABECERA TABS --}}
@@ -865,6 +862,8 @@
                                                                                         }
                                                                                         $generadoseriesalida .=
                                                                                     '</div>';
+
+                                                                                    $generadoseriesalida .= '<div class="row">';
                                                                                     // Numeros por serie y Campos por serie
                                                                                     foreach ($campos_sort as $keyser =>$serie){
                                                                                         if ($keyser == 'nro_x_serie' || $keyser == 'campos_x_serie'){
@@ -880,6 +879,7 @@
                                                                                             '</div>';
                                                                                         }
                                                                                     }
+                                                                                    $generadoseriesalida .= '</div>';
 
                                                                                     for ($ca = 1; $ca <= $nroXserie; $ca++){
                                                                                         $datosserie = isset( $datosguardados[$campo['id']."|".$ca] ) ? $datosguardados[$campo['id']."|".$ca]  : "";
@@ -1122,7 +1122,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Registrar campo serie</h5>
+                <h5 class="modal-title">Registrar gráfico</h5>
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -1136,7 +1136,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Estado principal del procedimiento</h5>
+                <h5 class="modal-title">Estado principal del formulario</h5>
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -1228,7 +1228,7 @@
             $('.campos_princ').show();
             $('.boton_form').show();
             if(option == ""){
-                $('.opt_depcont').hide();
+                // $('.opt_depcont').hide();
                 $('.campos_princ').hide();
                 $('.nombreinput').hide();
                 $('.opciones_radio').hide();
@@ -1333,7 +1333,7 @@
                                 '<div class="row">'+
                                     '<div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">'+
                                         '<b> Campo dependiente </b> '+
-                                        '<a data-toggle="popover" data-trigger="hover" data-content="<p class=\'text-justify\' style=\'font-size: 11px;\'>Para agregar los campos estos deben estar creados previamente.<br>Se listaran los campos que pertenezcan al Sub Contenedor seleccionado en la parte superior de Este Procedimiento.</p>" '+
+                                        '<a data-toggle="popover" data-trigger="hover" data-content="<p class=\'text-justify\' style=\'font-size: 11px;\'>Para agregar los campos estos deben estar creados previamente.<br>Se listaran los campos que pertenezcan al Sub Contenedor seleccionado en la parte superior de este formulario.</p>" '+
                                             '<i class="fa fa-info-circle fa-md text-yellow"></i>'+
                                         '</a>&nbsp;'+
                                         '<a class="add_clear" id="'+h+'" data-toggle="popover" data-trigger="hover" data-content="<span style=\'font-size: 11px;\'> Limpiar opciones seleccionadas </span>"> '+
