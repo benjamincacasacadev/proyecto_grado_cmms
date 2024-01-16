@@ -1006,7 +1006,9 @@ class WorkOrdersController extends Controller
         if($countattach > 0 ){
             // Guardar temporalmente el archivo a adjuntar
             define('PDFMAIL_DIR', storage_path('app/public/pdfattach'));
-            if (!is_dir(PDFMAIL_DIR))   mkdir(PDFMAIL_DIR, 0777, true);
+            if (!is_dir(PDFMAIL_DIR)){
+                mkdir(PDFMAIL_DIR, 0777, true);
+            }
             $nombrepdf = $workorder->cod.'_'.userId().'.pdf';
             // Verificar si el archivo existe para que no salgan errores
             if (Storage::exists("public/pdfattach/".$nombrepdf)){
