@@ -755,7 +755,7 @@
                                                         </div>
                                                         <div class="col col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                             <label style="width: 100%;">Cuerpo</label> <br>
-                                                            <textarea name="&carta&|body" id=""  rows="2" style="width:100%; resize: none" class="form-control">{!!purify($workorder->letter_body)!!}</textarea>
+                                                            <textarea name="&carta&|body" id=""  rows="2" style="width:100%; resize: none" class="form-control">{!!purify($workorder->bodyletter)!!}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -906,7 +906,7 @@
                                             data-content='<p style=\"font-size: 11px; text-align: justify\">Para mostrar los últimos datos modificados previamente debe guardar los datos presionando <b>\"Guardar Datos\"</b>.</p>'
                                             data-original-title='<span style=\"font-size: 12px; font-weight:bold;\" >Información</span>'";
                                         @endphp
-                                        <a href="/workorders/export/{{code($workorder->id)}}" type="button" target="_blank" class="btn btn-lg btn-outline-danger border border-danger " {!! $infopopover !!} id="btnPdf">
+                                        <a href="/work_orders/export/{{code($workorder->id)}}" type="button" target="_blank" class="btn btn-lg btn-outline-danger border border-danger " {!! $infopopover !!} id="btnPdf">
                                             <i class="fas fa-file-pdf fa-md"></i> &ensp;
                                             <span id="textExportPDF">
                                                 Ver informe en PDF
@@ -1657,14 +1657,14 @@
 
     // INSTANCIANDO EL CKEDITOR
     @if($check_formCarta == 1)
-    var editorLetter = CKEDITOR.replace('&carta&|body', {
-        uiColor: '#f4f6fa',
-        height: 400,
-        removePlugins: ['scayt','about','image','anchor','links','specialchar','stylescombo','horizontalrule','table','tabletools','tableselection'],
-        removeButtons: 'Anchor,Image,Links,Subscript,Superscript',
-        disableNativeSpellChecker: false,
-        extraPlugins: ['justify']
-    });
+        var editorLetter = CKEDITOR.replace('&carta&|body', {
+            uiColor: '#f4f6fa',
+            height: 400,
+            removePlugins: ['scayt','about','image','anchor','links','specialchar','stylescombo','horizontalrule','table','tabletools','tableselection'],
+            removeButtons: 'Anchor,Image,Links,Subscript,Superscript',
+            disableNativeSpellChecker: false,
+            extraPlugins: ['justify']
+        });
     @endif
 
     // ********************************************************************************************

@@ -334,6 +334,14 @@ class WorkOrders extends Model
         return $this->estado == 'E' || $this->estado == 'C' || $this->state == 'R';
     }
 
+    public function getBodyletterAttribute(){
+        if ($this->letter_body != null && $this->letter_body != '') {
+            return isset($this->letter_body) ? $this->letter_body : '';
+        }
+
+        return isset($this->forms->letter_body) ? $this->forms->letter_body : '' ;
+    }
+
     // ======================================================================================================
     //                                                   SCOPES
     // ======================================================================================================

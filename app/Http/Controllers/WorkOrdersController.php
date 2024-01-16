@@ -15,6 +15,11 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image as InterventionImage;
 use DB;
 use Session;
+use iio\libmergepdf\Merger;
+use iio\libmergepdf\Driver\TcpdiDriver;
+use Illuminate\Support\Facades\File;
+use View;
+use PDF;
 
 class WorkOrdersController extends Controller
 {
@@ -332,9 +337,7 @@ class WorkOrdersController extends Controller
         $mins = $arrayInterval['m'];
         $segs = $arrayInterval['s'];
 
-
         Session::put('item','1.');
-        $vista = isset($formulario->custom_template) ? 'st.reports.custom_templates.'.$formulario->custom_template : 'st.reports.show';
         return view('work_orders.report', compact('workorder','formulario','form','containers','datosguardados','check_formCarta','campos_carta','tecnicos','horas','mins','segs','totalArchivos'));
     }
 
@@ -808,6 +811,248 @@ class WorkOrdersController extends Controller
         return Redirect()->route('reports.show', ['id' => $idrep, 'contid' => $contid]);
     }
 
+    // =========================================================================================================
+    // =========================================================================================================
+    //                                       EXPORT
+    // =========================================================================================================
+    // =========================================================================================================
+    public function export(Request $request, $id){
+        $workorder = WorkOrders::findOrFail(decode($id));
+        $formulario = StForms::findOrFail($workorder->form_id);
+        $campos_array = isset($formulario->maintenance) ? $formulario->maintenance : [] ;
+        $campos_carta = collect($formulario->letter)->sortBy('orden');
+        $containers = collect($formulario->containers)->sortBy('orden');
+        $datosguardados = $workorder->info_general;
+
+        $carta = isset($datosguardados['&carta&']) ? $datosguardados['&carta&'] : [];
+        $checkcarta = isset($datosguardados['&checkcarta&']) ? $datosguardados['&checkcarta&'] : [];
+        // CAMPOS DE CARTA QUE SON FIJOS
+        $paracarta = isset($workorder->letter_for) ? $workorder->letter_for : null;
+        $copiacarta = isset($workorder->letter_copy) ? $workorder->letter_copy : null;
+        $refcarta = isset($workorder->letter_reference) ? $workorder->letter_reference : null;
+        $cuerpocarta = isset($workorder->letter_body) ? $workorder->letter_body : null;
+
+        // Tecnico Responsable
+        $users_work = DB::table('user_work_orders')->where('work_orders_id',$workorder->id)->where('responsable',1)->first();
+        $user = isset($users_work->user_id) ? User::where('id',$users_work->user_id)->first() : null;
+
+        // Imagenes que se adjuntaran al PDF
+        $images = StAttach::select('id','path','nombre')
+        ->where('work_order_id',$workorder->id)
+        ->where(function ($q){
+            $q->orwhere('path','like',"%.png")
+            ->orwhere('path','like',"%.jpeg")
+            ->orwhere('path','like',"%.jpg")
+            ->orwhere('path','like',"%.gif");
+        })->orderBy('orden')->get();
+        $imageslast = $images->last();
+
+        // GUARDAR BROWSERSHOT
+        $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $localhost_sw = strpos($actual_link,'127.0.0.1');
+        define('CHART_DIR', 'storage/chartreports');
+        if (!is_dir(CHART_DIR)){
+            mkdir(CHART_DIR, 0777, true);
+        }
+
+        $datos_graficoxy = $stringhighchart = "";
+        $arrayimages = [];
+        if (count($campos_array)>0){
+            $camposinput = collect($campos_array)->sortBy('orden');
+            foreach($camposinput as $key=>$campo) {
+                if($campo['type'] == 'serie'){
+                    $tipo_grafico = isset($campo['tipografico']) ? $campo['tipografico'] : "";
+                    if ( $tipo_grafico == "xvsy_graf" ){
+                        $nombreejex = str_replace(" ","_",$campo["nombre_eje_x"]);
+                        $nombreejey = str_replace(" ","_",$campo["nombre_eje_y"]);
+                        $datos_ejey = isset($datosguardados [$campo["id"]] [$nombreejey]['valor']) ? $datosguardados [$campo["id"]] [$nombreejey]['valor'] : [];
+                        $datos_ejex = isset($datosguardados [$campo["id"]] [$nombreejex]['valor']) ? $datosguardados [$campo["id"]] [$nombreejex]['valor'] : [];
+                        $seriegen_x = "&grafXY&|".$campo["id"]."|".$nombreejex."[]";
+                        $seriegen_y = "&grafXY&|".$campo["id"]."|".$nombreejey."[]";
+                        $seriegen_x_fijo = "&grafXY&|".$campo["id"]."|".$nombreejex."|&fijo&[]";
+                        $ejex_aux = 0;
+                        $dataname_seriegen_y = delete_charspecial($seriegen_y);
+                        $dataname_seriegen_x = delete_charspecial($seriegen_x);
+                        if(count($datos_ejey) == 0){
+                        }else{
+                            foreach ($datos_ejey as $keje=>$_ejey) {
+                                if(isset($datos_ejex[$keje]))
+                                    $datos_graficoxy .= "[".$datos_ejex[$keje]." , ".$_ejey."],";
+                            }
+                        }
+                        $camponame = delete_charspecial($campo['id']);
+                        $nombrecont_chart_xy = $camponame."__".$campo['type'];
+                        $tipo_graf_xy = isset($campo['tipo_de_grafico_xy']) ? $campo['tipo_de_grafico_xy'] : "";
+                        switch ($tipo_graf_xy) {
+                            case 'grafico_barras':  $tipoGrafHighXY = 'column';  break;
+                            case 'grafico_area':    $tipoGrafHighXY = 'area';    break;
+                            default:    $tipoGrafHighXY = 'spline';  break;
+                        }
+
+                        // Si el grafico no tiene datos
+                        if($datos_graficoxy != ''){
+                            $tituloChart = str_replace(" ","____",$campo['mostrar']);
+                            $tituloEjeXChart = str_replace(" ","____",$campo["nombre_eje_x"]);
+                            $tituloEjeYChart = $campo["nombre_eje_y"];
+                            $salidascript_xy = highchartXY('containerprueba', $tituloChart, $tituloEjeXChart, $tituloEjeYChart, $datos_graficoxy, $tipoGrafHighXY);
+                            $salidascript_xy = base64_encode(str_replace(" ","",$salidascript_xy));
+                            $htmlChartAdditional = view('work_orders.reports.browsershot', ['script_serie' => $salidascript_xy])->render();
+                            $nombrearchivo = 'storage/chartreports/1__'.$workorder->id."__".$nombrecont_chart_xy.'.png';
+                            $arrayimages[] = '1__'.$workorder->id.'__'.$camponame."__".$campo['type'].'.png';
+                            if ($localhost_sw === false) {
+                                Browsershot::html($htmlChartAdditional)->select('#containerprueba')->save($nombrearchivo);
+                            }
+                        }
+                        $datos_graficoxy = "";
+
+                    }elseif($tipo_grafico == "serie_graf"){
+                        $nroXserie = isset($datosguardados[$campo['id']]['nro_x_serie']) ? $datosguardados[$campo['id']]['nro_x_serie'] : 0;
+                        $campoXserie = isset($datosguardados[$campo['id']]['campos_x_serie']) ? $datosguardados[$campo['id']]['campos_x_serie'] : 0;
+                        for ($ca = 1; $ca <= $nroXserie; $ca++){
+                            $datosserie = isset( $datosguardados[$campo['id']."|".$ca] ) ? $datosguardados[$campo['id']."|".$ca]  : null;
+                            $caaux = $nroXserie; $saux = 1;
+                            $name_min = "&serie&|".$campo["id"]."|&minimo&|".$ca;
+                            $name_max = "&serie&|".$campo["id"]."|&maximo&|".$ca;
+                            $procedValMin = isset($campo['valmin']) && $campo['valmin'] != "" ? $campo['valmin'] : 0;
+                            $procedValMax = isset($campo['valmax']) && $campo['valmax'] != "" ? $campo['valmax'] : 0;
+                            $valmin = isset($datosserie["&minimo&"]['valor']) && $datosserie["&minimo&"]['valor'] != "" ? $datosserie["&minimo&"]['valor'] : $procedValMin;
+                            $valmax = isset($datosserie["&maximo&"]['valor']) && $datosserie["&maximo&"]['valor'] != "" ? $datosserie["&maximo&"]['valor'] : $procedValMax;
+                            $countDatosHigh = 0;
+                            for ($s = 1; $s <= $campoXserie; $s++){
+                                $datosseriegen = isset($datosserie['&seriegener&_'.$s]['valor']) ? $datosserie['&seriegener&_'.$s]['valor'] : "";
+                                if($datosseriegen != ""){
+                                    $stringhighchart .= "[".$saux.", ".$caaux.", ".$datosseriegen."],"; // Datos Grafico
+                                    $countDatosHigh++;
+                                }
+                                if($saux % 6 == 0){ $caaux--; $saux=0; } $saux++; // Cantidad de Datos por FIla Grafico
+                            }
+                            $camponame_serie = delete_charspecial($campo['id']);
+                            $nombrecont_chart = $camponame_serie."__".$campo['type']."__".$ca;
+                            $arrayaux[$ca] =  $stringhighchart;
+                            // Si el grafico no tiene datos
+                            if($countDatosHigh > 0){
+                                $salidascriptarray = highchartHeatMap('containerprueba', 'null', $arrayaux[$ca], $valmax, $valmin, $countDatosHigh);
+                                $salidascriptarray = base64_encode(str_replace(" ","",$salidascriptarray));
+                                $stringhighchart = "";
+                                $htmlChartAdditional = view('work_orders.reports.browsershot', ['script_serie' => $salidascriptarray])->render();
+                                $nombrearchivo = 'storage/chartreports/1__'.$workorder->id."__".$nombrecont_chart.'.png';
+                                $arrayimages[] = '1__'.$workorder->id.'__'.$campo['id']."__".$campo['type']."__".$ca.'.png';
+                                if ($localhost_sw === false) {
+                                    Browsershot::html($htmlChartAdditional)->select('#containerprueba')->save($nombrearchivo);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // técnicos A CARGO
+        $responsable = User::whereHas('pivotUsers', function ($query) use($workorder) {
+            $query->where('work_orders_id',$workorder->wo_id)->where('responsable',1);
+        })->first();
+
+        $workorderuser = User::whereHas('pivotUsers', function ($query) use($workorder) {
+            $query->where('work_orders_id',$workorder->wo_id)->where('responsable',0);
+        })->get();
+
+        $asociados = [];
+        foreach($workorderuser as $wouser){
+            $asociados[] = trim(userFullName($wouser->id));
+        }
+
+        // Mostrar fecha
+        $intervalActual = $workorder->timeElapsed['interval'];
+        $arrayDateInterval = $workorder->timeElapsed;
+        $textDate = '';
+        if (isset($arrayDateInterval['h']) &&  $arrayDateInterval['h'] > 1) {
+            $textDate .= $arrayDateInterval['h'] .' horas ';
+        } elseif(isset($arrayDateInterval['h']) &&  $arrayDateInterval['h'] == 1) {
+            $textDate .= '1 hora ';
+        }
+        if (isset($arrayDateInterval['m']) &&  $arrayDateInterval['m'] > 1) {
+            $textDate .= $arrayDateInterval['m'] .' minutos ';
+        } elseif(isset($arrayDateInterval['m']) &&  $arrayDateInterval['m'] == 1) {
+            $textDate .= '1 minuto ';
+        }
+        if (isset($arrayDateInterval['s']) &&  $arrayDateInterval['s'] > 1) {
+            $textDate .= $arrayDateInterval['s'] .' segundos ';
+        } elseif(isset($arrayDateInterval['s']) &&  $arrayDateInterval['s'] == 1) {
+            $textDate .= '1 segundo ';
+        }
+
+        $workTimes = $workorder->workTimes;
+        $countWoTimes = count($workorder->workTimes);
+        $woInterval = $workorder->timeElapsed;
+
+        // Adjuntar encabezado y pie de Página al PDF
+        $header = View::make('pdf.header')->render();
+        $footer = View::make('pdf.footer')->render();
+        $pdf = PDF::setOption('header-html', $header)
+        ->setOption('footer-html', $footer)
+        ->setOption('margin-top',30)->setOption('margin-bottom',20)
+        ->setOption('footer-right', 'Página [page] de [toPage]')
+        ->setOption('viewport-size', '1024x768' );
+        $pdf->setOption('enable-javascript', true);
+        $pdf->setOption('javascript-delay', 1000);
+        $pdf->setOption('enable-smart-shrinking', true);
+        $pdf->setOption('no-stop-slow-scripts', true);
+
+        // return view('work_orders.reports.pdf', compact('workorder','formulario','campos_array','containers','datosguardados','user','carta','checkcarta','paracarta','copiacarta','refcarta','cuerpocarta','images','imageslast','responsable','asociados','textDate','workTimes','countWoTimes','woInterval'));
+
+        $pdf->loadView('work_orders.reports.pdf', compact('workorder','formulario','campos_array','containers','datosguardados','user','carta','checkcarta','paracarta','copiacarta','refcarta','cuerpocarta','images','imageslast','responsable','asociados','textDate','workTimes','countWoTimes','woInterval'));
+
+        // REVISAR CUANTOS PDFs ADJUNTOS HAY
+        $countattach = StAttach::select('path')->where('work_order_id',$workorder->id)->where('flag',1)->count();
+        if($countattach > 0 ){
+            // Guardar temporalmente el archivo a adjuntar
+            define('PDFMAIL_DIR', storage_path('app/public/pdfattach'));
+            if (!is_dir(PDFMAIL_DIR))   mkdir(PDFMAIL_DIR, 0777, true);
+            $nombrepdf = $workorder->cod.'_'.userId().'.pdf';
+            // Verificar si el archivo existe para que no salgan errores
+            if (Storage::exists("public/pdfattach/".$nombrepdf)){
+                Storage::delete("public/pdfattach/".$nombrepdf);
+            }
+            // Guardar archivo en la ruta indicada
+            $pdf->save(PDFMAIL_DIR.'/'.$nombrepdf);
+            $pdfPath = PDFMAIL_DIR.'/'.$nombrepdf;
+            // Unir PDFs
+            $pdfatt = StAttach::select('path')->where('work_order_id',$workorder->id)->where('flag',1)->get();
+            $documentos = [];
+            foreach($pdfatt as $ii=>$pda){
+                if ( $this->endsWith($pda->path,'.pdf') ) $documentos[$ii] = $pda->path;
+            }
+            $combinador = new Merger(new TcpdiDriver);
+            $combinador->addFile($pdfPath);
+            if( count($documentos) > 0 ){
+                if (Storage::exists("public/anexos.pdf")){
+                    $anexos = storage_path().'/app/public/anexos.pdf';
+                    $combinador->addFile($anexos);
+                }
+            }
+            foreach($documentos as $doc){
+                if (Storage::exists("public/reports/".$workorder->cod."/".$doc)){
+                    $ruta = storage_path().'/app/public/reports/'.$workorder->cod."/".$doc.'';
+                    $combinador->addFile($ruta);
+                }
+            }
+            $nombreArchivo = 'Informe_'.$workorder->cod.'.pdf';
+            $salida = $combinador->merge();
+
+            header("Content-type:application/pdf");
+            header("Content-disposition: inline; filename=$nombreArchivo");
+            header("content-Transfer-Encoding:binary");
+            header("Accept-Ranges:bytes");
+            echo $salida;
+            File::delete($pdfPath);
+        }else{
+            // CAMBIAR NOMBRE DE PDF
+            $defPdf = 'Informe_'.$workorder->cod;
+            $extPdf = '.pdf';
+            $nameExportPdf = $defPdf.$extPdf;
+            return $pdf->stream($nameExportPdf);
+        }
+    }
+
     public function validateWorkorders(Request $request, $id = ''){
         $activo = 'activo';
         $emergency = 'emergency';
@@ -853,5 +1098,15 @@ class WorkOrdersController extends Controller
         $len = strlen($endString);
         if ($len == 0)  return true;
         return (substr($string, -$len) === $endString);
+    }
+
+    public function limpiar($string){
+        $salida = preg_replace('/\s+/', ' ',$string);
+        $salida = trim($salida);
+        $salida = strtolower(str_replace(" ","_",$salida));
+        $salida = is_numeric($salida) ? "_".$salida : $salida;
+        $salida = delete_char_file($salida);
+        $salida = cleanAll($salida);
+        return $salida;
     }
 }

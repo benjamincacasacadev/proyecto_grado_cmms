@@ -48,6 +48,10 @@ class User extends Authenticatable
         return $this->belongsTo(Roles::class, 'role_id');
     }
 
+    public function pivotUsers(){
+        return $this->belongsToMany(WorkOrders::class,'user_work_orders','user_id','work_orders_id');
+    }
+
     // =====================================================================
     //                          FUNCIONES
     // =====================================================================

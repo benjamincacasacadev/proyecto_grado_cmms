@@ -75,6 +75,7 @@ Route::post('/work_orders/worktime/{id}', 'WorkOrdersController@initTimeWork')->
 
 // llenar Informes
 Route::post('/work_orders/show/update/{id}', 'WorkOrdersController@updateReport')->name('workorders.updateReport');
+Route::get('/work_orders/export/{id}', 'WorkOrdersController@export')->name('workorders.pdf');
 
 // Archivos
 Route::post('/reports_tablefile', 'WorkOrdersController@tableFile')->name('reports.tableFiles');
