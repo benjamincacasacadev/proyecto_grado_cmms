@@ -9,6 +9,10 @@ use Carbon\CarbonInterval;
 use Carbon\CarbonPeriod;
 class WorkOrders extends Model
 {
+    //    JSON
+    protected $casts = [
+        'info_general' => 'array',
+    ];
     // ======================================================================================================
     //                                                   RELACIONES
     // ======================================================================================================
@@ -290,40 +294,45 @@ class WorkOrders extends Model
         return $this->estado == 'P' && permisoAdmin();
     }
 
-        //  Accessor para obtener el tiempo de inicio de un ot
-        public function getTimeElapsedAttribute(){
-            $arrayTime['h'] = $arrayTime['m'] = $arrayTime['s'] = 0;
-            $interval = CarbonInterval::createFromFormat('H:i:s', '00:00:00');
+    //  Accessor para obtener el tiempo de inicio de un ot
+    public function getTimeElapsedAttribute(){
+        $arrayTime['h'] = $arrayTime['m'] = $arrayTime['s'] = 0;
+        $interval = CarbonInterval::createFromFormat('H:i:s', '00:00:00');
 
-            if(count($this->workTimes) > 0){
-                $firstTime = $this->StartTime;
+        if(count($this->workTimes) > 0){
+            $firstTime = $this->StartTime;
 
-                foreach($this->workTimes->where('end_work_date','!=',null) as $wotime){
-                    if(isset($wotime->init_work_date) && isset($wotime->end_work_date)){
-                        $firstTime = $wotime->init_work_date;
-                        $lastTime = $wotime->end_work_date;
-                        $difSegundos = Carbon::parse($lastTime)->floatDiffInSeconds($firstTime);
-                        $interval->addSeconds($difSegundos)->cascade();
-                    }
-                }
-                $workTimeInit =  $this->workTimes->where('end_work_date',null)->first();
-                if($workTimeInit != null){
-                    $firstTime = $workTimeInit->init_work_date;
-                    $lastTime = Carbon::now();
+            foreach($this->workTimes->where('end_work_date','!=',null) as $wotime){
+                if(isset($wotime->init_work_date) && isset($wotime->end_work_date)){
+                    $firstTime = $wotime->init_work_date;
+                    $lastTime = $wotime->end_work_date;
                     $difSegundos = Carbon::parse($lastTime)->floatDiffInSeconds($firstTime);
                     $interval->addSeconds($difSegundos)->cascade();
                 }
             }
-            if(isset($interval)){
-
-                $horas = intVal($interval->totalHours);
-                $arrayTime['h'] += "".$horas;
-                $arrayTime['m'] += $interval->minutes;
-                $arrayTime['s'] += $interval->seconds;
-                $arrayTime['interval'] = $interval;
+            $workTimeInit =  $this->workTimes->where('end_work_date',null)->first();
+            if($workTimeInit != null){
+                $firstTime = $workTimeInit->init_work_date;
+                $lastTime = Carbon::now();
+                $difSegundos = Carbon::parse($lastTime)->floatDiffInSeconds($firstTime);
+                $interval->addSeconds($difSegundos)->cascade();
             }
-            return $arrayTime;
         }
+        if(isset($interval)){
+
+            $horas = intVal($interval->totalHours);
+            $arrayTime['h'] += "".$horas;
+            $arrayTime['m'] += $interval->minutes;
+            $arrayTime['s'] += $interval->seconds;
+            $arrayTime['interval'] = $interval;
+        }
+        return $arrayTime;
+    }
+
+    public function getReportEnabledAttribute(){
+        // return $this->state != 'P' && $this->state != 'C' && $this->state != '1' ? false : true ;
+        return $this->estado == 'E' || $this->estado == 'C' || $this->state == 'R';
+    }
 
     // ======================================================================================================
     //                                                   SCOPES

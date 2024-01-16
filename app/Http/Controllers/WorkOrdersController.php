@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\StAttach;
 use App\StForms;
 use App\User;
 use App\WorkOrders;
@@ -273,9 +274,8 @@ class WorkOrdersController extends Controller
         $workorder = WorkOrders::findOrFail(decode($id));
 
         // VALIDACION DE ESTADO TERMINADO Y ANULADO
-        if ($workorder->state == '3' || $workorder->state == 'X'){
-            $msjError= 'No puede subir el archivo la <b> orden de trabajo </b> tiene estado '.$workorder->getEstado(0);
-            return  \Response::json(['alerta' => '1','mensaje' => $msjError]);
+        if ($workorder->estado == 'T' || $workorder->estado == 'X'){
+            return  \Response::json(['alerta' => '1','mensaje' => 'error']);
         }
         // ALMACENAMIENTO DEL ARCHIVO
         if ($request->hasFile('fileWO')) {
@@ -400,6 +400,414 @@ class WorkOrdersController extends Controller
         }
     }
 
+    // ====================================================================================================
+    // GUARDAR DATOS DE REPORTE
+    // ====================================================================================================
+    public function updateReport(Request $request, FlasherInterface $flasher, $id){
+
+        $workorder = WorkOrders::findOrFail(decode($id));
+
+        // Informes en revision solo pueden ser editados por los que tengan permiso de validar informes
+        if($workorder->estado == 'T'){
+            return back();
+        }
+
+        if(!$workorder->reportEnabled){
+            return back();
+        }
+
+        $idrep = $id;
+        $container = $request->get('&&contenedor_id&&');
+        $respuestas = [];
+        $field = $request->all();
+        unset ($field['&&contenedor_id&&']);
+        unset ($field['_token']);
+        foreach ($field as $key => $valor) {
+            $aux = explode("|",$key);
+            $id = $aux[0];
+            switch ($id) {
+                case '&carta&': // CARTA
+                    // $respuestas[$id][$aux[1]]['valor'] = $valor;
+                    // $respuestas[$id][$aux[1]]['orden'] = $aux[2];
+                break;
+                case '&serie&': // SERIE MxN
+                    $nroserie = isset($aux[3]) ? $aux[3] : "";
+                    $nombreserie = isset($aux[1]) ? $aux[1] : "";
+                    $nombrecamposerie = isset($aux[2]) ? $aux[2] : "";
+                    $seriegenerada = isset($aux[4]) ? $aux[4] : "";
+                    $keyserie = $nombreserie."|".$nroserie;
+                    $keyseriegen = $nombrecamposerie."_".$seriegenerada;
+                    if(is_array($valor)){
+                        $respuestas[$keyserie][$nombrecamposerie]['id'] = $nombrecamposerie;
+                        $respuestas[$keyserie][$nombrecamposerie]['valor'] = $valor;
+                    }else{
+                        $valorguard = explode("___",$valor);
+                        $colorhex = isset($valorguard[1]) ? $valorguard[1] : "";
+                        if($nombrecamposerie == '&seriegener&'){
+                            $respuestas[$keyserie][$keyseriegen]['id'] = $keyseriegen;
+                            $respuestas[$keyserie][$keyseriegen]['valor'] = $valorguard[0];
+                        }else{
+                            $respuestas[$keyserie][$nombrecamposerie]['id'] = $nombrecamposerie;
+                            $respuestas[$keyserie][$nombrecamposerie]['valor'] = $valorguard[0];
+                            if ($colorhex != '') {
+                                $respuestas[$keyserie][$nombrecamposerie]['hex'] = $colorhex;
+                            }
+                        }
+                    }
+                break;
+                case '&serie_xy&': // SERIE XY
+                    $nombreserie = isset($aux[1]) ? $aux[1] : "";
+                    $nombrecamposerie = isset($aux[2]) ? $aux[2] : "";
+                    if(is_array($valor)){
+                        $respuestas[$nombreserie][$nombrecamposerie]['id'] = $nombrecamposerie;
+                        $respuestas[$nombreserie][$nombrecamposerie]['valor'] = $valor;
+                    }else{
+                        $valorguard = explode("___",$valor);
+                        $colorhex = isset($valorguard[1]) ? $valorguard[1] : "";
+                        $respuestas[$nombreserie][$nombrecamposerie]['id'] = $nombrecamposerie;
+                        $respuestas[$nombreserie][$nombrecamposerie]['valor'] = $valorguard[0];
+                        if ($colorhex != '') {
+                            $respuestas[$nombreserie][$nombrecamposerie]['hex'] = $colorhex;
+                        }
+                    }
+                break;
+                case '&grafXY&': // GRAFICO XY
+                    $nombreserie = isset($aux[1]) ? $aux[1] : "";
+                    $nombrecamposerie = isset($aux[2]) ? $aux[2] : "";
+                    if(is_array($valor) && count($valor)>0){
+                        if(count($valor) > 100){
+                            return Redirect()->route('reports.show', ['id' => $idrep, 'contid' => $container]);
+                        }
+                        foreach($valor as $cl=>$val){
+                            // if(!isset($val)) unset($valor[$cl]);
+                        }
+                    }
+                    $respuestas[$nombreserie][$nombrecamposerie]['id'] = $nombrecamposerie;
+                    $respuestas[$nombreserie][$nombrecamposerie]['valor'] = $valor;
+                break;
+                default: // TODOS LOS DEMAS CAMPOS
+                    if($id != '&checkcarta&'){
+                        $swradiodep = explode("||",$key);
+                        $swradiopadredep = isset($swradiodep[2]) ? $swradiodep[2] : "";
+                        $swradiodep = isset($swradiodep[1]) ? $swradiodep[1] : "";
+                        $respuestas[$id]['id'] = $id;
+                        $respuestas[$id]['valor'] = $valor;
+                        if($swradiodep != ""){
+                            $iddep = $swradiopadredep.'|'.$swradiodep.'|'.$id;
+                            $respuestas[$iddep]['id'] = $id;
+                            $respuestas[$iddep]['valor'] = $valor;
+                            $respuestas[$iddep]['radioid'] = $swradiodep;
+                        }
+                        // COLOR RADIO
+                        if(!is_array($valor)){
+                            $auxcolor_radio = explode("___",$valor);
+                            if(isset($auxcolor_radio[1]) && $auxcolor_radio[1] != "")
+                            $respuestas[$id]['hex'] = isset($auxcolor_radio[1]) ? $auxcolor_radio[1] : "";
+                        }
+
+                        $keyserie = explode("|",$key);
+                        $keyserie = isset($keyserie[1]) ? $keyserie[1] : "";
+                        if($keyserie == '&nro_x_serie_simple&'){
+                            if($valor > 100){
+                                return Redirect()->route('reports.show', ['id' => $idrep, 'contid' => $container]);
+                            }
+                        }
+                        if($keyserie == 'campos_x_serie' ){
+                            if($valor > 80){
+                                return Redirect()->route('reports.show', ['id' => $idrep, 'contid' => $container]);
+                            }
+                            $respuestas[$id]['campos_x_serie'] = $valor;
+                        }
+                        if($keyserie == 'nro_x_serie'){
+                            if($valor > 80){
+                                return Redirect()->route('reports.show', ['id' => $idrep, 'contid' => $container]);
+                            }
+                            $respuestas[$id]['nro_x_serie'] = $valor;
+                        }
+                    }
+                break;
+            }
+        }
+        $chc = '&checkcarta&';
+        $respuestas['&checkcarta&'] = isset($request->$chc) ? 1 : 0;
+        if($request->$chc != null){
+            $workorder->letter_for = (isset($request['&carta&|for']))? $request['&carta&|for'] : '';
+            $workorder->letter_copy = (isset($request['&carta&|copy']))? $request['&carta&|copy'] : '';
+            $workorder->letter_reference = (isset($request['&carta&|reference']))? $request['&carta&|reference'] : '';
+            $workorder->letter_body = (isset($request['&carta&|body']))? $request['&carta&|body'] : '';
+        }
+        $workorder->info_general = $respuestas;
+        $workorder->update();
+        $flasher->addFlash('success', 'Actualizado correctamente', 'Informe '.$workorder->cod);
+
+        return Redirect()->route('reports.show', ['id' => $idrep, 'contid' => $container]);
+    }
+
+        // =========================================================================================================
+    // =========================================================================================================
+    //                                       ARCHIVOS
+    // =========================================================================================================
+    // =========================================================================================================
+    public function storeFile(Request $request, FlasherInterface $flasher){
+        $messages = [
+            'archivo.required' => 'Debe subir un archivo.',
+            'imagen.required' => 'Debe subir un archivo.',
+            'imagen.max' => "El tamaño de la imagen no debe superar los 15 MB.",
+            'archivo.max' => "El tamaño del archivo no debe superar los 5 MB.",
+            'titulo.required' => 'el campo Título del Archivo es obligatorio.',
+            'tipo_archivo.*' => 'Debe seleccionar el tipo de archivo.'
+        ];
+        if($request->tipo_archivo == 'i'){
+            $val_img = 'required|max:15192|mimes:gif,jpg,jpeg,png';
+            $val_file = 'nullable';
+        }else{
+            $val_img = 'nullable';
+            $val_file = 'required|max:5192|mimes:pdf,txt,doc,docx,zip,rar,qz,xls,xlsx';
+        }
+        $request->validate([
+            'imagen' => $val_img,
+            'archivo' => $val_file,
+            'titulo' => 'required',
+            'tipo_archivo' => 'required|regex:~(^[ia]{1})$~',
+        ],$messages);
+
+        $workorder = WorkOrders::findOrFail($request->idModulo);
+
+        // Informes en revision solo pueden ser editados por los que tengan permiso de validar informes
+        if($workorder->estado == 'T'){
+            toastr()->error('No se pudo realizar la acción','Incorrecto', ['positionClass' => 'toast-bottom-right']);
+            return back();
+        }
+
+        if(!$workorder->reportEnabled){
+            return  \Response::json(['alerta' => '2', 'mensaje' => 'error']);
+        }
+        // Añadiendo el Archivo
+        if($request->tipo_archivo == 'i'){
+            $file = $request->file('imagen');
+        }else{
+            $file = $request->file('archivo');
+        }
+        if($file!=null){
+            $ext = $file->getClientOriginalExtension();
+            $ext = strtolower($ext);
+
+            if(isset($request->renombrar))
+                $name = $this->limpiar($request->renombrar).'.'.$ext;
+            else
+                $name = $file->getClientOriginalName();
+
+            $name = str_replace(array("_"),"-",$name);
+            $name = str_replace(" ","_",$name);
+            $archivo = $workorder->cod."_".time()."_".delete_char_file($name);
+            $attach = StAttach::where('work_order_id',$workorder->id)->get();
+            $ordenmax = 0;
+            foreach($attach as $att){
+                if($att->orden > $ordenmax){
+                    $ordenmax = $att->orden;
+                }
+            }
+            $ordenmax++;
+            $saveAttachname = isset($request->titulo) ? $request->titulo : $name;
+
+            $saveAttach = new StAttach();
+            $saveAttach->work_order_id = $workorder->id;
+            $saveAttach->path = $archivo;
+            $saveAttach->nombre = $saveAttachname;
+            $saveAttach->orden = $ordenmax;
+            $saveAttach->save();
+
+            $file->storeAs('public/reports/'.$workorder->cod, $archivo);
+            if($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'png'){
+                $size = getimagesize($file);
+                if($size[0]<=1024 && $size[1]<=1024){
+                    InterventionImage::make($file)
+                    ->orientate()
+                    ->resize(function ($constraint){
+                        $constraint->aspectRatio();
+                    })->save(storage_path().'/app/public/reports/'.$workorder->cod.'/'.$archivo, 90);
+                }else{
+                    InterventionImage::make($file)
+                    ->orientate()
+                    ->resize(1024,1024, function ($constraint){
+                        $constraint->aspectRatio();
+                    })->save(storage_path().'/app/public/reports/'.$workorder->cod.'/'.$archivo, 80);
+                }
+            }
+        }
+        $flasher->addFlash('success', 'Agregado con éxito', 'Archivo');
+        return  \Response::json(['success' => '1']);
+    }
+
+    public function tableFile(Request $request){
+        $idrep = $request->get('report');
+
+        $workorder = WorkOrders::findOrFail($idrep);
+        // Informes en revision solo pueden ser editados por los que tengan permiso de validar informes
+        $swValidate = permisoAdmin();
+
+        $archivos = $workorder->attachesReport;
+
+        $totalData = $archivos->count();
+        $totalFiltered = $totalData;
+
+        $posts = $archivos->sortBy('orden');
+        $totalFiltered=$posts->count();
+        $data = array();
+
+        $aa = 0;
+        foreach ($posts as $post) {
+            $arch = $post->path;
+            $carpeta = storage_path().'/app/public/reports/'.$workorder->cod.'/';
+            $url = $carpeta.$arch;
+            $size_file = is_file($url) ? round(filesize($url)/1000,2)." Kb" : "";
+            $repEnabled = $workorder->reportEnabled;
+            $mostrar = mostrarArchivosST($post->path, '/reports/'.$workorder->cod.'/', code($post->id), $workorder->cod);
+            $adjuntar = $msgpopover = "";
+            if ( $this->endsWith($post->path,'.pdf') && $repEnabled && $swValidate){
+                if($post->flag == 1){
+                    $adjuntar =
+                    '<a p-4 href="/reports/attachFile/'.code($post->id).'" data-toggle="popover" data-content="<span style=\'font-size:10px;color:#D73925\'><b>Quitar Archivo del <br> Informe en PDF</b></span>">
+                        <svg class="icon text-red iconhover" style="width:22px;height:22px;" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" /><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" /><line x1="16" y1="21" x2="16" y2="19" /><line x1="19" y1="16" x2="21" y2="16" /><line x1="3" y1="8" x2="5" y2="8" /><line x1="8" y1="3" x2="8" y2="5" /></svg>
+                    </a>';
+                    $msgpopover = '<a data-toggle="popover" data-content="<span style=\'font-size:10px\'><b>Archivo Adjuntado en <br> el Informe en PDF</b></span>"><i class="fas fa-paperclip" style="padding-left:5px;color:#008D4C;" ></i></a>';
+                }else{
+                    $adjuntar =
+                    '<a p-4 href="/reports/attachFile/'.code($post->id).'" data-toggle="popover" data-content="<span style=\'font-size:10px;color:#008d4c\'><b>Adjuntar Archivo al <br>Informe en PDF</b></span>" >
+                        <svg class="icon text-green iconhover" style="width:22px;height:22px;" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" /><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" /></svg>
+                    </a>';
+                }
+            }
+
+            $descargar =
+            '<a href="/reports/downloadfile/'.$post->path.'/'.$workorder->cod.'" title="Descargar">
+                <svg class="icon text-muted iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19 18a3.5 3.5 0 0 0 0 -7h-1a5 4.5 0 0 0 -11 -2a4.6 4.4 0 0 0 -2.1 8.4" /><line x1="12" y1="13" x2="12" y2="22" /><polyline points="9 19 12 22 15 19" /></svg>
+            </a>';
+
+            $eliminar = "";
+            if ($repEnabled && $swValidate){
+                $eliminar =
+                '<a rel="modalEliminarArchivo" href="/reports/deleteModalFile/'. code($post->id) .'/'.$workorder->cod.'">
+                    <svg class="icon text-muted iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                </a>';
+            }
+
+            $nestedData['DT_RowId'] =$post->id;
+            $nestedData['orden'] = ++$aa ;
+            $nestedData['nombre'] ="<div class='textedit classEditable' data-type='text' data-pk='$post->id' data-name='nombre'>".$post->nombre.$msgpopover."</div>";
+            $nestedData['tamanio'] =$size_file;
+            $nestedData['opciones'] = $adjuntar.$mostrar.$descargar.$eliminar;
+            $data[] = $nestedData;
+        }
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data,
+            );
+
+        echo json_encode($json_data);
+    }
+
+    public function orderFile(Request $request){
+        $att_ant=StAttach::find($request->prev_item);
+        $att=StAttach::findOrFail($request->id_item);
+
+        if(isset($att_ant->orden)){
+            StAttach::where('work_order_id',$request->report)
+            ->where('orden','>', $att_ant->orden)
+            ->update(['orden' => DB::raw('orden+1'),'updated_at' =>now()]);
+            $newOrden = $att_ant->orden+1;
+        }else{
+            StAttach::where('work_order_id',$request->report)
+            ->update(['orden' => DB::raw('orden+1'),'updated_at' =>now()]);;
+            $newOrden = 1;
+        }
+        $att->orden = $newOrden;
+        $att->update();
+    }
+
+    public function modalShowFile($id){
+        $attach = StAttach::findOrFail(decode($id));
+
+        $workorder = WorkOrders::findOrFail($attach->work_order_id);
+
+        return view("work_orders.reports.modalShowFile", compact('attach','workorder'));
+    }
+
+    public function modalDeleteFile($id,$cod){
+        $attach = StAttach::findOrFail(decode($id));
+        return view("work_orders.reports.modalDeleteFile", compact('attach','cod'));
+    }
+
+    public function updateNombreArchivo(Request $request){
+        $test = StAttach::find($request->pk);
+        $column_name = $request->name;
+        $column_value = $request->value;
+        $test->update([$column_name => $column_value]);
+        return response()->json([ 'code'=>200], 200);
+    }
+
+    public function downloadFile($archivo, $cod){
+        $url = 'storage/reports/'.$cod.'/'.$archivo;
+        $name = explode("_",$archivo);
+        $name_down = "";
+        foreach($name as $k=>$n){
+            if($k>=2) $name_down .=$n."_";
+        }
+        $name_down = substr($name_down,0,-1);
+        if (Storage::exists('public/reports/'.$cod.'/'.$archivo))
+            return response()->download($url,$name_down);
+        else
+            return abort(404);
+    }
+
+    public function destroyFile(FlasherInterface $flasher, $id, $cod){
+        $attach = StAttach::findOrFail($id);
+        $workorder = WorkOrders::findOrFail($attach->work_order_id);
+        // Informes en revision solo pueden ser editados por los que tengan permiso de validar informes
+        if($workorder->estado == 'T'){
+            return Redirect()->route('reports.show', ['id' => code($workorder->id), 'contid' => '__archivos__']);
+        }
+        if(!$workorder->reportEnabled){
+            return Redirect()->route('reports.show', ['id' => code($workorder->id), 'contid' => '__archivos__']);
+        }
+        $ruta = '/st/reports/'.$cod.'/';
+
+        $archivo = $attach->path;
+        if (Storage::exists('public/reports/'.$cod.'/'.$archivo)){
+            Storage::delete('public/reports/'.$cod.'/'.$archivo);
+        }
+        $attach->delete();
+        $flasher->addFlash('error', 'Eliminado correctamente', 'Archivo');
+        return Redirect()->route('reports.show', ['id' => code($workorder->id), 'contid' => '__archivos__']);
+    }
+
+    public function attachFile(FlasherInterface $flasher, $id){
+        $attach = StAttach::findOrFail(decode($id));
+
+        $workorder = WorkOrders::findOrFail($attach->work_order_id);
+        // Informes en revision solo pueden ser editados por los que tengan permiso de validar informes
+        if($workorder->estado == 'T'){
+            return back();
+        }
+
+        if(!$workorder->reportEnabled){
+            return back();
+        }
+        if ($attach->flag == 1 ){
+            $attach->flag = 0;
+            $flasher->addFlash('error', 'Quitado del informe correctamente', 'Archivo');
+        }else{
+            $attach->flag = 1;
+            $flasher->addFlash('success', 'Adjuntado al informe correctamente', 'Archivo');
+        }
+        $attach->update();
+        $contid = "__archivos__";
+        $idrep = code($attach->work_order_id);
+        return Redirect()->route('reports.show', ['id' => $idrep, 'contid' => $contid]);
+    }
+
     public function validateWorkorders(Request $request, $id = ''){
         $activo = 'activo';
         $emergency = 'emergency';
@@ -439,5 +847,11 @@ class WorkOrdersController extends Controller
         ];
 
         return $request->validate($validateArray, [], $aliasArray);
+    }
+
+    function endsWith($string, $endString) {
+        $len = strlen($endString);
+        if ($len == 0)  return true;
+        return (substr($string, -$len) === $endString);
     }
 }

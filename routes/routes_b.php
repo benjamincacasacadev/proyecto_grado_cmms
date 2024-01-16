@@ -73,6 +73,19 @@ Route::post('/work_orders/time_range/{id}', 'WorkOrdersController@timeRangeStore
 // Iniciar temporizador de trabajo
 Route::post('/work_orders/worktime/{id}', 'WorkOrdersController@initTimeWork')->name('workorders.worktime');
 
+// llenar Informes
+Route::post('/work_orders/show/update/{id}', 'WorkOrdersController@updateReport')->name('workorders.updateReport');
+
+// Archivos
+Route::post('/reports_tablefile', 'WorkOrdersController@tableFile')->name('reports.tableFiles');
+Route::post('/work_orders/storefile', 'WorkOrdersController@storeFile')->name('reports.saveFile');
+Route::post('/work_orders/orderfile', 'WorkOrdersController@orderFile')->name('reports.orderFile');
+Route::post('/st_report_update', 'WorkOrdersController@updateNombreArchivo')->name('streports.updatearchivo');
+Route::get('/reports/mostrarImagen/{id}', 'WorkOrdersController@modalShowFile')->name('reports.modalFile');
+Route::get('/reports/downloadfile/{img}/{cod}', 'WorkOrdersController@downloadFile')->name('reports.downloadFile');
+Route::get('/reports/attachFile/{id}', 'WorkOrdersController@attachFile')->name('reports.attachfile');
+Route::get('/reports/deleteModalFile/{id}/{cod}', 'WorkOrdersController@modalDeleteFile')->name('reports.modalDestroyFile');
+Route::delete('/reports/deletefile/{img}/{cod}', 'WorkOrdersController@destroyFile')->name('reports.destroyFile');
 
 // ========================================================================================
 //                                   FORMULARIOS

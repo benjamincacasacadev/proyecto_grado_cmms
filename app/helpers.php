@@ -509,3 +509,46 @@ function tipoCampoSerie($namecampo,$valor,$label,$tipocampo,$options, $href, $co
 
     return $salida;
 }
+
+function mostrarArchivosST($file, $ruta_archivo, $i, $cod, $modulo = 'reports' ){
+    $extension=explode('.',$file);
+    $extensionNueva=end($extension);
+    $extensionNueva = strtolower($extensionNueva);
+    if ($extensionNueva=='png' || $extensionNueva=='jpg' || $extensionNueva=='jpeg' || $extensionNueva=='gif' || $extensionNueva=='svg') {
+        return  '<a rel="modalImagen" style="text-decoration: none" href="/reports/mostrarImagen/' . $i . '" title="Ver Imagen">
+                    <svg class="icon text-orange iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="15" y1="8" x2="15.01" y2="8" /><rect x="4" y="4" width="16" height="16" rx="3" /><path d="M4 15l4 -4a3 5 0 0 1 3 0l5 5" /><path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2" /></svg>
+                </a>';
+    } elseif ($extensionNueva=='pdf') {
+        return '<a href="/storage'.$ruta_archivo.$file.'" title="PDF" target="_blank">
+                    <svg class="icon text-red iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><line x1="9" y1="17" x2="9" y2="12" /><line x1="12" y1="17" x2="12" y2="16" /><line x1="15" y1="17" x2="15" y2="14" /></svg>
+                </a>';
+    } elseif ($extensionNueva=='doc' || $extensionNueva=='docx') {
+        return '<a href="/'.$modulo.'/downloadfile/'.$file.'/'.$cod.'" title="Word">
+                    <svg class="icon text-primary iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><line x1="9" y1="9" x2="10" y2="9" /><line x1="9" y1="13" x2="15" y2="13" /><line x1="9" y1="17" x2="15" y2="17" /></svg>
+                </a>';
+    } elseif ($extensionNueva=='rar' || $extensionNueva=='zip' || $extensionNueva=='tar') {
+        return '<a href="/'.$modulo.'/downloadfile/'.$file.'/'.$cod.'" title="Archivo comprimido">
+                    <svg class="icon iconhover" style="color:#f7daab" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 20.735a2 2 0 0 1 -1 -1.735v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-1" /><path d="M11 17a2 2 0 0 1 2 2v2a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-2a2 2 0 0 1 2 -2z" /><line x1="11" y1="5" x2="10" y2="5" /><line x1="13" y1="7" x2="12" y2="7" /><line x1="11" y1="9" x2="10" y2="9" /><line x1="13" y1="11" x2="12" y2="11" /><line x1="11" y1="13" x2="10" y2="13" /><line x1="13" y1="15" x2="12" y2="15" /></svg>
+                </a>';
+    }elseif ($extensionNueva=='xlsx' || $extensionNueva=='xlsm' || $extensionNueva=='xls' || $extensionNueva=='csv') {
+        return '<a href="/'.$modulo.'/downloadfile/'.$file.'/'.$cod.'" title="Excel">
+                    <svg class="icon text-green iconhover" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M10 12l4 4m0 -4l-4 4" /></svg>
+                </a>';
+    }
+}
+
+function iconoArchivos($nom_archivo, $size = '100px'){
+    $extension = explode('.',$nom_archivo);
+    $extensionNueva = end($extension);
+    if($extensionNueva=='xlsx' || $extensionNueva=='xlsm' || $extensionNueva=='xls' || $extensionNueva=='csv'){
+        return '<img class="mb-2" src="/imagenes/iconoExcel.png" class="img-rounded img-responsive pull-left" style="width: '.$size.'; " alt="Sin imagen para mostdar" id="imgItem">'; }
+    elseif($extensionNueva=='rar' || $extensionNueva=='zip' || $extensionNueva=='tar'){
+        return '<img class="mb-2" src="/imagenes/iconoZip.png" class="img-rounded img-responsive pull-left" style="width: '.$size.'; " alt="Sin imagen para mostdar" id="imgItem">'; }
+    elseif($extensionNueva=='doc' || $extensionNueva=='docx'){
+        return '<img class="mb-2" src="/imagenes/iconoWord.png" class="img-rounded img-responsive pull-left" style="width: '.$size.'; " alt="Sin imagen para mostdar" id="imgItem">'; }
+    elseif($extensionNueva=='pdf'){
+        return '<img class="mb-2" src="/imagenes/iconoPdf.png" class="img-rounded img-responsive pull-left" style="width: '.$size.'; " alt="Sin imagen para mostdar" id="imgItem">' ; }
+    else{
+        return '<img class="mb-2" src="/imagenes/iconoImg.svg" class="img-rounded img-responsive pull-left" style="width: '.$size.'; " alt="Sin imagen para mostdar" id="imgItem">';
+    }
+}
