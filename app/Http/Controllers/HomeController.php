@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\WorkOrders;
 use Illuminate\Http\Request;
 use Flasher\Prime\FlasherInterface;
 use Session;
@@ -22,28 +23,60 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index(Request $request, FlasherInterface $flasher){
-        // $request->session()->flash('info', 'Task was successful!');
+    public function index(Request $request){
 
-        $options = array( 'duration' => 3000, 'dismissible' =>true, 'ripple' =>true, 'position' => 'top' , 'center');
-        // $flasher->addError('error message');
-        // $flasher->addFlash('success', 'Data has been saved successfully!');
+                // =============================================================================================
+        //                                 Grafico Órdenes de trabajo
+        // =============================================================================================
+        $cWO = WorkOrders::
+        selectRaw('COUNT(id) as total,
+        sum(case when estado = "P" then 1 else 0 end) AS pendiente,
+        sum(case when estado = "E" then 1 else 0 end) AS progreso,
+        sum(case when estado = "R" then 1 else 0 end) AS revision,
+        sum(case when estado = "T" then 1 else 0 end) AS terminado,
+        sum(case when estado = "S" then 1 else 0 end) AS en_pausa,
+        sum(case when estado = "C" then 1 else 0 end) AS en_correccion,
+        sum(case when estado = "X" then 1 else 0 end) AS anulado')
+        ->first();
 
-        $flasher->addFlash('success', 'mensaje', 'Titulo', array( 'duration' => 30000));
+        $nameArr = [
+            'Pendientes',
+            'En progreso',
+            'En pausa',
+            'En revisión',
+            'En corrección',
+            'Anulado',
+            'Terminados',
+        ];
+        $valArr = [
+            $cWO->pendiente,
+            $cWO->progreso,
+            $cWO->en_pausa,
+            $cWO->revision,
+            $cWO->en_correccion,
+            $cWO->anulado,
+            $cWO->terminado,
+        ];
+        $colorArr = [
+            '#edb66a',
+            '#337AB7',
+            '#f76707',
+            '#8ebde2',
+            '#ae3ec9',
+            '#d63939',
+            '#66c474',
+        ];
 
+        $arrayData = [];
+        foreach ($nameArr as $k => $array) {
+            $arrayData[$k]['name'] = $array;
+            $arrayData[$k]['y'] = (int)$valArr[$k];
+            $arrayData[$k]['color'] = $colorArr[$k];
+        }
 
-                // Step 1: create your notification and add options
-        // $builder = $flasher->handler('toastr') // the handle() method here is optional
-        // ->type('success')
-        // ->message('your custom message')
-        // ->priority(2)
-        // ->option('timer', 5000);
-
-        // // Step2 : Store the notification in the session
-        // $builder->flash();
-
+        $jsonDataOT = json_encode($arrayData);
 
         Session::put('item','0.');
-        return view('home');
+        return view('home', compact('jsonDataOT'));
     }
 }

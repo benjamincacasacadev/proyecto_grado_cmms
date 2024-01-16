@@ -552,3 +552,13 @@ function iconoArchivos($nom_archivo, $size = '100px'){
         return '<img class="mb-2" src="/imagenes/iconoImg.svg" class="img-rounded img-responsive pull-left" style="width: '.$size.'; " alt="Sin imagen para mostdar" id="imgItem">';
     }
 }
+
+function sliderImg(){
+    $imgslider = ['01.png','02.png','03.png'];
+    foreach ($imgslider as $img){
+        if (Storage::exists('public/general/slider/'.$img)){
+            $salida[] = asset('/storage/general/slider/'.$img);
+        }
+    }
+    return $salida;
+}

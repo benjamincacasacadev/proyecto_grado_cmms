@@ -67,6 +67,7 @@ Route::get('/work_orders/deletemodal/{id}', 'WorkOrdersController@modalDelete')-
 Route::delete('/work_orders/delete/{id}','WorkOrdersController@destroy')->name('workorders.destroy');
 Route::get('/workorders/report/{id}', 'WorkOrdersController@report')->name('reports.show');
 Route::post('/work_orders/updateImage/{id}', 'WorkOrdersController@updateImage')->name('workorders.updateImage');
+Route::post('/schedule/ajax/ot', 'StScheduleController@datesAjax')->name('calendario.ots');
 
 // GUARDAR LOS INTERVALOS DE FECHAS DE LAS ORDENES DE TRABAJO
 Route::post('/work_orders/time_range/{id}', 'WorkOrdersController@timeRangeStore')->name('workorders.timeRangeStore');
