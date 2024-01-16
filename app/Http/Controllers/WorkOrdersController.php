@@ -42,8 +42,9 @@ class WorkOrdersController extends Controller
 
     public function create(){
         $users = User::where('active','1')->get();
+        $forms = StForms::get();
         Session::put('item','1.');
-        return view('work_orders.create', compact('users'));
+        return view('work_orders.create', compact('users','forms'));
     }
 
     public function store(Request $request, FlasherInterface $flasher) {

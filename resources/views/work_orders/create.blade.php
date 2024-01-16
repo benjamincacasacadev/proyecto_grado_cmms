@@ -156,8 +156,8 @@
                                     </label> <br>
                                     <select name="formulario" class="form-control selector-formulario" style="width: 100%">
                                         <option value="" data-mail="Sin usuario">Seleccionar</option>
-                                        @foreach($users as $user)
-                                            <option value="{!! code($user->id) !!}"> {{ $user->fullName }} </option>
+                                        @foreach($forms as $form)
+                                            <option value="{!! code($form->id) !!}"> {{ $form->name }} </option>
                                         @endforeach
                                     </select>
                                     <span id="formulario-error" class="text-red"></span>

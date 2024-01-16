@@ -555,6 +555,7 @@ function iconoArchivos($nom_archivo, $size = '100px'){
 
 function sliderImg(){
     $imgslider = ['01.png','02.png','03.png'];
+    $salida = [];
     foreach ($imgslider as $img){
         if (Storage::exists('public/general/slider/'.$img)){
             $salida[] = asset('/storage/general/slider/'.$img);
