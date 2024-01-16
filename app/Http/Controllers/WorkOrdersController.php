@@ -578,7 +578,6 @@ class WorkOrdersController extends Controller
 
         // Informes en revision solo pueden ser editados por los que tengan permiso de validar informes
         if($workorder->estado == 'T'){
-            toastr()->error('No se pudo realizar la acción','Incorrecto', ['positionClass' => 'toast-bottom-right']);
             return back();
         }
 
@@ -1053,6 +1052,99 @@ class WorkOrdersController extends Controller
             $nameExportPdf = $defPdf.$extPdf;
             return $pdf->stream($nameExportPdf);
         }
+    }
+
+    // =========================================================================================================
+    // =========================================================================================================
+    //                                       TIEMPOS DE TRANAJO
+    // =========================================================================================================
+    // =========================================================================================================
+    public function modalDuration(Request $request, $id){
+        $workorder = WorkOrders::findOrFail(decode($id));
+        $workTimes = $workorder->workTimes;
+        $countWoTimes = count($workorder->workTimes);
+        $woInterval = $workorder->timeElapsed;
+        return view("work_orders.modalDuration", compact('workorder','workTimes','countWoTimes','woInterval'));
+    }
+
+    // ==========================================================================================
+    //                                       ENVIAR INFORMES
+    // ==========================================================================================
+
+    public function modalSendRevision($id, $swC){
+        $workorder = WorkOrders::findOrFail(decode($id));
+        // Tiempo de trabajo
+        $arrayInterval = $workorder->timeElapsed;
+        $horas = $arrayInterval['h'];
+        $mins = $arrayInterval['m'];
+        $segs = $arrayInterval['s'];
+
+        return view("work_orders.reports.modalInformeEnviar", compact('workorder','horas','mins','segs','swC'));
+    }
+
+    public function SendRevision(FlasherInterface $flasher, $id, $swC){
+
+        $workorder = WorkOrders::findOrFail(decode($id));
+
+        // VALIDACION DE ESTADO DEL REPORTE
+        if ($workorder->estado != 'E' && $workorder->estado != 'S' && $workorder->estado != 'C' ){
+            return Redirect()->route('reports.show', ['id' => $id]);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Actualizar orden de trabajo
+            $swPause = $workorder->estado == 'S' ? '1' : '0'; // sw pause
+            $workorder->historial .= '<br><b>[Enviado por '.userFullName(userId()).']</b> en fecha '.date('d/m/Y').' a la(s) '.date('H:i').'.';
+            $workorder->estado = 'R';
+            $workorder->update();
+
+            // Tiempo de trabajo
+            if($swPause == '0'){
+                $timePendiente = $workorder->workTimes->where('end_work_date',null)->first();
+                if($timePendiente != null){
+                    $timePendiente->end_work_date = now();
+                    $timePendiente->update();
+                }
+            }
+
+            $flasher->addFlash('success', 'Enviar a revisión con éxito', 'Informe '.$workorder->cod);
+            DB::commit();
+            return Redirect()->route('reports.show', ['id' => $id]);
+        } // termina el try
+        catch (\Exception $e) {
+            DB::rollback();
+            DB::commit();
+            return  \Response::json(['alerta' => '1', 'mensaje' => $e->getMessage()]);
+
+        }
+    }
+
+    public function validateRevision(FlasherInterface $flasher, $id){
+        $workorder = WorkOrders::findOrFail(decode($id));
+        $workorder->estado = 'T';
+        $workorder->update();
+
+        $flasher->addFlash('success', 'Terminado con éxito', 'Informe '.$workorder->cod);
+        return Redirect()->route('reports.show', ['id' => $id]);
+    }
+
+    public function rejectRevision(FlasherInterface $flasher, Request $request,$id){
+        if( !isset($request->textrechazo)){
+            $contid = '__archivos__';
+            $flasher->addFlash('error', 'EL campo motivo es obligatorio', 'No permitido');
+
+            return Redirect()->route('reports.show', ['id' => $id, 'contid' => $contid]);
+        }
+
+        $workorder = WorkOrders::findorFail(decode($id));
+        $workorder->estado = 'C';
+        $workorder->historial .= '<br><b>[Rechazado por '.userFullName(userId()).']</b> en fecha '.date('d/m/Y').' a la(s) '.date('H:i').'. <b>Motivo: </b> '.$request->textrechazo;
+        $workorder->update();
+
+        $contid = '__archivos__';
+        $flasher->addFlash('error', 'Rechazado correctamente', 'Informe '.$workorder->cod);
+        return Redirect()->route('reports.show', ['id' => $id, 'contid' => $contid]);
     }
 
     public function validateWorkorders(Request $request, $id = ''){

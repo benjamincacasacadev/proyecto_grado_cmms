@@ -73,9 +73,14 @@ Route::post('/work_orders/time_range/{id}', 'WorkOrdersController@timeRangeStore
 // Iniciar temporizador de trabajo
 Route::post('/work_orders/worktime/{id}', 'WorkOrdersController@initTimeWork')->name('workorders.worktime');
 
+// Tiempos de trabajo
+Route::get('/work_orders/time/modalDuration/{id}', 'WorkOrdersController@modalDuration')->name('workorders.modalDuration');
+
 // llenar Informes
 Route::post('/work_orders/show/update/{id}', 'WorkOrdersController@updateReport')->name('workorders.updateReport');
 Route::get('/work_orders/export/{id}', 'WorkOrdersController@export')->name('workorders.pdf');
+Route::get('/work_orders/modalSendRevision/{id}/{swC}', 'WorkOrdersController@modalSendRevision')->name('reports.modalsendrevision');
+Route::put('/work_orders/send/revision/{id}/{swC?}', 'WorkOrdersController@SendRevision')->name('reports.sendrevision');
 
 // Archivos
 Route::post('/reports_tablefile', 'WorkOrdersController@tableFile')->name('reports.tableFiles');
@@ -87,6 +92,9 @@ Route::get('/reports/downloadfile/{img}/{cod}', 'WorkOrdersController@downloadFi
 Route::get('/reports/attachFile/{id}', 'WorkOrdersController@attachFile')->name('reports.attachfile');
 Route::get('/reports/deleteModalFile/{id}/{cod}', 'WorkOrdersController@modalDeleteFile')->name('reports.modalDestroyFile');
 Route::delete('/reports/deletefile/{img}/{cod}', 'WorkOrdersController@destroyFile')->name('reports.destroyFile');
+
+Route::put('/reports/reject/revision/{id}', 'WorkOrdersController@rejectRevision')->name('reports.rejectrevision');
+Route::post('/reports/validate/revision/{id}', 'WorkOrdersController@validateRevision')->name('reports.validaterevision');
 
 // ========================================================================================
 //                                   FORMULARIOS

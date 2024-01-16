@@ -821,7 +821,7 @@
                                                     $swCorrec = $workorder->estado == 'C' ? '1' : '0';
                                                 @endphp
                                                 {{-- ENVIAR INFORME A REVISION --}}
-                                                <a href="/reports/modalSendRevision/{{code($workorder->id)}}/{{$swCorrec}}" rel="modalSendReport" class="btn btn-outline-yellow btn-lg font-weight-bold border border-2 border-yellow">
+                                                <a href="/work_orders/modalSendRevision/{{code($workorder->id)}}/{{$swCorrec}}" rel="modalSendReport" class="btn btn-outline-yellow btn-lg font-weight-bold border border-2 border-yellow">
                                                     <svg class="icon icon-btn" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                         <path d="M8 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h5.697"></path>
@@ -936,8 +936,24 @@
                                     @endif
                                 @endif
 
-                                {{-- ========================================
-                                    AQUIAQUI --}}
+                                @if (isset($workorder->historial) && $workorder->historial != '')
+                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 ">
+                                        <br>
+                                        <p style="margin-bottom:0px; font-weight:bold">
+                                            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><line x1="12" y1="8" x2="12.01" y2="8" /><polyline points="11 12 12 12 12 16 13 16" /></svg>
+                                            HISTORIAL DEL INFORME
+                                        </p>
+                                        <div style="max-height: 150px; overflow-y: auto; text-align:justify;" class="text-muted">
+                                            @php
+                                                $historialShow = purify($workorder->historial);
+                                                if(str_starts_with($workorder->historial,'<br>')){
+                                                    $historialShow = purify( substr($workorder->historial, 4) );
+                                                }
+                                            @endphp
+                                            {!! $historialShow !!}
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         @else
                             No tiene campos registrados.
@@ -1045,8 +1061,16 @@
             </div>
         </div>
     </div>
+    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog"  id="modalSendReport" data-backdrop="static">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
 
     @include('work_orders.reports.modalUpdateFile')
+    @include('work_orders.reports.modalInformeRechazar')
+    @include('work_orders.reports.modalInformeValidar')
 
 @endsection
 
@@ -1651,7 +1675,7 @@
 <script>
     modalAjax("modalParamPDF","modalParamPDF","modal-body");
     // MODAL ENVIAR INFORME
-    modalAjax("modalSendReport","modalSendReport","modal-body");
+    modalAjax("modalSendReport","modalSendReport","modal-content");
     modalAjax("modalDetener","modalDetener","modal-content");
     modalAjax("modalTerminarEdicion","modalTerminarEdicion","modal-content");
 

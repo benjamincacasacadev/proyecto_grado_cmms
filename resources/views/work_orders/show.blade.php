@@ -191,13 +191,13 @@ $routeAttach = storage_path('app/public/workorders/'.$workorder->attach);
                                 </td>
                             </tr>
 
-                            @if (isset($workorder->description_state))
+                            @if (isset($workorder->historial))
                                 <tr>
                                     <td class="font-weight-bold">Historial</td>
                                     <td style="max-height: 200px; overflow-y: auto;">
                                         <div style="max-height: 200px; overflow-y: auto; text-align:justify; font-size:12px">
                                             @php
-                                                $historial = substr($workorder->description_state,4)
+                                                $historial = substr($workorder->historial,4)
                                             @endphp
                                             {!! purify(nl2br($historial)) !!}
                                         </div>
@@ -325,7 +325,7 @@ $routeAttach = storage_path('app/public/workorders/'.$workorder->attach);
                                 &nbsp;&nbsp; &nbsp; <input type="checkbox" class="cambioarchivo2" name="cambioarchivo" value="1" checked>
                             </h3>
                             @endif
-                            @if($workorder->state != '3' && $workorder->state != 'X')
+                            @if($workorder->estado != 'T' && $workorder->estado != 'X')
                                 {{Form::Open(array('action'=>array('WorkOrdersController@updateImage',code($workorder->id)),'method'=>'POST','autocomplete'=>'off','id'=>'formAttachOrdenTrabajo'))}}
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
                                         <div class="text-center font-wight-bold" style="font-size:20px;" id="{{(!isset($workorder->requests))? 'div_info' : ''}}">
@@ -403,6 +403,13 @@ $routeAttach = storage_path('app/public/workorders/'.$workorder->attach);
     </div>
 </div>
 
+{{-- modal duration --}}
+<div class="modal modalPrimary fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modalDuration" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
 
 @endsection
 
