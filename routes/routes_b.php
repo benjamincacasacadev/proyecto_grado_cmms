@@ -65,9 +65,17 @@ Route::get('/work_orders/editmodal/{id}', 'WorkOrdersController@modalEdit')->nam
 Route::post('/work_orders/update/{id}', 'WorkOrdersController@update')->name('workorders.update');
 Route::get('/work_orders/deletemodal/{id}', 'WorkOrdersController@modalDelete')->name('workorders.deletemodal');
 Route::delete('/work_orders/delete/{id}','WorkOrdersController@destroy')->name('workorders.destroy');
+Route::get('/workorders/report/{id}', 'WorkOrdersController@report')->name('reports.show');
+Route::post('/work_orders/updateImage/{id}', 'WorkOrdersController@updateImage')->name('workorders.updateImage');
+
+// GUARDAR LOS INTERVALOS DE FECHAS DE LAS ORDENES DE TRABAJO
+Route::post('/work_orders/time_range/{id}', 'WorkOrdersController@timeRangeStore')->name('workorders.timeRangeStore');
+// Iniciar temporizador de trabajo
+Route::post('/work_orders/worktime/{id}', 'WorkOrdersController@initTimeWork')->name('workorders.worktime');
+
 
 // ========================================================================================
-//                                   ORDENES DE TRABAJO
+//                                   FORMULARIOS
 // ========================================================================================
 Route::get('/forms', 'StFormController@index')->name('forms.index');
 Route::post('/table_forms', 'StFormController@tableForms')->name('forms.table');

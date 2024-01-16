@@ -5,6 +5,8 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use DB;
+use Carbon\CarbonInterval;
+use Carbon\CarbonPeriod;
 class WorkOrders extends Model
 {
     // ======================================================================================================
@@ -15,9 +17,18 @@ class WorkOrders extends Model
         return $this->belongsTo(StAssets::class, 'asset_id');
     }
 
+    public function attachesReport() {
+        return $this->hasMany(StAttach::class,'work_order_id');
+    }
+
     public function usuarios(){
         return $this->belongsToMany('App\User')->withPivot('responsable');
     }
+
+    public function forms(){
+        return $this->belongsTo(StForms::class, 'form_id');
+    }
+
     public function pivotWO(){
         return $this->belongsToMany(User::class,'user_work_orders','work_orders_id','user_id')->orderBy('responsable','desc');
     }
@@ -28,6 +39,16 @@ class WorkOrders extends Model
     // RELACION DE MUCHOS A MUCHOS CON USUARIOS RESPONSABLES
     public function pivotUsersNoResponsables(){
         return $this->belongsToMany(User::class,'user_work_orders','work_orders_id','user_id')->withPivot('responsable')->wherePivot('responsable','0');
+    }
+
+    public function workTimes() {
+        return $this->hasMany(WoTime::class,'work_order_id');
+    }
+    public function lastWorkTimes() {
+        return $this->hasOne(WoTime::class,'work_order_id')->latest();
+    }
+    public function firstWorkTimes() {
+        return $this->hasOne(WoTime::class,'work_order_id')->oldest();
     }
 
     // ======================================================================================================
@@ -48,48 +69,56 @@ class WorkOrders extends Model
                 $estado0 = "Pendiente";
                 $estado1 = '<span class="status-icon '.$classColor.'"></span> <b class="'.$classColor.'">'.$estado0.'</b>';
                 $estado2 = '#edb66a';
+                $estado6 = '<span class="text-yellow" style="font-weight: 500"><i class="fas fa-exclamation-circle fa-lg"></i>&nbsp;'.$estado0.'</span>';
             break;
             case 'E':
                 $classColor = 'text-azure';
                 $estado0 = "En progreso";
                 $estado1 = '<span class="status-icon '.$classColor.'"></span> <b class="blink_me2 '.$classColor.'">'.$estado0.'</b>';
                 $estado2 = '#337AB7';
+                $estado6 = '<span class="text-primary"><i class="fa fa-spinner fa-lg fa-spin"></i></span> <span class="text-primary"> &nbsp;<b>'.$estado0.'</b></span>';
             break;
             case 'R':
                 $classColor = 'text-cyan';
                 $estado0 = "En revisión";
                 $estado1 = '<span class="status-icon '.$classColor.'"></span> <b class="'.$classColor.'">'.$estado0.'</b>';
                 $estado2 = '#8ebde2';
+                $estado6 = '<span class="text-primary" style="font-weight:500;"><i class="fas fa-paper-plane fa-lg"></i> &nbsp;'.$estado0.'</span>';
             break;
             case 'T':
                 $classColor = 'text-teal';
                 $estado0 = "Terminado";
                 $estado1 = '<span class="status-icon '.$classColor.'"></span> <b class="'.$classColor.'">'.$estado0.'</b>';
                 $estado2 = '#66c474';
+                $estado6 = '<span class="text-green" style="font-weight:500;"><i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;'.$estado0.'</span>';
             break;
             case 'S':
                 $classColor = 'text-orange';
                 $estado0 = "En pausa";
                 $estado1 = '<span class="status-icon '.$classColor.'"></span> <b class="'.$classColor.'">'.$estado0.'</b>';
                 $estado2 = '#f76707';
+                $estado6 = '<span class="text-yellow" style="font-weight: 500"><i class="fas fa-exclamation-circle fa-lg"></i>&nbsp;'.$estado0.'</span>';
                 break;
             case 'C':
                 $classColor = 'text-purple';
                 $estado0 = "En corrección";
                 $estado1 = '<i class="status-icon '.$classColor.'"></i> <b class="'.$classColor.'">'.$estado0.'</b>';
                 $estado2 = '#ae3ec9';
+                $estado6 = '<span class="text-purple" style="font-weight: 500"><i class="fas fa-cog fa-lg"></i>&nbsp;'.$estado0.'</span>';
             break;
             case 'X':
                 $classColor = 'text-red';
                 $estado0 = "Anulado";
                 $estado1 = '<span class="status-icon '.$classColor.'"></span> <b class="'.$classColor.'">'.$estado0.'</b>';
                 $estado2 = '#d63939';
+                $estado6 = '<span class="text-red" style="font-weight:500;"><i class="fa fa-ban fa-lg"></i> &nbsp;'.$estado0.'</span>';
             break;
             default:
                 $classColor = 'text-muted';
                 $estado0 = "Desconocido";
                 $estado1 = '<span class="status-icon text-muted"></span><span class="text-muted">Desconocido</span>';
                 $estado2 = '#888f96';
+                $estado6 = $estado1;
             break;
         }
 
@@ -105,6 +134,7 @@ class WorkOrders extends Model
             case '2':   return $estado2;    break;
             case '3':   return $estado3;    break;
             case '4':   return $estado4;    break;
+            case '6':   return $estado6;    break;
         }
     }
 
@@ -259,6 +289,41 @@ class WorkOrders extends Model
     public function getCanEditAttribute(){
         return $this->estado == 'P' && permisoAdmin();
     }
+
+        //  Accessor para obtener el tiempo de inicio de un ot
+        public function getTimeElapsedAttribute(){
+            $arrayTime['h'] = $arrayTime['m'] = $arrayTime['s'] = 0;
+            $interval = CarbonInterval::createFromFormat('H:i:s', '00:00:00');
+
+            if(count($this->workTimes) > 0){
+                $firstTime = $this->StartTime;
+
+                foreach($this->workTimes->where('end_work_date','!=',null) as $wotime){
+                    if(isset($wotime->init_work_date) && isset($wotime->end_work_date)){
+                        $firstTime = $wotime->init_work_date;
+                        $lastTime = $wotime->end_work_date;
+                        $difSegundos = Carbon::parse($lastTime)->floatDiffInSeconds($firstTime);
+                        $interval->addSeconds($difSegundos)->cascade();
+                    }
+                }
+                $workTimeInit =  $this->workTimes->where('end_work_date',null)->first();
+                if($workTimeInit != null){
+                    $firstTime = $workTimeInit->init_work_date;
+                    $lastTime = Carbon::now();
+                    $difSegundos = Carbon::parse($lastTime)->floatDiffInSeconds($firstTime);
+                    $interval->addSeconds($difSegundos)->cascade();
+                }
+            }
+            if(isset($interval)){
+
+                $horas = intVal($interval->totalHours);
+                $arrayTime['h'] += "".$horas;
+                $arrayTime['m'] += $interval->minutes;
+                $arrayTime['s'] += $interval->seconds;
+                $arrayTime['interval'] = $interval;
+            }
+            return $arrayTime;
+        }
 
     // ======================================================================================================
     //                                                   SCOPES

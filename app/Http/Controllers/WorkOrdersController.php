@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\StForms;
 use App\User;
 use App\WorkOrders;
+use App\WoTime;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Flasher\Prime\FlasherInterface;
@@ -20,6 +22,16 @@ class WorkOrdersController extends Controller
         $users = User::where('active','1')->get();
         Session::put('item','1.');
         return view('work_orders.index', compact('users','selectEstado'));
+    }
+
+    public function show(Request $request, $id){
+        $workorder = WorkOrders::where('id',decode($id))->with('asset.cliente')->first();
+        if(!isset($workorder)){
+            abort(404);
+        }
+        $users = User::where('active','1')->get();
+        Session::put('item','1.');
+        return view('work_orders.show', compact('workorder'));
     }
 
     public function create(){
@@ -41,7 +53,7 @@ class WorkOrdersController extends Controller
             $workorder = new WorkOrders();
             $workorder->cod = $cod;
             $workorder->asset_id = decode($request->activo);
-            $workorder->form_id = $request->formulario;
+            $workorder->form_id = decode($request->formulario);
             $workorder->titulo = $request->titulo;
             $workorder->fecha = $fechaSave;
             $workorder->prioridad = $request->prioridad;
@@ -159,11 +171,12 @@ class WorkOrdersController extends Controller
 
     public function modalEdit(Request $request, $id){
         $workorder = WorkOrders::findOrFail(decode($id));
+        $forms = StForms::get();
         if(!$workorder->canEdit){
             abort(403);
         }
         $users = User::where('active','1')->get();
-        return view('work_orders.modalEdit', compact('workorder','users'));
+        return view('work_orders.modalEdit', compact('workorder','users','forms'));
     }
 
     public function update(Request $request, FlasherInterface $flasher, $id) {
@@ -175,12 +188,13 @@ class WorkOrdersController extends Controller
         try {
             $workorder = WorkOrders::findOrFail(decode($id));
             $workorder->asset_id = decode($request->activo);
-            $workorder->form_id = $request->formulario;
+            $workorder->form_id = decode($request->formulario);
             $workorder->titulo = $request->titulo;
             $workorder->fecha = $fechaSave;
             $workorder->prioridad = $request->prioridad;
             $workorder->descripcion = $request->descripcion;
             $workorder->emergencia = $request->emergency;
+
             $workorder->update();
 
             // Buscar y eliminar técnicos duplicados
@@ -243,6 +257,147 @@ class WorkOrdersController extends Controller
 
         $flasher->addFlash('error', 'Eliminada correctamente', 'Orden de trabajo '.$workorder->cod);
         return redirect()->route('workorders.index');
+    }
+
+    public function updateImage(Request $request, FlasherInterface $flasher, $id){
+        $messages = [
+            'fileWO.required' => 'Debe adjuntar un archivo',
+            'fileWO.mimes' => 'El archivo debe estar en algunos de los siguientes formatos:<br><p class="text-center"><b>gif, jpg, jpeg, png</b></p>',
+            'fileWO.max' => "El archivo a subir es muy grande. El tamaño máximo admitido es de 5 MB (5192 KB).",
+        ];
+
+        $validateArray = [
+            'fileWO' => 'required|mimes:gif,jpg,jpeg,png,pdf,mp4|max:5192'
+        ];
+        $request->validate($validateArray,$messages);
+        $workorder = WorkOrders::findOrFail(decode($id));
+
+        // VALIDACION DE ESTADO TERMINADO Y ANULADO
+        if ($workorder->state == '3' || $workorder->state == 'X'){
+            $msjError= 'No puede subir el archivo la <b> orden de trabajo </b> tiene estado '.$workorder->getEstado(0);
+            return  \Response::json(['alerta' => '1','mensaje' => $msjError]);
+        }
+        // ALMACENAMIENTO DEL ARCHIVO
+        if ($request->hasFile('fileWO')) {
+            $rutaborrar = 'public/workorders/'.$workorder->attach;
+            if (Storage::exists($rutaborrar)){
+                Storage::delete($rutaborrar);
+            }
+            $archivo = $request->file('fileWO');
+            $ext = $archivo->getClientOriginalExtension();
+            $ext = strtolower($ext);
+            $nombre = $archivo->getClientOriginalName();
+            $nombre = delete_charspecial($nombre);
+            $workorder->attach = $workorder->cod . '_' . strtolower($nombre);
+            $archivo->storeAs("public/workorders/", $workorder->attach);
+            if($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'png'){
+                $size = getimagesize($archivo);
+                if($size[0]<=1024 && $size[1]<=1024){
+                    InterventionImage::make($archivo)->resize(function ($constraint){
+                        $constraint->aspectRatio();
+                    })->save(storage_path().'/app/public/workorders/'.$workorder->attach, 90);
+                }else{
+                    InterventionImage::make($archivo)->resize(1024,1024, function ($constraint){
+                        $constraint->aspectRatio();
+                    })->save(storage_path().'/app/public/workorders/'.$workorder->attach, 80);
+                }
+            }
+        }
+        $workorder->update();
+        $flasher->addFlash('info', 'Modificada con éxito', 'Imagen de '.$workorder->cod);
+        return  \Response::json(['success' => '1']);
+    }
+
+    public function report(Request $request, $id){
+        $workorder = WorkOrders::findOrFail(decode($id));
+
+        $formulario = $workorder->forms;
+
+        $form = isset($formulario->maintenance) ? $formulario->maintenance : [];
+        $containers = collect($formulario->containers)->sortBy('orden');
+        $campos_carta = $formulario->letter;
+        $check_formCarta = $formulario->check_letter;
+
+        $datosguardados = $workorder->info_general;
+        $tecnicos = User::where('active',1)->orderBy('ap_paterno','asc')->get();
+
+        // Cantidad de archivos adjuntos del informe
+        $archivos = $workorder->attachesReport;
+        $totalArchivos = $archivos->count();
+
+        // Tiempo de trabajo
+        $arrayInterval = $workorder->timeElapsed;
+
+        $horas = $arrayInterval['h'];
+        $mins = $arrayInterval['m'];
+        $segs = $arrayInterval['s'];
+
+
+        Session::put('item','1.');
+        $vista = isset($formulario->custom_template) ? 'st.reports.custom_templates.'.$formulario->custom_template : 'st.reports.show';
+        return view('work_orders.report', compact('workorder','formulario','form','containers','datosguardados','check_formCarta','campos_carta','tecnicos','horas','mins','segs','totalArchivos'));
+    }
+
+    public function initTimeWork(FlasherInterface $flasher, $id){
+        $workorder = WorkOrders::findOrFail(decode($id));
+        if ($workorder->estado != 'P' ){
+            return Redirect()->route('reports.show', ['id' => $id]);
+        }
+        $workorder->init_work_date = now();
+        $workorder->estado = 'E';
+        $workorder->update();
+        // GUARDANDO EL INICIO DEL TRABAJO
+        $woTime = new WoTime();
+        $woTime->work_order_id = $workorder->id;
+        $woTime->init_work_date = now();
+        $woTime->save();
+
+        $flasher->addFlash('success', 'Iniciado correctamente', 'Tiempo de trabajo');
+        return Redirect()->route('reports.show', ['id' => $id]);
+    }
+
+    public function timeRangeStore(Request $request, FlasherInterface $flasher, $id){
+        $workorder = WorkOrders::findOrFail(decode($id));
+        $fechaActual = Carbon::now();
+        if($request->sw == 1){
+            if ($workorder->estado != 'E'){
+                return  \Response::json(['alerta' => '1']);
+            }
+            $wotime =  $workorder->workTimes->where('end_work_date',null)->first();
+            if($wotime != null && $wotime->init_work_date->lt($fechaActual) ){
+                $wotime->end_work_date = $fechaActual->subSeconds(1);
+                $wotime->description = $request->motivo;
+                $wotime->update();
+
+                $workorder->estado = 'S';
+                $workorder->update();
+
+                $estado = $workorder->getEstado(6);
+                $flasher->addFlash('info', 'Orden de trabajo en pausa', 'CAMBIO DE ESTADO');
+                return  \Response::json(['success' => '1','estado' => $estado]);
+            }else{
+                $msjError = 'No se guardo la fecha';
+                return  \Response::json(['alerta' => '2', 'mensaje' => $msjError]);
+            }
+        }elseif($request->sw == 2){
+            if ($workorder->estado != 'S'){
+                return  \Response::json(['alerta' => '1']);
+            }
+            // TIEMPO TRANSCURRIDO DE TRABAJO
+            $arrayTime = $workorder->timeElapsed;
+            $woTime = new WoTime();
+            $woTime->work_order_id = $workorder->id;
+            $woTime->init_work_date = now();
+            $woTime->save();
+            // PONER EN PROGRESO LA OT Y EL REPORTE
+            $workorder->estado = 'E';
+            $workorder->update();
+
+
+            $estado = $workorder->getEstado(6);
+            $flasher->addFlash('info', 'Orden de trabajo en progreso', 'CAMBIO DE ESTADO');
+            return  \Response::json(['success' => '2','arrayTime' =>$arrayTime,'estado' =>$estado]);
+        }
     }
 
     public function validateWorkorders(Request $request, $id = ''){

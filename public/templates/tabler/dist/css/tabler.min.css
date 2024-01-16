@@ -6585,6 +6585,30 @@ fieldset:disabled .btn {
 .border-yellow {
     border-color: #f59f00 !important
 }
+.border-orange {
+    border-color: #f76707 !important
+}
+.border-teal{
+    border-color: #13a77b !important;
+}
+.border-cyan{
+    border-color: #17a2b8 !important;
+}
+.border-lime{
+    border-color: #74b816 !important;
+}
+.border-pink{
+    border-color: #d6336c !important;
+}
+.border-purple{
+    border-color: #ae3ec9 !important;
+}
+
+.icon-xl {
+    width: 4.5rem !important;
+    height: 4.5rem !important;
+    stroke-width: 1
+}
 /*  */
 
 .border-1 {
