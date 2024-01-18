@@ -6,9 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvStocks extends Model
 {
-    public function locations() {
-        return $this->belongsTo(InvParameters::class,'location');
-    }
     public function items() {
         return $this->belongsTo(Inventory::class,'item_id');
     }
@@ -125,6 +122,16 @@ class InvStocks extends Model
                     <line x1="16" y1="12" x2="12" y2="16"></line>
                 </svg>';
         }
+    }
+
+    public function getAlmacenLiteralAttribute(){
+        switch ($this->location) {
+            case '1': return 'Edificio Arcadia';    break;
+            case '2': return 'El Alto'; break;
+            case '3': return 'Gramadal';    break;
+            case '4': return 'Edifico técnico'; break;
+        }
+        return '';
     }
 
     public function scopeInvRangeDate($query,$start,$final, $type){

@@ -173,3 +173,7 @@ Route::post('/inventory/update/{id}', 'InventoryController@update')->name('inven
 Route::get('/inventory/deletemodal/{id}', 'InventoryController@modalDelete')->name('inventory.deletemodal');
 Route::delete('/inventory/destroy/{id}', 'InventoryController@destroy')->name('inventory.destroy');
 Route::post('/inventory/updateImage/{id}', 'InventoryController@updateImage')->name('inventory.updateImage'); // Update imagen
+
+// KARDEX (SHOW)
+Route::get('/inventory/kardex/{id}', 'InventoryController@kardex')->name('inventory.kardex');
+Route::post('/inventory/details/table', 'InventoryController@tableKardexDetails')->name('inventory.details.table');

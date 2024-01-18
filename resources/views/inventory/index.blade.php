@@ -62,61 +62,64 @@
 @endsection
 
 @section ('contenido')
-
-    {!! Form::open(['route'=>'inventory.index','method'=>'GET', 'role'=>'search', 'id'=>'formFilterOT']) !!}
-    <div class="row mb-3 me-1">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="pull-right">
-                <div class="form-inline"  >
-                    <div class="form-group">
-                        <div class="divEstado pull-right" >
-                            <select class="form-control selectEstado" name="selectEstado" style=" margin-right:-10px; width:192px;">
-                                <option @if ($selectEstado=="all" ) {{ 'selected' }} @endif value="all">Todos</option>
-                                <option @if ($selectEstado=="1" ) {{ 'selected' }} @endif value="1">Activos</option>
-                                <option @if ($selectEstado=="0" ) {{ 'selected' }} @endif value="0">Inactivos</option>
-                            </select>
+<div class="card">
+    <div class="card-body">
+        {!! Form::open(['route'=>'inventory.index','method'=>'GET', 'role'=>'search', 'id'=>'formFilterOT']) !!}
+        <div class="row mb-3 me-1">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="pull-right">
+                    <div class="form-inline"  >
+                        <div class="form-group">
+                            <div class="divEstado pull-right" >
+                                <select class="form-control selectEstado" name="selectEstado" style=" margin-right:-10px; width:192px;">
+                                    <option @if ($selectEstado=="all" ) {{ 'selected' }} @endif value="all">Todos</option>
+                                    <option @if ($selectEstado=="1" ) {{ 'selected' }} @endif value="1">Activos</option>
+                                    <option @if ($selectEstado=="0" ) {{ 'selected' }} @endif value="0">Inactivos</option>
+                                </select>
+                            </div>
+                            <span class="pull-right font-weight-bold" style="margin-top: 8px;">Estado:&nbsp;&nbsp; </span>
                         </div>
-                        <span class="pull-right font-weight-bold" style="margin-top: 8px;">Estado:&nbsp;&nbsp; </span>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    {{ Form::close() }}
+        {{ Form::close() }}
 
-    <div class="table-responsive">
-        <table class="table table-vcenter table-center table-sm table-hover" id="table_inventory">
-            <thead>
-                <tr>
-                    <th width="8%">Código</th>
-                    <th width="15%">Item</th>
-                    <th width="25%">Descripción</th>
-                    <th width="10%">Cantidad</th>
-                    <th width="10%">Cantidad mínima</th>
-                    <th width="15%">Unidad</th>
-                    <th width="15%">Estado</th>
-                    <th width="8%">Op.</th>
-                </tr>
-            </thead>
-            <thead role="row">
-                <tr class="filters">
-                    <td><input style="width: 100%;font-size:10px" id="inven0" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="codb"/></td>
-                    <td><input style="width: 100%;font-size:10px" id="inven1" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="itemb"/></td>
-                    <td><input style="width: 100%;font-size:10px" id="inven2" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="descripcionb"/></td>
-                    <td><input style="width: 100%;font-size:10px" id="inven3" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="cantb"/></td>
-                    <td><input style="width: 100%;font-size:10px" id="inven4" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="cantminb"/></td>
-                    <td><input style="width: 100%;font-size:10px" id="inven5" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="unidadb"/></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-vcenter table-center table-sm table-hover" id="table_inventory">
+                <thead>
+                    <tr>
+                        <th width="8%">Código</th>
+                        <th width="15%">Item</th>
+                        <th width="25%">Descripción</th>
+                        <th width="10%">Cantidad</th>
+                        <th width="10%">Cantidad mínima</th>
+                        <th width="15%">Unidad</th>
+                        <th width="15%">Estado</th>
+                        <th width="8%">Op.</th>
+                    </tr>
+                </thead>
+                <thead role="row">
+                    <tr class="filters">
+                        <td><input style="width: 100%;font-size:10px" id="inven0" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="codb"/></td>
+                        <td><input style="width: 100%;font-size:10px" id="inven1" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="itemb"/></td>
+                        <td><input style="width: 100%;font-size:10px" id="inven2" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="descripcionb"/></td>
+                        <td><input style="width: 100%;font-size:10px" id="inven3" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="cantb"/></td>
+                        <td><input style="width: 100%;font-size:10px" id="inven4" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="cantminb"/></td>
+                        <td><input style="width: 100%;font-size:10px" id="inven5" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="unidadb"/></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
 
-        <input class="hidden" type="text" name="tipoExport" id="tipoExport">
-        <input class="hidden" type="text" name="estadob" />
+            <input class="hidden" type="text" name="tipoExport" id="tipoExport">
+            <input class="hidden" type="text" name="estadob" />
+        </div>
     </div>
+</div>
 
     {{-- Modal Crear --}}
     <div class="modal modalPrimary fade modal-slide-in-right" aria-hidden="true" role="dialog"  id="modalCreate" data-backdrop="static">

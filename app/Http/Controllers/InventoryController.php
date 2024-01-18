@@ -321,4 +321,74 @@ class InventoryController extends Controller
 
         return redirect()->route('inventory.index');
     }
+
+        // ===============================================================================
+    //                                    KARDEX
+    // ===============================================================================
+    public function kardex($id){
+        $item = Inventory::findOrFail(decode($id));
+        $qrcode  = "Nombre: ".$item->title."\r\nCodigo fungible: ".$item->cod;
+        $qrcode .= "\r\nCantidad disponible: ".number_format($item->TotalItem,2,".","");
+        $details = InvStocks::selectRaw("*, SUM(incomes) as ingresos, SUM(outcomes) as egresos")->where('item_id',$item->id)->groupBy('location')->get();
+
+
+        Session::put('item','4.0:1|');
+        return view("inventory.kardex", compact('item','qrcode','details'));
+    }
+
+    public function tableKardexDetails(Request $request){
+        $item = $request->get('item');
+        $totalData = InvStocks::where('item_id',decode($item))->groupBy('location')->count();
+
+        $totalFiltered = $totalData;
+        $limit =( empty($request->input('length'))  ) ? $limit = 10 : $limit = $request->input('length');
+        $start =( empty($request->input('start'))  ) ? $start = 0 :  $start = $request->input('start');
+
+        $posts = InvStocks::where('item_id',decode($item));
+        $totalFiltered=$posts->count();
+        $posts=$posts
+        ->offset($start)
+        ->limit($limit)
+        ->orderBy('date','asc')
+        ->get();
+
+        $balance = $val_balance = 0;
+        $last = '';
+        $data = array();
+        foreach ($posts as $k=>$post) {
+            $balance += $post->incomes;
+            $balance -= $post->outcomes;
+            $debit = $post->incomes*$post->unit_cost;
+            $credit = $post->outcomes*$post->unit_cost;
+            $val_balance += $debit;
+            $val_balance -= $credit;
+
+            $nestedData['orden'] = ++$k;
+            $nestedData['date'] = isset($post->date) ? date("d/m/Y",strtotime($post->date)) : "";
+            $nestedData['in'] = $post->getIn();
+            $nestedData['out'] = $post->getOut();
+            $nestedData['balance'] = number_format($balance,2,'.','');
+            $nestedData['origin'] = $post->getOrigenLink();
+            $nestedData['location'] = $post->almacenLiteral;
+            // Datos de kardex valorado
+            $nestedData['indicator'] = $post->getIndicatorKardex($last);
+            $nestedData['unit_cost'] = number_format($post->unit_cost,2,'.',',');
+            $nestedData['debit'] = ($debit > 0) ?  '<span class="text-teal">'.number_format($debit,2,'.',',').'</span>' : number_format($debit,2,'.',',');
+            $nestedData['credit'] = ($credit > 0) ?   '<span class="text-pink">'.number_format($credit,2,'.',',').'</span>': number_format($credit,2,'.',',');
+            $nestedData['val_balance'] = '<b class="text-yellow">'.number_format($val_balance,2,'.',',').'</b>';
+
+            $last = round($post->unit_cost,2);
+
+            $data[] = $nestedData;
+        }
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data,
+            );
+
+        echo json_encode($json_data);
+    }
+
 }
