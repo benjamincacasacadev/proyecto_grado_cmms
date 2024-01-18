@@ -154,3 +154,22 @@ Route::get('/forms/series/modalcreate/{id}', 'StFormController@modalCreateSerie'
 Route::post('/forms/storeSerie/{id}', 'StFormController@storeSerie')->name('forms.serie.store');
 
 Route::post('/storeletter/{id}', 'StFormController@storeLetter')->name('letter.store');
+
+
+// ========================================================================================
+//                                      INVENTARIO
+// ========================================================================================
+Route::get('/inventory', 'InventoryController@index')->name('inventory.index');
+Route::post('/inventory/table', 'InventoryController@tableInventory')->name('inventory.table');
+Route::get('/inventory/imagemodal/{id}/{sw}', 'InventoryController@modalImage')->name('inventory.imagemodal');
+// ITEMS MODAL
+Route::get('/items/modal/', 'InventoryController@modalItems')->name('items.modalitems');
+Route::post('/items/table', 'InventoryController@tableItems')->name('items.table');
+Route::get('/inventory/createmodal', 'InventoryController@modalCreate')->name('inventory.createmodal');
+Route::post('/inventory/store', 'InventoryController@store')->name('inventory.store');
+Route::get('/items/state/{id}/{estado}', 'InventoryController@changeStatus')->name('inventory.changestatus');
+Route::get('/inventory/editmodal/{id}', 'InventoryController@modalEdit')->name('inventory.editmodal');
+Route::post('/inventory/update/{id}', 'InventoryController@update')->name('inventory.update');
+Route::get('/inventory/deletemodal/{id}', 'InventoryController@modalDelete')->name('inventory.deletemodal');
+Route::delete('/inventory/destroy/{id}', 'InventoryController@destroy')->name('inventory.destroy');
+Route::post('/inventory/updateImage/{id}', 'InventoryController@updateImage')->name('inventory.updateImage'); // Update imagen

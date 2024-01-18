@@ -563,3 +563,8 @@ function sliderImg(){
     }
     return $salida;
 }
+
+function monedaVal($valor){
+    $numero=floatval(str_replace(",","",$valor));
+    return $numero;
+}
