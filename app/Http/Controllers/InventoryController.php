@@ -391,4 +391,76 @@ class InventoryController extends Controller
         echo json_encode($json_data);
     }
 
+        // ===================================================================================================
+    //                                 MODAL Y TABLA PARA SELECCIONAR ITEMS
+    // ===================================================================================================
+    public function modalItems(){
+        return view("inventory.modalItems");
+    }
+
+    public function tableItems(Request $request){
+        $columns = array(
+            0 => 'cod',
+            1 => 'name',
+            2 => 'state',
+            3 => 'operations',
+        );
+        $totalData = Inventory::where('active',1)->count();
+        $totalFiltered = $totalData;
+
+        $limit =( empty($request->input('length'))  ) ? $limit = 10 : $limit = $request->input('length');
+        $start =( empty($request->input('start'))  ) ? $start = 0 :  $start = $request->input('start');
+        $order =( empty($request->input('order.0.column')) ) ? $order = 'id' : $order = $columns[$request->input('order.0.column')];
+        $dir = ( empty($request->input('order.0.dir')) ) ? $dir = 'desc' : $dir = $request->input('order.0.dir');
+
+        $search = $request->input('search.value');
+        $posts = Inventory::where('active',1)
+        ->where(function ($q) use ($search){
+            $q->where('cod','LIKE',"%{$search}%")
+            ->orwhere('title','LIKE',"%{$search}%")
+            ->orwhere('quantity','LIKE',"%{$search}%");
+        });
+
+        $totalFiltered=$posts->count();
+        $posts=$posts
+        ->offset($start)
+        ->limit($limit)
+        ->orderBy($order,$dir)
+        ->get();
+
+        $data = array();
+        foreach ($posts as $post){
+
+            $routeAttach = storage_path('app/public/inventory/'.$post->attach);
+            if (isset($post->attach) && file_exists($routeAttach))
+                $imagen =
+                '<a href="/storage/inventory/'.$post->attach.'" target="_blank">
+                    <img src="/storage/inventory/thumbnail/'.$post->attach.'" style="max-width:45px" alt="Sin imagen para mostrar">
+                </a>';
+            else
+                $imagen = '<img src="/storage/thumbnail/noimage.png" style="max-width: 45px;" >';
+
+            $datos=
+            "<span >
+                <span style='color:#A6ACAF;'>Código: <span class='text-primary'>".$post->getCod()."</span><br>
+                <span style='color:#A6ACAF;'>Item: </span><span class='text-dark'>".$post->title."</span><br>
+                <span style='color:#A6ACAF;'>Cantidad Disponible: </span><span class='text-dark font-weight-bold' style='font-size:15px'>".$post->getQuantity()."</span>
+            </span>";
+
+            $class = $post->quantity == 0 ? 'danger' : 'primary';
+            $boton = '<button type="button" class="modalbtn btn border border-'.$class.' btn-outline-'.$class.'" data-cod="'.$post->cod.' - '.$post->title.'" id="'.code($post->id).'" data-cant="'.$post->quantity.'" >Seleccionar</button>';
+            $nestedData['imagen'] = $imagen;
+            $nestedData['datos'] = $datos;
+            $nestedData['button'] = $boton;
+            $data[] = $nestedData;
+        }
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+            );
+        echo json_encode($json_data);
+    }
+
 }

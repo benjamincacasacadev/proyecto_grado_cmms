@@ -96,9 +96,8 @@ class InvIncomesController extends Controller
 
     public function show($id){
         $income = InvIncomes::findOrFail(decode($id));
-        $params = InvParameters::where('empresa_id',empresaId())->get();
         Session::put('item','4.2:');
-        return view("inventory.incomes.show", compact('income','params'));
+        return view("inventory.incomes.show", compact('income'));
     }
 
     public function modalEdit($id){

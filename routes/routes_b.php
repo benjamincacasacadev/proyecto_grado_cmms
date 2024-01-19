@@ -191,3 +191,20 @@ Route::get('/incomes/editmodal/{id}', 'InvIncomesController@modalEdit')->name('i
 Route::post('/incomes/update/{id}', 'InvIncomesController@update')->name('incomes.update');
 Route::get('/incomes/deletemodal/{id}', 'InvIncomesController@modalDelete')->name('incomes.deletemodal');
 Route::delete('/incomes/delete/{id}', 'InvIncomesController@destroy')->name('incomes.destroy');
+
+// Detalles de ingreso
+Route::get('/incomes/statemodal/{id}', 'InvIncomesController@modalState')->name('incomes.statemodal');
+Route::post('/incomes/state/{id}', 'InvIncomesController@updateState')->name('incomes.state');
+
+Route::post('/incomes/details/store/{id}', 'InvIncomesDetailsController@storeDetails')->name('incomes.details.store');
+Route::get('/incomes/details/editmodal/{id}/{sw}', 'InvIncomesDetailsController@modalEdit')->name('incomes.details.editmodal');
+Route::post('/incomes/details/update/{id}', 'InvIncomesDetailsController@updateDetails')->name('incomes.details.update');
+Route::get('/incomes/details/deletemodal/{id}/{sw}', 'InvIncomesDetailsController@modalDelete')->name('incomes.details.deletemodal');
+Route::delete('/incomes/details/destroy/{id}', 'InvIncomesDetailsController@destroyDetails')->name('incomes.details.destroy');
+Route::get('/incomes/details/order', 'InvIncomesDetailsController@order')->name('incomes.details.order');
+
+// ITEMS MODAL
+Route::get('/items/modal/', 'InventoryController@modalItems')->name('items.modalitems');
+Route::post('/items/table', 'InventoryController@tableItems')->name('items.table');
+Route::get('/incomes/items/modal/', 'InvIncomesDetailsController@modalItems')->name('items.incomes.modalitems'); // Create transfers
+Route::post('/items/incomes/table', 'InvIncomesDetailsController@tableItemsEdit')->name('items.incomes.table');
