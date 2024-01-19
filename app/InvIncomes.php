@@ -19,33 +19,11 @@ class InvIncomes extends Model
     }
 
     public function getOrigin(){
-        return isset($this->origin_id) ? $this->getCodOrigin() : $this->origin;
-    }
-
-    public function getCodOrigin(){
-        if(permisoAdmin())
-            return '<b style="font-size:11px">Orden de compra</b><br><a href="/purchase_orders/'.code($this->origin_id).'" target="_blank">'.$this->purchase->cod.'</a>';
-        else
-            return '<b style="font-size:11px">Orden de compra</b><br>'.$this->purchase->cod;
+        return $this->origin;
     }
 
     public function getCantDetails(){
         return isset($this->details) ? $this->details->count() : 0;
-    }
-
-    public function getAssociate(){
-        switch ($this->associate) {
-            case 'I':
-                $val = '<b class="text-yellow font-weight-bold">Fungibles</b>';
-            break;
-            case 'P':
-                $val = '<b class="text-yellow font-weight-bold">Herramientas</b>';
-            break;
-            default:
-                $val = "Desconocido";
-            break;
-        }
-        return $val;
     }
 
     public function getState($flag){
@@ -128,10 +106,7 @@ class InvIncomes extends Model
 
         if($val != ""){
             $query->where(function($q) use ($val){
-                $q->orwhere('origin', 'like', "%{$val}%")
-                ->orwhereHas('purchase', function($qw) use ($val){
-                    $qw->where('cod', 'like', "%{$val}%");
-                });
+                $q->orwhere('origin', 'like', "%{$val}%");
             });
         }
     }

@@ -46,7 +46,7 @@
 @section ('contenido')
 
 <div class="row">
-    {!! Form::open(['route'=>'incomes.index','method'=>'GET']) !!}
+    {!! Form::open(['route'=>'incomes.index','method'=>'GET', 'id' => 'formFilterIncome']) !!}
         <div class="pull-right">
             <div class="form-inline"  >
                 <div class="form-group">
@@ -59,7 +59,6 @@
                         </select>
                     </div>
                     <span class="pull-right font-weight-bold" style="margin-top: 8px;">Estado:&nbsp;&nbsp; </span>
-                    <input class="hidden"  type="submit" id="submiSearch">
                 </div>
             </div>
         </div>
@@ -233,6 +232,10 @@
 
         // BUSCAR Filtros de DataTable
         filterInputDT(table);
+    });
+
+    $('.selectEstado').on('change', function () {
+        $('#formFilterIncome').submit();
     });
 
     ValidateAjax("formCreateIncomes",campos,"btnSubmit","{{route('incomes.store')}}","POST","/incomes");

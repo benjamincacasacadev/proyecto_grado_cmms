@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Inventory;
 use App\InvIncomes;
+use App\InvIncomesDetails;
+use App\InvStocks;
 use Illuminate\Http\Request;
 use Session;
 use Flasher\Prime\FlasherInterface;
+use Illuminate\Support\Facades\DB;
 
 class InvIncomesController extends Controller
 {
@@ -146,5 +150,72 @@ class InvIncomesController extends Controller
             $flasher->addFlash('warning', 'No se eliminó el registro', 'Error');
         }
         return redirect()->route('incomes.index');
+    }
+
+    public function modalState(Request $request, $id){
+        $income = InvIncomes::findOrFail(decode($id));
+        if($income->state == 1){
+            return view("inventory.incomes.modalState", compact('income'));
+        }
+        abort(404);
+    }
+
+    public function updateState(Request $request, FlasherInterface $flasher, $id){
+
+        $incomes = InvIncomes::findOrFail(decode($id));
+
+        $messages = [
+            'checkstate.required' => 'Debe escoger una opción válida',
+        ];
+        $validateArray = [
+            'checkstate' =>'required',
+        ];
+        $validateAnul = [
+            'motivo' =>'required',
+        ];
+        if($request->checkstate == '0'){
+            $validateArray = array_merge($validateArray,$validateAnul);
+        }
+
+        $request->validate($validateArray, $messages);
+
+        $incomes->state = $request->checkstate;
+        $incomes->message = $request->motivo;
+        $incomes->autorizador_id = userId();
+        $incomes->update();
+
+
+        DB::beginTransaction();
+        try {
+            if($incomes->state == 2){
+                $flasher->addFlash('success', 'Validada con éxito', 'Nota de ingreso '.$incomes->cod);
+                $details = InvIncomesDetails::where('income_id',$incomes->id)->orderBy('id')->get();
+                foreach ($details as $k=>$detail) {
+                    $item = Inventory::find($detail->item_id);
+                    if(isset($item)){
+                        // Actualizar la tabla de stocks (Ubicación)
+                        $stock = new InvStocks();
+                        $stock->item_id = $detail->item_id;
+                        $stock->incomes = $detail->quantity;
+                        $stock->origen_type = 'A1';
+                        $stock->origen_id = $detail->id;
+                        $stock->location = $detail->location;
+                        $stock->date = now();
+                        $stock->save();
+                        $item->quantity = $item->quantity + $detail->quantity;
+                        $item->update();
+                    }
+                }
+                $flasher->addFlash('success', 'Validada con éxito', 'Cantidad de items '.$incomes->cod);
+            }
+            elseif($incomes->message == 0){
+                $flasher->addFlash('error', 'Anulada correctamente', 'Nota de ingreso '.$incomes->cod);
+            }
+            DB::commit();
+            return  \Response::json(['success' => '1']);
+        }catch (\Exception $e) {
+            DB::rollback();
+            return $e->getMessage();
+        }
     }
 }
