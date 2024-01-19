@@ -177,3 +177,17 @@ Route::post('/inventory/updateImage/{id}', 'InventoryController@updateImage')->n
 // KARDEX (SHOW)
 Route::get('/inventory/kardex/{id}', 'InventoryController@kardex')->name('inventory.kardex');
 Route::post('/inventory/details/table', 'InventoryController@tableKardexDetails')->name('inventory.details.table');
+
+// ========================================================================================
+//                                  NOTAS DE INGRESO
+// ========================================================================================
+Route::get('/incomes', 'InvIncomesController@index')->name('incomes.index');
+Route::post('/incomes/table', 'InvIncomesController@tableIncomes')->name('incomes.table');
+Route::get('/incomes/{id}', 'InvIncomesController@show')->name('incomes.show');
+Route::post('/incomes/details/table', 'InvIncomesDetailsController@tableDetails')->name('incomes.details.table');
+
+Route::post('/incomes/store', 'InvIncomesController@store')->name('incomes.store');
+Route::get('/incomes/editmodal/{id}', 'InvIncomesController@modalEdit')->name('incomes.editmodal');
+Route::post('/incomes/update/{id}', 'InvIncomesController@update')->name('incomes.update');
+Route::get('/incomes/deletemodal/{id}', 'InvIncomesController@modalDelete')->name('incomes.deletemodal');
+Route::delete('/incomes/delete/{id}', 'InvIncomesController@destroy')->name('incomes.destroy');
