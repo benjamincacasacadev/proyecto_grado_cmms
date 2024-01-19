@@ -208,3 +208,21 @@ Route::get('/items/modal/', 'InventoryController@modalItems')->name('items.modal
 Route::post('/items/table', 'InventoryController@tableItems')->name('items.table');
 Route::get('/incomes/items/modal/', 'InvIncomesDetailsController@modalItems')->name('items.incomes.modalitems'); // Create transfers
 Route::post('/items/incomes/table', 'InvIncomesDetailsController@tableItemsEdit')->name('items.incomes.table');
+
+
+// ========================================================================================
+//                                      TRASPASOS
+// ========================================================================================
+Route::get('/transfers', 'InvTransfersController@index')->name('transfers.index');
+Route::post('/transfers/table', 'InvTransfersController@tableTransfers')->name('transfers.table');
+Route::get('/transfers/showmodal/{id}', 'InvTransfersController@modalShow')->name('transfers.showmodal');
+
+Route::get('/transfers/createmodal', 'InvTransfersController@modalCreate')->name('transfers.createmodal');
+Route::post('/transfers/store/', 'InvTransfersController@store')->name('transfers.store');
+Route::post('/transfers/locationsAJAX/', 'InvTransfersController@ajaxLocations')->name('transfers.locations.ajax');
+// Traspasos desde pedidos
+Route::get('/items/transfer/{id}', 'InvStocksController@modalTransferItems')->name('items.transfermodal');
+Route::post('/items/transfer/update/{id}', 'InvStocksController@updateTransferItems')->name('items.transfers.update');
+
+Route::get('/transfers/statemodal/{id}', 'InvTransfersController@modalState')->name('transfers.statemodal');
+Route::post('/transfers/state/{id}', 'InvTransfersController@updateState')->name('transfers.state');

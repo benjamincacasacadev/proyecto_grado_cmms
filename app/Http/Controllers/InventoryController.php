@@ -327,7 +327,7 @@ class InventoryController extends Controller
     // ===============================================================================
     public function kardex($id){
         $item = Inventory::findOrFail(decode($id));
-        $qrcode  = "Nombre: ".$item->title."\r\nCodigo fungible: ".$item->cod;
+        $qrcode  = "Nombre: ".$item->title."\r\nCodigo material: ".$item->cod;
         $qrcode .= "\r\nCantidad disponible: ".number_format($item->TotalItem,2,".","");
         $details = InvStocks::selectRaw("*, SUM(incomes) as ingresos, SUM(outcomes) as egresos")->where('item_id',$item->id)->groupBy('location')->get();
 

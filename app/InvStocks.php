@@ -47,6 +47,7 @@ class InvStocks extends Model
         return $this->getTotalIn($item) - $this->getTotalOut($item);
     }
 
+
     public function getOrigenLink(){
         switch($this->origen_type){
             case 'A0':

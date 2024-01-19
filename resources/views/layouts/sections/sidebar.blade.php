@@ -172,27 +172,18 @@
                                 </span>
                             </a>
 
-                                <a class="dropdown-item {!!strstr($item,':',true)=='4.3'?'active font-weight-bold':'';!!}" href="/transfers">
-                                    <span class="nav-link-icon  d-lg-inline-block">
-                                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <path d="M14 21l-11 -11"></path>
-                                            <path d="M3 14v-4h4"></path>
-                                            <path d="M17 14h4v-4"></path>
-                                            <line x1="10" y1="3" x2="21" y2="14"></line>
-                                        </svg>
-                                    </span>
-                                    <span class="nav-link-title">
-                                        Traspasos
-                                    </span>
-                                </a>
-
-                            <a class="dropdown-item {!!strstr($item,':',true)=='4.4'?'active font-weight-bold':'';!!}" href="/inventory/parameters">
-                                <span class="nav-link-icon d-lg-inline-block">
-                                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M9 16v-8h4a2 2 0 0 1 0 4h-4"></path></svg>
+                            <a class="dropdown-item {!!strstr($item,':',true)=='4.3'?'active font-weight-bold':'';!!}" href="/transfers">
+                                <span class="nav-link-icon  d-lg-inline-block">
+                                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M14 21l-11 -11"></path>
+                                        <path d="M3 14v-4h4"></path>
+                                        <path d="M17 14h4v-4"></path>
+                                        <line x1="10" y1="3" x2="21" y2="14"></line>
+                                    </svg>
                                 </span>
                                 <span class="nav-link-title">
-                                    Paramétricas
+                                    Traspasos
                                 </span>
                             </a>
                         </div>

@@ -568,3 +568,12 @@ function monedaVal($valor){
     $numero=floatval(str_replace(",","",$valor));
     return $numero;
 }
+
+function getAlmacenes(){
+    return [
+        1 => 'Edificio Arcadia',
+        2 => 'El Alto',
+        3 => 'Gramadal',
+        4 => 'Edifico técnico',
+    ];
+}
