@@ -65,6 +65,10 @@ class WorkOrders extends Model
         return $this->cod;
     }
 
+    public function getAppendCod(){
+        return $this->cod." - ".$this->titulo;
+    }
+
     public function getEstado($estilos = 0){
 
         switch ($this->estado){
@@ -352,6 +356,13 @@ class WorkOrders extends Model
         }
     }
 
+    public function scopeCodTitle($query, $val){
+        if($val != ''){
+            $query->where('cod','LIKE','%'.$val.'%')
+            ->orwhere('title','LIKE','%'.$val.'%');
+        }
+    }
+
     public function scopeActivo($query, $val){
         if ($val != '') {
             $query->whereHas('asset', function ($q1) use ($val) {
@@ -405,6 +416,15 @@ class WorkOrders extends Model
     public function scopeFecha($query, $val){
         if ($val != '') {
             $query->where(\DB::raw('DATE_FORMAT(fecha, "%d/%m/%Y %H:%i")'), 'like', "%{$val}%");
+        }
+    }
+
+    public function scopeSearchEstado($query, $estados){
+        if(isset($estados)){
+            $query->whereIn('estado',$estados);
+        }else{
+            $query->where('estado','!=', 'T')
+            ->where('estado','!=', 'X');
         }
     }
 }

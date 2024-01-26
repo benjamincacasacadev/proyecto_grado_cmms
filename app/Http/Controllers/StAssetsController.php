@@ -271,12 +271,9 @@ class StAssetsController extends Controller
 
     public function listAssetsDetailsAjax(Request $request) {
         $request['search'] = limpiarTexto($request->search,'s2');
-        $search = ($request->search == '') ? '-----' : $request->search;
 
-        $assets = StAssets::where( function ($query) use($search) {
-            $query->where('cod','LIKE','%'.$search.'%')
-            ->orwhere('nombre','LIKE','%'.$search.'%');
-        })->orderBy('cod','desc')
+        $assets = StAssets::CodName($request->search)
+        ->orderBy('cod','desc')
         ->limit(20)
         ->get();
 

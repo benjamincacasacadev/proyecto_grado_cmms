@@ -221,4 +221,11 @@ class StAssets extends Model
             $query->where('estado', $val);
         }
     }
+
+    public function scopeCodName($query, $search){
+        if($search != ''){
+            $query->where('cod','LIKE','%'.$search.'%')
+            ->orwhere('nombre','LIKE','%'.$search.'%');
+        }
+    }
 }

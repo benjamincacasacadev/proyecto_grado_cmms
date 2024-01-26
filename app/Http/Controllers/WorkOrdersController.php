@@ -1204,4 +1204,25 @@ class WorkOrdersController extends Controller
         $salida = cleanAll($salida);
         return $salida;
     }
+
+    public function listWorkOrdersAjax(Request $request) {
+        $estados = $request->estados;
+        $request['search'] = limpiarTexto($request->search,'s2');
+
+        $workorders = WorkOrders::
+        CodTitle($request->search)
+        ->searchEstado($estados)
+        ->orderBy('cod','desc')
+        ->limit(20)
+        ->get();
+        $array = [];
+        $array['results'][0]['id'] = '';
+        $array['results'][0]['text'] = 'Seleccionar una opción';
+        foreach ($workorders as $k => $wo) {
+            $array['results'][$k + 1]['id'] = code($wo->id);
+            $array['results'][$k + 1]['text'] = $wo->cod.' - '.$wo->titulo;
+        }
+        $array['pagination']['more'] = false;
+        return response()->json($array);
+    }
 }

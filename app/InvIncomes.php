@@ -12,10 +12,10 @@ class InvIncomes extends Model
     }
 
     public function getCod(){
-        if(permisoAdmin())
+        if(permisoAdmin()){
             return '<a href="/incomes/'.code($this->id).'" target="_blank">'.$this->cod.'</a>';
-        else
-            return $this->cod;
+        }
+        return $this->cod;
     }
 
     public function getOrigin(){

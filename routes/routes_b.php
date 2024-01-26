@@ -1,6 +1,7 @@
 <?php
 Route::get('/list_of_clients', 'ClientsController@listClients')->name('clients.listClients');
 Route::get('/list_of_assets_details', 'StAssetsController@listAssetsDetailsAjax')->name('assets.listAssets.details');
+Route::get('/list_of_work_orders', 'WorkOrdersController@listWorkOrdersAjax')->name('workorders.listWorkOrdersAjax'); // LISTADO DE ORDENES DE TRABAJO POR SELECT 2 AJAX
 
 // ========================================================================================
 //                                          USUARIOS
@@ -226,3 +227,31 @@ Route::post('/items/transfer/update/{id}', 'InvStocksController@updateTransferIt
 
 Route::get('/transfers/statemodal/{id}', 'InvTransfersController@modalState')->name('transfers.statemodal');
 Route::post('/transfers/state/{id}', 'InvTransfersController@updateState')->name('transfers.state');
+
+// ========================================================================================
+//                                      PEDIDOS
+// ========================================================================================
+Route::get('/outcomes', 'InvOutcomesController@index')->name('outcomes.index');
+Route::post('/outcomes/table', 'InvOutcomesController@tableOutcomes')->name('outcomes.table');
+Route::get('/outcomes/show/{id}', 'InvOutcomesController@show')->name('outcomes.show');
+Route::post('/outcomes/details/table', 'InvOutcomesDetailsController@tableDetails')->name('outcomes.details.table');
+Route::post('/outcomes/reportClient/', 'InvOutcomesController@ajaxClientWorkorders')->name('outcomes.workorderclientajax');
+Route::get('/outcomes/createmodal', 'InvOutcomesController@modalCreate')->name('outcomes.createmodal');
+Route::post('/outcomes/store', 'InvOutcomesController@store')->name('outcomes.store');
+Route::get('/outcomes/editmodal/{id}', 'InvOutcomesController@modalEdit')->name('outcomes.editmodal');
+Route::post('/outcomes/update/{id}', 'InvOutcomesController@update')->name('outcomes.update');
+Route::get('/outcomes/deletemodal/{id}', 'InvOutcomesController@modalDelete')->name('outcomes.deletemodal');
+Route::delete('/outcomes/delete/{id}', 'InvOutcomesController@destroy')->name('outcomes.destroy');
+Route::get('/outcomes/statemodal/{id}', 'InvOutcomesController@modalState')->name('outcomes.statemodal');
+Route::post('/outcomes/state/{id}', 'InvOutcomesController@updateState')->name('outcomes.state');
+Route::get('/outcomes/items/modal/', 'InvOutcomesDetailsController@modalItems')->name('items.outcomes.modalitems');
+Route::post('/items/outcomes/table', 'InvOutcomesDetailsController@tableItemsEdit')->name('items.outcomes.table');
+
+Route::post('/outcomes/details/store/{id}', 'InvOutcomesDetailsController@storeDetails')->name('outcomes.details.store');
+Route::get('/outcomes/location/{id}', 'InvOutcomesDetailsController@locationsList')->name('outcomes.locations.list'); // X EDITABLE LIST AJAX
+Route::post('/outcomes/detail_location/update', 'InvOutcomesDetailsController@updateLocation')->name('outcomes.locationupdate'); // UPDATE XEDITABLE
+Route::get('/outcomes/details/editmodal/{id}', 'InvOutcomesDetailsController@modalEdit')->name('outcomes.details.editmodal');
+Route::post('/outcomes/details/update/{id}', 'InvOutcomesDetailsController@updateDetails')->name('outcomes.details.update');
+Route::get('/outcomes/details/deletemodal/{id}', 'InvOutcomesDetailsController@modalDelete')->name('outcomes.details.deletemodal');
+Route::delete('/outcomes/details/destroy/{id}', 'InvOutcomesDetailsController@destroyDetails')->name('outcomes.details.destroy');
+Route::get('/outcomes/details/order', 'InvOutcomesDetailsController@order')->name('outcomes.details.order');
