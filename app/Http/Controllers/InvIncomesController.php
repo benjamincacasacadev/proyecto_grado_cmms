@@ -181,7 +181,6 @@ class InvIncomesController extends Controller
 
         $incomes->state = $request->checkstate;
         $incomes->message = $request->motivo;
-        $incomes->autorizador_id = userId();
         $incomes->update();
 
 

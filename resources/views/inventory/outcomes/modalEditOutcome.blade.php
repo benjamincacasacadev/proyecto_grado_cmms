@@ -115,7 +115,7 @@
     }
 
     // VALIDAR EDITAR ENCABEZADO
-    var camposedit = ['ordentrabajoedit','motivoedit','destinoedit','autorizadoredit','fechaedit','observacionedit'];
+    var camposedit = ['ordentrabajoedit','motivoedit','destinoedit','fechaedit','observacionedit'];
     ValidateAjax("formEditOutcomes",camposedit,"btnSubmitEditOutcome","{{ route('outcomes.update',code($outcome->id) )}}","POST");
 
     // **************************************************************************************************

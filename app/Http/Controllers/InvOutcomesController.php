@@ -148,7 +148,6 @@ class InvOutcomesController extends Controller
 
             $outcome->wo_id = decode($request->ordentrabajoedit);
             $outcome->reason = $request->motivoedit;
-            $outcome->autorizador_id = decode($request->autorizadoredit);
             $outcome->delivery_date = $fechaUpdate;
             $outcome->observation = $request->observacionedit;
             $outcome->update();

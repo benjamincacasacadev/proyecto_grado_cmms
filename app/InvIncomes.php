@@ -8,7 +8,7 @@ class InvIncomes extends Model
 {
     // RELACION A DETALLES
     public function details() {
-        return $this->hasMany(InvIncomesDetails::class,'income_id')->orderBy('order');
+        return $this->hasMany(InvIncomesDetails::class,'income_id');
     }
 
     public function getCod(){

@@ -9,15 +9,12 @@ class InvOutcomes extends Model
     public function solicitado()  {
         return $this->belongsTo(User::class,'solicitado_id');
     }
-    public function autorizador()  {
-        return $this->belongsTo(User::class,'autorizador_id');
-    }
     public function workorders()  {
         return $this->belongsTo(WorkOrders::class,'wo_id');
     }
     // RELACION A DETALLES
     public function details() {
-        return $this->hasMany(InvOutcomesDetails::class,'outcome_id')->orderBy('order');
+        return $this->hasMany(InvOutcomesDetails::class,'outcome_id');
     }
 
     // =============================================================================================
