@@ -14,11 +14,17 @@ class StAssets extends Model
     public function cliente(){
         return $this->belongsTo(Clients::class, 'client_id');
     }
+    public function workorders() {
+        return $this->hasMany(WorkOrders::class,'asset_id');
+    }
 
     // ==========================================================================
     // FUNCIONES
     // ==========================================================================
     public function getCod(){
+        if(permisoAdmin()){
+            return '<a href=\'/assets/show/'.code($this->id).'\'>'.$this->cod.'</a>';
+        }
         return $this->cod;
     }
 

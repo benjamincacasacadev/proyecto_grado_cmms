@@ -57,81 +57,85 @@
 @endsection
 
 @section ('contenido')
-    <div class="table-responsive">
-        <table class="table table-vcenter table-center table-sm table-hover" id="tablaAssets">
-            <thead>
-                <tr>
-                    <th width="7%">Código</th>
-                    <th width="8%">Nombre</th>
-                    <th width="10%">Cliente</th>
-                    <th width="10%">Categoria</th>
-                    <th width="10%">Ubicación</th>
-                    <th width="7%">Ciudad</th>
-                    <th width="8%">Nº de serie</th>
-                    <th width="13%" style="text-align: center !important">Datos del activo</th>
-                    <th width="5%">Estado</th>
-                    @if (permisoAdmin())
-                        <th width="3%">OP.</th>
-                    @endif
-                </tr>
-            </thead>
 
-            <thead role="row">
-                <tr class="filters">
-                    <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="codigob"/></td>
-                    <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="nombreb"/></td>
-                    <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="clienteb"/></td>
-                    <td>
-                        <select class="form-control text-center selector" style="width: 100%" name="ciudadb">
-                            <option selected value="">Todas</option>
-                            <option value="0">Aire Acondicionado de confort</option>
-                            <option value="1">Aires de precision</option>
-                            <option value="2">Banco de baterias de litio</option>
-                            <option value="3">Equipo inversor</option>
-                            <option value="4">Equipo rectificador</option>
-                            <option value="5">Equipo UPS</option>
-                            <option value="6">Estabilizador</option>
-                            <option value="7">Grupos Electrógenos</option>
-                            <option value="8">Reconectador de media tension</option>
-                            <option value="9">Tablero Banco de capacitores</option>
-                            <option value="10">Tablero de transferencia ATS</option>
-                        </select>
-                    </td>
-                    <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="ubicacionb"/></td>
-                    <td>
-                        <select class="form-control text-center selector" style="width: 100%" name="ciudadb">
-                            <option selected value="">Todas</option>
-                            <option value="0">Beni</option>
-                            <option value="1">Chuquisaca</option>
-                            <option value="2">Cochabamba</option>
-                            <option value="3">La Paz</option>
-                            <option value="4">Oruro</option>
-                            <option value="5">Pando</option>
-                            <option value="6">Potosi</option>
-                            <option value="7">Santa Cruz</option>
-                            <option value="8">Tarija</option>
-                        </select>
-                    </td>
-                    <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="serieb"/></td>
-                    <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="datosb"/></td>
-                    <td>
-                        <select class="form-control text-center" style="width: 100%" name="estadob">
-                            <option selected value="">Todos</option>
-                            <option value="1">Activos</option>
-                            <option value="0">Inactivos</option>
-                        </select>
-                    </td>
-                    @if (permisoAdmin())
-                        <td></td>
-                    @endif
-                </tr>
-            </thead>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-vcenter table-center table-sm table-hover" id="tablaAssets">
+                <thead>
+                    <tr>
+                        <th width="7%">Código</th>
+                        <th width="8%">Nombre</th>
+                        <th width="10%">Cliente</th>
+                        <th width="10%">Categoria</th>
+                        <th width="10%">Ubicación</th>
+                        <th width="7%">Ciudad</th>
+                        <th width="8%">Nº de serie</th>
+                        <th width="13%" style="text-align: center !important">Datos del activo</th>
+                        <th width="5%">Estado</th>
+                        @if (permisoAdmin())
+                            <th width="3%">OP.</th>
+                        @endif
+                    </tr>
+                </thead>
 
-            <tbody>
-            </tbody>
-        </table>
+                <thead role="row">
+                    <tr class="filters">
+                        <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="codigob"/></td>
+                        <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="nombreb"/></td>
+                        <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="clienteb"/></td>
+                        <td>
+                            <select class="form-control text-center selector" style="width: 100%" name="ciudadb">
+                                <option selected value="">Todas</option>
+                                <option value="0">Aire Acondicionado de confort</option>
+                                <option value="1">Aires de precision</option>
+                                <option value="2">Banco de baterias de litio</option>
+                                <option value="3">Equipo inversor</option>
+                                <option value="4">Equipo rectificador</option>
+                                <option value="5">Equipo UPS</option>
+                                <option value="6">Estabilizador</option>
+                                <option value="7">Grupos Electrógenos</option>
+                                <option value="8">Reconectador de media tension</option>
+                                <option value="9">Tablero Banco de capacitores</option>
+                                <option value="10">Tablero de transferencia ATS</option>
+                            </select>
+                        </td>
+                        <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="ubicacionb"/></td>
+                        <td>
+                            <select class="form-control text-center selector" style="width: 100%" name="ciudadb">
+                                <option selected value="">Todas</option>
+                                <option value="0">Beni</option>
+                                <option value="1">Chuquisaca</option>
+                                <option value="2">Cochabamba</option>
+                                <option value="3">La Paz</option>
+                                <option value="4">Oruro</option>
+                                <option value="5">Pando</option>
+                                <option value="6">Potosi</option>
+                                <option value="7">Santa Cruz</option>
+                                <option value="8">Tarija</option>
+                            </select>
+                        </td>
+                        <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="serieb"/></td>
+                        <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="datosb"/></td>
+                        <td>
+                            <select class="form-control text-center" style="width: 100%" name="estadob">
+                                <option selected value="">Todos</option>
+                                <option value="1">Activos</option>
+                                <option value="0">Inactivos</option>
+                            </select>
+                        </td>
+                        @if (permisoAdmin())
+                            <td></td>
+                        @endif
+                    </tr>
+                </thead>
+
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
-
+</div>
     {{-- Modal Crear --}}
     <div class="modal modalPrimary fade modal-slide-in-right" aria-hidden="true" role="dialog"  id="modalCreate" data-backdrop="static">
         <div class="modal-dialog modal-lg modal-dialog-centered">

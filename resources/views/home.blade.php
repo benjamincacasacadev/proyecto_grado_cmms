@@ -210,6 +210,7 @@
 <script src="{{asset('/plugins/highchart/modules/exporting.js')}}"></script>
 <script src="{{asset('/plugins/highchart/modules/heatmap.js')}}"></script>
 <script src="{{asset('/plugins/moment/moment.js')}}"></script>
+<script src="{{asset('/plugins/moment/locale/es.js')}}"></script>
 
 <script>
     $(window).resize(function() {

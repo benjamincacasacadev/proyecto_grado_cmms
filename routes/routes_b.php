@@ -45,6 +45,7 @@ Route::delete('/clients/delete/{id}','ClientsController@destroy')->name('clients
 //                                      ACTIVOS
 // ========================================================================================
 Route::get('/assets', 'StAssetsController@index')->name('assets.index');
+Route::get('/assets/show/{id}', 'StAssetsController@show')->name('assets.show');
 Route::post('/table_assets', 'StAssetsController@tableAssets')->name('assets.table');
 Route::get('/assets/estado/{id}/{estado}', 'StAssetsController@changeEstado')->name('assets.cambioEstado');
 Route::get('/assets/modalCreate', 'StAssetsController@modalCreate')->name('assets.createmodal');
@@ -53,6 +54,7 @@ Route::get('/assets/editmodal/{id}', 'StAssetsController@modalEdit')->name('asse
 Route::post('/assets/update/{id}', 'StAssetsController@update')->name('assets.update');
 Route::get('/assets/deletemodal/{id}', 'StAssetsController@modalDelete')->name('assets.deletemodal');
 Route::delete('/assets/delete/{id}','StAssetsController@destroy')->name('assets.destroy');
+Route::post('/assets/updateImage/{id}', 'StAssetsController@updateImage')->name('assets.updateImage');
 
 // ========================================================================================
 //                                   ORDENES DE TRABAJO

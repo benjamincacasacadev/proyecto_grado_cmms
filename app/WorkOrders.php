@@ -430,4 +430,10 @@ class WorkOrders extends Model
             ->where('estado','!=', 'X');
         }
     }
+
+    public function scopeAssetId($query, $val){
+        if($val != ''){
+            $query->where('asset_id', $val);
+        }
+    }
 }

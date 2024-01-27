@@ -18,6 +18,12 @@ class StAssetsController extends Controller
         return view('assets.index');
     }
 
+    public function show(Request $request, $id){
+        $asset = StAssets::findOrFail(decode($id));
+        Session::put('item','2.');
+        return view('assets.show', compact('asset'));
+    }
+
     public function modalCreate(){
         return view('assets.modalCreate');
     }
@@ -267,6 +273,65 @@ class StAssetsController extends Controller
         ];
 
         return $request->validate($validateArray, [], $aliasArray);
+    }
+
+    public function updateImage(Request $request, FlasherInterface $flasher, $id){
+        $messages = [
+            'fileAsset.required' => 'Debe adjuntar una imagen',
+            'fileAsset.mimes' => 'El archivo debe estar en algunos de los siguientes formatos:<br><p class="text-center"><b>gif, jpg, jpeg, png</b></p>',
+            'fileAsset.max' => "El archivo a subir es muy grande. El tamaño máximo admitido es de 2 MB (2048 KB).",
+        ];
+
+        $validateArray = [
+            'fileAsset' => 'required|mimes:gif,jpg,jpeg,png|max:2048'
+        ];
+        $request->validate($validateArray,$messages);
+        $asset = StAssets::findOrFail(decode($id));
+        // ALMACENAMIENTO DEL ARCHIVO
+        if ( $request->hasFile('fileAsset') ){
+
+            $rutaFile = 'public/assets/'.$asset->attach;
+            if (Storage::exists($rutaFile)){
+                Storage::delete($rutaFile);
+            }
+
+            $archivo = $request->file('fileAsset');
+            $extension = $archivo->getClientOriginalExtension();
+            $ext = strtolower($extension);
+            $nombre = $request->get('__renombraredit__');
+            $nombre = $this->limpiar($nombre);
+            $nombreConExtension = ($nombre != null && $nombre != '') ? $nombre . '.' . $extension : $archivo->getClientOriginalName();
+            $nombreConExtension = delete_charspecial($nombreConExtension);
+
+            $asset->attach = $asset->cod . '_' . strtolower($nombreConExtension);
+            $archivo->storeAs("public/assets/", $asset->attach);
+
+            if($ext == 'gif' || $ext == 'jpg' || $ext == 'jpeg' || $ext == 'png'){
+                $size = getimagesize($archivo);
+                if($size[0]<=1024 && $size[1]<=1024){
+                    InterventionImage::make($archivo)->resize(function ($constraint){
+                        $constraint->aspectRatio();
+                    })->save(storage_path().'/app/public/assets/'.$asset->attach, 90);
+                }else{
+                    InterventionImage::make($archivo)->resize(1024,1024, function ($constraint){
+                        $constraint->aspectRatio();
+                    })->save(storage_path().'/app/public/assets/'.$asset->attach, 80);
+                }
+            }
+        }
+        $asset->update();
+        $flasher->addFlash('info', 'Modificada con éxito', 'Imagen de '.$asset->cod);
+        return  \Response::json(['success' => '1']);
+    }
+
+    public function limpiar($string){
+        $salida = preg_replace('/\s+/', ' ',$string);
+        $salida = trim($salida);
+        $salida = strtolower(str_replace(" ","_",$salida));
+        $salida = is_numeric($salida) ? "_".$salida : $salida;
+        $salida = delete_char_file($salida);
+        $salida = cleanAll($salida);
+        return $salida;
     }
 
     public function listAssetsDetailsAjax(Request $request) {

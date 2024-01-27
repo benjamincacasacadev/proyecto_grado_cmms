@@ -135,6 +135,7 @@ class WorkOrdersController extends Controller
         $start = empty($request->input('start')) ? 0 :  $request->input('start');
 
         $posts = WorkOrders::Cod($request->input('columns.0.search.value'))
+        ->AssetId($request->assetId)
         ->Activo($request->input('columns.1.search.value'))
         ->Estado($request->state)
         ->Titulo($request->input('columns.3.search.value'))
@@ -155,7 +156,7 @@ class WorkOrdersController extends Controller
         $data = array();
         foreach ($posts as $post){
             $nestedData['cod'] = $post->getCod();
-            $nestedData['activo'] = $post->asset->cod.' '.$post->asset->name;
+            $nestedData['activo'] = '<b>'.$post->asset->getCod().' <br> '.$post->asset->nombre.'</b>';
             $nestedData['estado'] = $post->getEstado(1);
             $nestedData['titulo'] = $post->titulo;
             $nestedData['cliente'] = $post->asset->cliente->nombre;
