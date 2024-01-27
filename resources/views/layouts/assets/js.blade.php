@@ -17,6 +17,9 @@
 <script src="{{asset('/plugins/datatables.net/js/dataTables.fixedColumns.min.js')}}"></script>
 <script src="{{asset('/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{asset('/dist/js/datetimepicker.js')}}"></script>
+<script src="{{asset('/plugins/toastr.min.js')}}"></script>
+
+{{-- <script src="{{asset('/plugins/flasher.min.js')}}"></script> --}}
 
     <script>
         window.onload = function () {
@@ -27,18 +30,8 @@
     </script>
     <script>
         $(document).ready(function () {
-            // var optionsFlasher = {
-            //     timeout: 7000,
-            //     position: 'top-right',
-            //     direction: 'top',
-            // };
-            // $(".fl-main-container").removeAttr('data-position');
-            // $(".fl-main-container").attr('data-position','bottom-right');
-            // flasher.error("Oops! Something went wrong!");
-            // flasher.warning("Are you sure you want to proceed ?");
-            // flasher.success("Data has been saved successfully!");
-            // flasher.info("Welcome back");
-
+            $(".fl-main-container").removeAttr('data-position');
+            $(".fl-main-container").attr('data-position','bottom-right');
             $('select').addClass('form-select').css('font-size','12px');
             $(".select2-selection").addClass('form-select2').css('border-color','#ccc');
             $(".select2-selection--single").addClass('form-selectcont');

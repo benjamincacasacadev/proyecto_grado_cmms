@@ -23,7 +23,6 @@ class InvIncomesDetails extends Model
         return '';
     }
 
-
     public function getOperations($sw){
         $operaciones = "";
         if(permisoAdmin()){

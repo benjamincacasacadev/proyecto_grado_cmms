@@ -177,6 +177,12 @@ class InvOutcomesController extends Controller
         return redirect()->route('outcomes.index');
     }
 
+    public function show($id){
+        $outcome = InvOutcomes::findOrFail(decode($id));
+        Session::put('item','4.0:2|');
+        return view("inventory.outcomes.show", compact('outcome'));
+    }
+
 
     public function ajaxClientWorkorders(Request $request){
         $clientename = "Sin cliente";

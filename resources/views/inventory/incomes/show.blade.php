@@ -127,7 +127,7 @@
                 <thead>
                     <tr>
                         <th width="3%">Nº</th>
-                        <th width="25%">Código Fungible</th>
+                        <th width="25%">Código de material</th>
                         <th width="8%">Cantidad</th>
                         <th width="15%">Ubicación</th>
                         <th width="17%">Observación</th>
@@ -219,7 +219,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title font-weight-bold">
                         <i class="fa fa-plus"></i>
-                        Nuevo fungible
+                        Nuevo material
                     </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
