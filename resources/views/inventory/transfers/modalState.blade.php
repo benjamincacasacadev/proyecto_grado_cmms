@@ -61,7 +61,7 @@
                             <tbody>
                                 <tr>
                                     <td width="50%" class="font-weight-bold">
-                                        @if ($transfer->associate == 'P') Herramienta:@else Fungible:@endif
+                                        Material:
                                     </td>
                                     <td>{!! $transfer->getItemsParts() !!}</td>
                                 </tr>

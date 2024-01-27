@@ -71,7 +71,7 @@ class InvOutcomesDetails extends Model
 
     public function getLocations(){
         if ($this->quantity <= $this->items->quantity){
-            return isset($this->locations) ? $this->almacenLiteral : '-';
+            return isset($this->location) ? $this->almacenLiteral : '-';
         }
         return '<i class="text-sm">No existe la cantidad solicitada</i>';
     }
@@ -111,7 +111,7 @@ class InvOutcomesDetails extends Model
         return $unitCost;
     }
 
-    //  Accessor para saber el costo de los fungibles de la OT
+    //  Accessor para saber el costo de los materiales de la OT
     public function getSubTotalAttribute(){
         $subtotal = 0;
         if (count($this->stocks) > 0) {

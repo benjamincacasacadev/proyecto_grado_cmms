@@ -48,7 +48,7 @@
 </style>
 
 <div class="modal-header">
-    <h5 class="modal-title"><i class="fa fa-edit"></i> Editar Fungible {{ $item->cod }}</h5>
+    <h5 class="modal-title"><i class="fa fa-edit"></i> Editar material {{ $item->cod }}</h5>
     <button type="button" class="btn-close text-yellow" data-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
@@ -56,7 +56,7 @@
         <div class="row">
             <div class="col-lg-12 col-md-6 col-sm-12 col-xs-12">
                 <label id="nombreedit--label">* Nombre</label>
-                <input type="text" class="form-control" name="nombreedit" style="width:100%" placeholder="Nombre del Fungible" value="{{ $item->title }}">
+                <input type="text" class="form-control" name="nombreedit" style="width:100%" placeholder="Nombre del material" value="{{ $item->title }}">
                 <span id="nombreedit-error" class="text-red"></span>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -108,7 +108,7 @@
 
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 archivodiv" id="fileInventoryedit--label"style="display:none">
-                <b>* Adjunte una imagen o fotografía del fungible registrado</b><br>
+                <b>* Adjunte una imagen o fotografía del material registrado</b><br>
                 <div style="padding-left: 25px;">
                     <b><svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                             fill="none" stroke-linecap="round" stroke-linejoin="round">

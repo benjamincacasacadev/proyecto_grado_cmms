@@ -182,6 +182,23 @@ $routeAttach = storage_path('app/public/workorders/'.$workorder->attach);
                                 <td class="font-weight-bold">Técnicos asignados</td>
                                 <td>{!! $workorder->getAvatars(5) !!}</td>
                             </tr>
+                            @if ($workorder->outcomes->count() > 0)
+                            <tr>
+                                <td class="font-weight-bold">Solicitud de materiales</td>
+
+                                <td>
+                                    @php
+                                        $codOutcome = '';
+                                        $codOutcomeArray = [];
+                                        foreach ($workorder->outcomes as $outcome){
+                                            $codOutcomeArray[] = $outcome->getCod();
+                                        }
+                                        $codOutcome = implode(', ',$codOutcomeArray);
+                                    @endphp
+                                    <b>{!! $codOutcome !!}</b>
+                                </td>
+                            </tr>
+                            @endif
                             <tr>
                                 <td class="font-weight-bold">Descripción</td>
                                 <td style="max-height: 200px; overflow-y: auto; max-width: 100px; overflow-x: auto;">

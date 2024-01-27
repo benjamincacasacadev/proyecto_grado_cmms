@@ -206,7 +206,7 @@ class InvIncomesController extends Controller
                         $item->update();
                     }
                 }
-                $flasher->addFlash('success', 'Validada con éxito', 'Cantidad de items '.$incomes->cod);
+                $flasher->addFlash('success', 'Retirados correctamente', 'Cantidad de items '.$incomes->cod);
             }
             elseif($incomes->message == 0){
                 $flasher->addFlash('error', 'Anulada correctamente', 'Nota de ingreso '.$incomes->cod);

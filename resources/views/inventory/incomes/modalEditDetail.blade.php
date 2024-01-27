@@ -19,7 +19,7 @@
 </style>
 <div class="modal-header">
     <h5 class="modal-title">
-        Editar Fungible
+        Editar material
     </h5>
     <button type="button" class="btn-close" aria-label="Close" data-dismiss="modal"></button>
 </div>
@@ -29,7 +29,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <label id="itemedit--label">* Código de material</label>
                 <a href="/incomes/items/modal/" rel="modalItemsEdit">
-                    <input type="text" class="form-select2 form-control text-center font-weight-bold text-yellow" placeholder="Seleccionar" id="inputCoditemedit" readonly value="{{ $detail->items->cod." - ".$detail->items->title }}" title="Clic para cambiar el Fungible">
+                    <input type="text" class="form-select2 form-control text-center font-weight-bold text-yellow" placeholder="Seleccionar" id="inputCoditemedit" readonly value="{{ $detail->items->cod." - ".$detail->items->title }}" title="Clic para cambiar el material">
                     <input type="text" id="itemcodedit" hidden name="itemedit" value="{{ code($detail->item_id) }}">
                 </a>
                 <span id="itemedit-error" class="text-red text-sm"></span>

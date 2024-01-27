@@ -194,7 +194,7 @@
                             </div>
                             <div class="text-center" id="divFileInput" style="display:none">
                                 <div style="text-align: left;">
-                                    <b>Adjunte una imagen o fotografía del fungible</b><br>
+                                    <b>Adjunte una imagen o fotografía del material</b><br>
                                     <div style="padding-left: 25px;">
                                         <b><svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -296,7 +296,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title font-weight-bold">
                         <i class="fa fa-plus"></i>
-                        Nuevo fungible
+                        Nuevo material
                     </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>

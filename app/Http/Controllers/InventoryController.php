@@ -21,7 +21,7 @@ use PDF;
 class InventoryController extends Controller
 {
     public function index (Request $request){
-        Session::put('item','4.0:1|');
+        Session::put('item','4.0:');
         $selectEstado = $request->selectEstado != null ? $request->selectEstado : 'all';
         return view("inventory.index", compact('selectEstado'));
     }
@@ -332,7 +332,7 @@ class InventoryController extends Controller
         $details = InvStocks::selectRaw("*, SUM(incomes) as ingresos, SUM(outcomes) as egresos")->where('item_id',$item->id)->groupBy('location')->get();
 
 
-        Session::put('item','4.0:1|');
+        Session::put('item','4.0:');
         return view("inventory.kardex", compact('item','qrcode','details'));
     }
 

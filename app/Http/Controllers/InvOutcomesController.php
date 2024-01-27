@@ -6,10 +6,8 @@ use App\Inventory;
 use App\InvOutcomes;
 use App\InvOutcomesDetails;
 use App\InvStocks;
-use App\User;
 use App\WorkOrders;
 use Carbon\Carbon;
-use Flasher\Laravel\Facade\Flasher;
 use Flasher\Prime\FlasherInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,8 +16,8 @@ use Session;
 class InvOutcomesController extends Controller
 {
     public function index (Request $request){
-        $selectEstado = $request->selectEstado != null ? $request->selectEstado : 'all';
-        Session::put('item','4.0:2|');
+        $selectEstado = $request->selectEstado != null ? $request->selectEstado : '';
+        Session::put('item','4.1:');
         return view("inventory.outcomes.index", compact('selectEstado'));
     }
 
@@ -179,10 +177,98 @@ class InvOutcomesController extends Controller
 
     public function show($id){
         $outcome = InvOutcomes::findOrFail(decode($id));
-        Session::put('item','4.0:2|');
+        Session::put('item','4.1:');
         return view("inventory.outcomes.show", compact('outcome'));
     }
 
+        // =============================================================================
+    //                          CAMBIO DE ESTADO PEDIDOS
+    // =============================================================================
+    public function modalState($id){
+        $outcome = InvOutcomes::findOrFail(decode($id));
+        if($outcome->state != 1){
+            abort(404);
+        }
+        // Verificar si existe la cantidad necesaria en inventario
+        $swcant = $swloc = 0;
+        $details = InvOutcomesDetails::where('outcome_id',$outcome->id)->get();
+        foreach($details as $detail){
+            if($detail->quantity > $detail->items->quantity)    $swcant = 1;
+            if(!isset($detail->location) || $detail->location = "") $swloc = 1;
+        }
+        return view("inventory.outcomes.modalState", compact('outcome','swcant','swloc'));
+    }
+
+    public function updateState(Request $request, FlasherInterface $flasher, $id){
+        $messages = [
+            'checkstate.required' => 'Debe escoger una opción válida',
+        ];
+        $validateArray = [
+            'checkstate' =>'required',
+        ];
+        $validateAnul = [
+            'motivo' =>'required',
+        ];
+        if($request->checkstate == '0'){
+            $validateArray = array_merge($validateArray,$validateAnul);
+        }
+        $request->validate($validateArray, $messages);
+
+        $outcomes = InvOutcomes::findOrFail(decode($id));
+        $outcomes->state = $request->checkstate;
+
+        // Verificar si existe la cantidad necesaria en inventario
+        $swcant = $swloc = 0;
+        $details = InvOutcomesDetails::where('outcome_id',$outcomes->id)->get();
+        foreach($details as $detail){
+            if($detail->quantity > $detail->items->quantity)    $swcant = 1;
+            if(!isset($detail->location) || $detail->location = "") $swloc = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+            if($swcant == 0 && $swloc == 0){
+                $outcomes->message = $request->motivo;
+                $outcomes->update();
+                if($outcomes->state == 2){
+                    $flasher->addFlash('success', 'Validada con éxito', 'Solicitud '.$outcomes->cod);
+                    $details = InvOutcomesDetails::where('outcome_id',$outcomes->id)->get();
+                    foreach ($details as $detail) {
+                        $item = Inventory::find($detail->item_id);
+                        if(isset($item)){
+                            // Actualizar la tabla de stocks (Ubicación)
+                            $stock = new InvStocks();
+                            $stock->item_id = $detail->item_id;
+                            $stock->outcomes = $detail->quantity;
+                            $stock->origen_type = 'A2';
+                            $stock->origen_id = $detail->id;
+                            $stock->location = $detail->location;
+                            $stock->date = now();
+                            $stock->save();
+                            // Actualizar cantidad de items
+                            $item->quantity = $item->quantity - $detail->quantity;
+                            $item->update();
+                        }
+                    }
+                    $flasher->addFlash('success', 'Retirados correctamente', 'Cantidad de materiales seleccionados');
+                }elseif($outcomes->state == 0){
+                    $flasher->addFlash('error', 'Anulada correctamente', 'Solicitud '.$outcomes->cod);
+                }
+            }elseif($outcomes->state == 0){
+                $outcomes->message = $request->motivo;
+                $outcomes->update();
+                $flasher->addFlash('error', 'Anulada correctamente', 'Solicitud '.$outcomes->cod);
+
+            }else{
+                $flasher->addFlash('warning', 'No se puede cambiar de estado', 'Error');
+            }
+            DB::commit();
+            return  \Response::json(['success' => '1']);
+        }catch (\Exception $e) {
+            DB::rollback();
+            return $e->getMessage();
+        }
+    }
 
     public function ajaxClientWorkorders(Request $request){
         $clientename = "Sin cliente";

@@ -80,7 +80,7 @@
                     </div>
                     <div class="row row-deck row-cards" id="div_gral_contenido">
                         @php
-                            $array = ['0', '1.', '4.0:1|', '6.'];
+                            $array = ['0', '1.', '4.0:', '6.'];
                         @endphp
                         @if(!in_array($item,$array))
                             <div class="col-12">

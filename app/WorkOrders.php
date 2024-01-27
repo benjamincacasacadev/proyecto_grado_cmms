@@ -54,6 +54,9 @@ class WorkOrders extends Model
     public function firstWorkTimes() {
         return $this->hasOne(WoTime::class,'work_order_id')->oldest();
     }
+    public function outcomes() {
+        return $this->hasMany(InvOutcomes::class,'wo_id')->where('state','2');
+    }
 
     // ======================================================================================================
     //                                                   FUNCIONES

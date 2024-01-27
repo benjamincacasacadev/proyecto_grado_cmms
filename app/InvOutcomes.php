@@ -60,7 +60,7 @@ class InvOutcomes extends Model
                 }
             break;
             case '2':
-                $val = "Ingresado";
+                $val = "Validado";
                 $fin =
                 '<div class="p-2 text-center  input-sm" >
                     <span class="text-green"><i class="fa fa-check"></i>&nbsp;&nbsp;'.$val.'</span>
