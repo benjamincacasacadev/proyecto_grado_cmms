@@ -1,6 +1,7 @@
 <?php
 
 use App\User;
+use Flasher\Prime\FlasherInterface;
 use Spatie\Permission\Models\Role;
 function nameEmpresa(){
     return "AMPER SRL";
@@ -215,13 +216,12 @@ function permisoJefe(){
 }
 
 function permisoTecnico(){
-    return roleId() == 3;
+    return roleId() == 4;
 }
 
 function permisoVeedor(){
     return roleId() == 3 || roleId() == 4;
 }
-
 
 function permisoAdminJefe(){
     return roleId() == 1 || roleId() == 2;
@@ -230,6 +230,19 @@ function permisoAdminJefe(){
 function canPassAdminJefe(){
     if(!permisoAdminJefe()){
         return abort(403);
+    }
+}
+
+function permisoAdminOTs($workId, $ajax = false){
+    if(!permisoAdminJefe()){
+        $checkTech = DB::table('user_work_orders')->select('user_id')->where('work_orders_id',$workId)->where('user_id',userId())->count();
+        if($checkTech != 1){
+            if($ajax){
+                return 'ajax';
+            }else{
+                abort(403);
+            }
+        }
     }
 }
 

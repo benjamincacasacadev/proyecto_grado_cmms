@@ -915,7 +915,7 @@
                                     </div>
 
                                     {{--  BOTON PARA GUARDAR DATOS --}}
-                                    @if ($workorder->estado != 'T')
+                                    @if ($workorder->estado != 'T' && $workorder->estado != 'R')
                                         @if ($workorder->reportEnabled)
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12 " id="btnGuardar">
                                                 {{-- Informes en revision solo pueden ser editados por los que tengan permiso de validar informes --}}
@@ -1032,7 +1032,7 @@
                     <div class="w-100">
                         <div class="row">
                             <div class="col">
-                                <a class="btn @if(themeMode() == 'D') btn-secondary @endif w-100" data-dismiss="modal">
+                                <a class="btn w-100" data-dismiss="modal">
                                     Cancelar
                                 </a>
                             </div>

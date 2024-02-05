@@ -245,10 +245,10 @@
                     motivo: motivo,
                 },
                 success: function (data) {
-                    if (data.success == '2' || data.success == '1') {
-                        window.location.reload();
-                    }
                     if(data.alerta) {
+                        toastr.error(data.mensaje, 'Algo salió mal');
+                    }
+                    if (data.success == '2' || data.success == '1') {
                         window.location.reload();
                     }
                 },

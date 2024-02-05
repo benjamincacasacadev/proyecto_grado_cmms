@@ -62,10 +62,7 @@ class WorkOrders extends Model
     //                                                   FUNCIONES
     // ======================================================================================================
     public function getCod(){
-        if(permisoAdminJefe()){
-            return '<a href=\'/work_orders/show/'.code($this->id).'\'>'.$this->cod.'</a>';
-        }
-        return $this->cod;
+        return '<a href=\'/work_orders/show/'.code($this->id).'\'>'.$this->cod.'</a>';
     }
 
     public function getAppendCod(){
@@ -352,6 +349,14 @@ class WorkOrders extends Model
     // ======================================================================================================
     //                                                   SCOPES
     // ======================================================================================================
+
+    public function scopePermisoVer($query){
+        if(!permisoAdminJefe()){
+            $query->whereHas('pivotWO', function($q) {
+                $q->where('user_id', userId());
+            });
+        }
+    }
 
     public function scopeCod($query, $val){
         if ($val != ''){

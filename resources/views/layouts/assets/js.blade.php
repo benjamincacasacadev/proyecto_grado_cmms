@@ -244,7 +244,7 @@
                     success:function(data) {
                         $("#"+idform+" .divWaitingMessage").hide();
                         if(data.alerta) {
-                            toastr.error(data.mensaje);
+                            toastr.error(data.mensaje, 'Algo salió mal');
                             $("[name="+buttonname+"]").attr('disabled',false)
                         }else if(data.success) {
                             if(data.urlReload){

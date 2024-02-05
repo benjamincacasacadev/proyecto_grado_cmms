@@ -35,12 +35,14 @@ class WorkOrdersController extends Controller
         if(!isset($workorder)){
             abort(404);
         }
+        permisoAdminOTs(decode($id));
         $users = User::where('active','1')->get();
         Session::put('item','1.');
         return view('work_orders.show', compact('workorder'));
     }
 
     public function create(){
+        canPassAdminJefe();
         $users = User::where('active','1')->get();
         $forms = StForms::get();
         Session::put('item','1.');
@@ -48,6 +50,7 @@ class WorkOrdersController extends Controller
     }
 
     public function store(Request $request, FlasherInterface $flasher) {
+        canPassAdminJefe();
         $this->validateWorkorders($request);
         // Guardar los campos de activo
         $registroMaximo = WorkOrders::select('cod')->where('cod', 'LIKE', "%OT%")->max('cod');
@@ -144,6 +147,7 @@ class WorkOrdersController extends Controller
         ->Descripcion($request->input('columns.6.search.value'))
         ->Prioridad($request->input('columns.7.search.value'))
         ->Fecha($request->input('columns.8.search.value'))
+        ->PermisoVer()
         ->with('asset.cliente');
 
         $totalFiltered = $posts->count();
@@ -178,6 +182,7 @@ class WorkOrdersController extends Controller
     }
 
     public function modalEdit(Request $request, $id){
+        canPassAdminJefe();
         $workorder = WorkOrders::findOrFail(decode($id));
         $forms = StForms::get();
         if(!$workorder->canEdit){
@@ -188,6 +193,7 @@ class WorkOrdersController extends Controller
     }
 
     public function update(Request $request, FlasherInterface $flasher, $id) {
+        canPassAdminJefe();
         $this->validateWorkorders($request, $id);
 
         $fechaSave = Carbon::createFromFormat('d/m/Y H:i', $request->fecha_ven);
@@ -241,6 +247,7 @@ class WorkOrdersController extends Controller
     }
 
     public function modalDelete(Request $request, $id){
+        canPassAdminJefe();
         $workorder = WorkOrders::findOrFail(decode($id));
         if(!$workorder->canEdit){
             abort(403);
@@ -250,6 +257,7 @@ class WorkOrdersController extends Controller
     }
 
     public function destroy(FlasherInterface $flasher, $id) {
+        canPassAdminJefe();
         $workorder = WorkOrders::findOrFail(decode($id));
         if(!$workorder->canEdit){
             $flasher->addFlash('warning', 'Debido al estado del informe', 'No se puede eliminar '.$workorder->cod);
@@ -316,6 +324,7 @@ class WorkOrdersController extends Controller
     }
 
     public function report(Request $request, $id){
+        permisoAdminOTs(decode($id));
         $workorder = WorkOrders::findOrFail(decode($id));
 
         $formulario = $workorder->forms;
@@ -344,6 +353,7 @@ class WorkOrdersController extends Controller
     }
 
     public function initTimeWork(FlasherInterface $flasher, $id){
+        permisoAdminOTs(decode($id));
         $workorder = WorkOrders::findOrFail(decode($id));
         if ($workorder->estado != 'P' ){
             return Redirect()->route('reports.show', ['id' => $id]);
@@ -363,6 +373,11 @@ class WorkOrdersController extends Controller
 
     public function timeRangeStore(Request $request, FlasherInterface $flasher, $id){
         $workorder = WorkOrders::findOrFail(decode($id));
+
+        if(permisoAdminOTs($workorder->id, true) == 'ajax'){
+            return  \Response::json(['alerta' => '2', 'mensaje' => '403 - No permitido']);
+        };
+
         $fechaActual = Carbon::now();
         if($request->sw == 1){
             if ($workorder->estado != 'E'){
@@ -398,7 +413,6 @@ class WorkOrdersController extends Controller
             $workorder->estado = 'E';
             $workorder->update();
 
-
             $estado = $workorder->getEstado(6);
             $flasher->addFlash('info', 'Orden de trabajo en progreso', 'CAMBIO DE ESTADO');
             return  \Response::json(['success' => '2','arrayTime' =>$arrayTime,'estado' =>$estado]);
@@ -409,16 +423,16 @@ class WorkOrdersController extends Controller
     // GUARDAR DATOS DE REPORTE
     // ====================================================================================================
     public function updateReport(Request $request, FlasherInterface $flasher, $id){
+        permisoAdminOTs(decode($id));
 
         $workorder = WorkOrders::findOrFail(decode($id));
 
-        // Informes en revision solo pueden ser editados por los que tengan permiso de validar informes
         if($workorder->estado == 'T'){
-            return back();
+            return Redirect()->route('reports.show', ['id' => $id]);
         }
 
         if(!$workorder->reportEnabled){
-            return back();
+            return Redirect()->route('reports.show', ['id' => $id]);
         }
 
         $idrep = $id;
@@ -431,10 +445,6 @@ class WorkOrdersController extends Controller
             $aux = explode("|",$key);
             $id = $aux[0];
             switch ($id) {
-                case '&carta&': // CARTA
-                    // $respuestas[$id][$aux[1]]['valor'] = $valor;
-                    // $respuestas[$id][$aux[1]]['orden'] = $aux[2];
-                break;
                 case '&serie&': // SERIE MxN
                     $nroserie = isset($aux[3]) ? $aux[3] : "";
                     $nombreserie = isset($aux[1]) ? $aux[1] : "";
@@ -548,7 +558,7 @@ class WorkOrdersController extends Controller
         return Redirect()->route('reports.show', ['id' => $idrep, 'contid' => $container]);
     }
 
-        // =========================================================================================================
+    // =========================================================================================================
     // =========================================================================================================
     //                                       ARCHIVOS
     // =========================================================================================================
@@ -578,9 +588,13 @@ class WorkOrdersController extends Controller
 
         $workorder = WorkOrders::findOrFail($request->idModulo);
 
+        if(permisoAdminOTs($workorder->id, true) == 'ajax'){
+            return  \Response::json(['alerta' => '2', 'mensaje' => '403 - No permitido']);
+        };
+
         // Informes en revision solo pueden ser editados por los que tengan permiso de validar informes
         if($workorder->estado == 'T'){
-            return back();
+            return  \Response::json(['alerta' => '2', 'mensaje' => 'error']);
         }
 
         if(!$workorder->reportEnabled){
@@ -648,7 +662,7 @@ class WorkOrdersController extends Controller
 
         $workorder = WorkOrders::findOrFail($idrep);
         // Informes en revision solo pueden ser editados por los que tengan permiso de validar informes
-        $swValidate = permisoAdminJefe();
+        $swValidate = permisoAdminJefe() || permisoTecnico();
 
         $archivos = $workorder->attachesReport;
 
@@ -1085,7 +1099,7 @@ class WorkOrdersController extends Controller
     }
 
     public function SendRevision(FlasherInterface $flasher, $id, $swC){
-
+        permisoAdminOTs(decode($id));
         $workorder = WorkOrders::findOrFail(decode($id));
 
         // VALIDACION DE ESTADO DEL REPORTE
