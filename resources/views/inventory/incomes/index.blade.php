@@ -33,7 +33,7 @@
             Ingresos
         </h1>
     </div>
-
+    @if (permisoAdminJefe())
     <div class="col-auto ms-auto d-print-none">
         <div class="btn-list">
             <button type="button" class="btn btn-pill btn-primary" id="add_income">
@@ -41,6 +41,7 @@
             </button>
         </div>
     </div>
+    @endif
 @endsection
 
 @section ('contenido')

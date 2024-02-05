@@ -12,6 +12,7 @@ use Flasher\Prime\FlasherInterface;
 
 class StFormController extends Controller{
     public function index(Request $request){
+        canPassAdminJefe();
         $stateFilter = ($request->stateFilter != '' && $request->stateFilter != null)? $request->stateFilter : 'act';
         Session::put('item','5.');
         return view("forms.index", compact('stateFilter'));

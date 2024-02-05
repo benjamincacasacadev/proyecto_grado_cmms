@@ -12,8 +12,9 @@ use Session;
 class InvTransfersController extends Controller
 {
     public function index (Request $request){
-        $selectEstado = $request->selectEstado != null ? $request->selectEstado : 'all';
         Session::put('item','4.3:');
+        canPassAdminJefe();
+        $selectEstado = $request->selectEstado != null ? $request->selectEstado : 'all';
         return view("inventory.transfers.index", compact('selectEstado'));
     }
 

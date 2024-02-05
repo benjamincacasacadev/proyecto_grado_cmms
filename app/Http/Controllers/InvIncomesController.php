@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 class InvIncomesController extends Controller
 {
     public function index (Request $request){
+        canPassAdminJefe();
         $selectEstado = $request->selectEstado != null ? $request->selectEstado : '';
         Session::put('item','4.2:');
         return view("inventory.incomes.index", compact('selectEstado'));
@@ -99,6 +100,7 @@ class InvIncomesController extends Controller
     }
 
     public function show($id){
+        canPassAdminJefe();
         $income = InvIncomes::findOrFail(decode($id));
         Session::put('item','4.2:');
         return view("inventory.incomes.show", compact('income'));
