@@ -308,7 +308,7 @@ $routeAttach = storage_path('app/public/workorders/'.$workorder->attach);
                                     </div>
                                 @endif
                                 {{-- SECCION PARA CAMBIAR ADJUNTO --}}
-                                @if (permisoAdmin())
+                                @if (permisoAdminJefe())
                                     <div>
                                         <label class="text-yellow">
                                             Cambiar adjunto
@@ -328,7 +328,7 @@ $routeAttach = storage_path('app/public/workorders/'.$workorder->attach);
                 @php $swfile = 0; @endphp
             @endif
 
-            @if (permisoAdmin())
+            @if (permisoAdminJefe())
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 divnewarchivo" style="{{($swfile != '0') ? 'display:none;' : ''}}">
                     <div class="card" id="{{(!isset($workorder->requests))? 'colPreview' : ''}}">
                         <div class="card-status-top bg-yellow"></div>

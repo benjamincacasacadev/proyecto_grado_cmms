@@ -102,7 +102,7 @@
                         <th width="8%">Descripción</th>
                         <th width="8%">Prioridad</th>
                         <th width="8%">Fecha programada</th>
-                        @if (permisoAdmin())
+                        @if (permisoAdminJefe())
                             <th width="3%">OP.</th>
                         @endif
                     </tr>
@@ -134,7 +134,7 @@
                             </select>
                         </td>
                         <td><input style="width: 100%;font-size:10px" id="user0" class="form-control nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="fechab"/></td>
-                        @if (permisoAdmin())
+                        @if (permisoAdminJefe())
                             <td></td>
                         @endif
                     </tr>
@@ -218,7 +218,7 @@
                 {"data": "descripcion", "className": "left"},
                 {"data": "prioridad"},
                 {"data": "fecha"},
-                @if (permisoAdmin())
+                @if (permisoAdminJefe())
                     {"data": "operations"},
                 @endif
             ],

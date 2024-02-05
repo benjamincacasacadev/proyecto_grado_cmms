@@ -69,7 +69,7 @@
                     <th style="width:15%">INFORMES DE MANTENIMIENTO</th>
                     <th style="width:15%">FORMULARIO PARA CARTA</th>
                     <th style="width:7%">ESTADO</th>
-                    @if (permisoAdmin())
+                    @if (permisoAdminJefe())
                         <th width="3%">OP.</th>
                     @endif
                 </tr>
@@ -83,7 +83,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    @if (permisoAdmin())
+                    @if (permisoAdminJefe())
                         <td></td>
                     @endif
                 </tr>
@@ -179,7 +179,7 @@
                 { "data": "informes" },
                 { "data": "carta" },
                 { "data": "estado" },
-                @if (permisoAdmin())
+                @if (permisoAdminJefe())
                     {"data": "operations"},
                 @endif
             ],

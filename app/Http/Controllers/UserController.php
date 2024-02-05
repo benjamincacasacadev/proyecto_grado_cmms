@@ -25,7 +25,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class UserController extends Controller
 {
     public function index(){
-        canPass();
+        canPassAdminJefe();
         $userlog = User::where('id',userId())->get();
         $usersa = User::where('active',1)->where('id','!=',userId())->orderBy('ap_paterno','asc')->get();
         $usersi = User::where('active','!=',2)->where('active','!=',1)->orderBy('ap_paterno','asc')->get();
@@ -40,7 +40,7 @@ class UserController extends Controller
     }
 
     public function show( Request $request, $cod){
-        canPass();
+        canPassAdminJefe();
         $user = User::findOrFail(decode($cod));
 
         if($user->active != '2'){
@@ -53,14 +53,14 @@ class UserController extends Controller
     }
 
     public function create(){
-        canPass();
+        canPassAdminJefe();
         $roles = Role::get();
         Session::put('item','6.');
         return view('users.create',compact('roles'));
     }
 
     public function store(Request $request, FlasherInterface $flasher) {
-        canPass();
+        canPassAdminJefe();
         $messages = [
             'username.required' => 'El campo nombre de usuario es requerido.',
             'password.required' => 'La contraseña es obligatoria',
@@ -130,7 +130,7 @@ class UserController extends Controller
     }
 
     public function edit($id){
-        canPass();
+        canPassAdminJefe();
         $user = User::findOrFail(decode($id));
         $roles = Role::get();
         Session::put('item','6.');
@@ -138,7 +138,7 @@ class UserController extends Controller
     }
 
     public function update(Request $request, FlasherInterface $flasher, $id){
-        canPass();
+        canPassAdminJefe();
         $user = User::where('id',decode($id))->first();
         // Validacion por request
         $this->validateUpdateUser($request, $user);
@@ -174,13 +174,13 @@ class UserController extends Controller
      * Carga la ventana de confirmacion para
      */
     public function modalCambioEstado($id){
-        canPass();
+        canPassAdminJefe();
         $users = User::findOrFail(decode($id));
         return view('users.modalCambioEstado', compact('users'));
     }
 
     public function cambiarestado(FlasherInterface $flasher, $id){
-        canPass();
+        canPassAdminJefe();
         $user=User::findOrFail(decode($id));
         if($user->id != userId()){
             if ($user->active=='0') {
@@ -196,13 +196,13 @@ class UserController extends Controller
     }
 
     public function modalDelete($id){
-        canPass();
+        canPassAdminJefe();
         $users = User::findOrFail(decode($id));
         return view('users.modalDelete', compact('users'));
     }
 
     public function destroy(Request $request, FlasherInterface $flasher, $id){
-        canPass();
+        canPassAdminJefe();
         $user = User::findOrFail(decode($id));
         $messages = [
             'userborrar.required' => 'El campo es obligatorio',

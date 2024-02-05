@@ -17,7 +17,7 @@ class InvTransfers extends Model
     }
 
     public function getCod(){
-        if(permisoAdmin())
+        if(permisoAdminJefe())
             return '<a href="/transfers/showmodal/'.code($this->id).'" rel="modalShow">'.$this->cod.'</a>';
         else
             return $this->cod;
@@ -58,7 +58,7 @@ class InvTransfers extends Model
             break;
             case '1':
                 $val = "Pendiente de autorización";
-                if (permisoAdmin())
+                if (permisoAdminJefe())
                     $fin =
                     '<div class="p-2 text-center form-control-sm font-weight-bold">
                         <a href="/transfers/statemodal/'.code($this->id).'" class="text-orange" title="Cambiar Estado" rel="modalState">

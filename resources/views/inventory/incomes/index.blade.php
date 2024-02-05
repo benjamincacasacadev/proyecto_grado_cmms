@@ -75,7 +75,7 @@
                 <th width="10%"># Detalles</th>
                 <th width="15%">Observación</th>
                 <th width="15%">Estado</th>
-                @if(permisoAdmin())
+                @if(permisoAdminJefe())
                     <th width="8%">Op.</th>
                 @endif
             </tr>
@@ -88,7 +88,7 @@
                 <td></td>
                 <td><input style="width: 100%;font-size:10px" id="income3" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="obsb"/></td>
                 <td></td>
-                @if(permisoAdmin())
+                @if(permisoAdminJefe())
                     <td></td>
                 @endif
             </tr>
@@ -197,7 +197,7 @@
                 {"data": "cant"},
                 {"data": "observation"},
                 {"data": "state"},
-                @if (permisoAdmin())
+                @if (permisoAdminJefe())
                     {"data": "operations"},
                 @endif
             ],

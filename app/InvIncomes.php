@@ -12,7 +12,7 @@ class InvIncomes extends Model
     }
 
     public function getCod(){
-        if(permisoAdmin()){
+        if(permisoAdminJefe()){
             return '<a href="/incomes/'.code($this->id).'" target="_blank">'.$this->cod.'</a>';
         }
         return $this->cod;
@@ -37,7 +37,7 @@ class InvIncomes extends Model
             break;
             case '1':
                 $val = "Pendiente de ingreso";
-                if(permisoAdmin())
+                if(permisoAdminJefe())
                     $fin =
                     '<div class="p-2 text-center form-control-sm vermas">
                         <a href="/incomes/statemodal/'.code($this->id).'" class="text-orange" title="Cambiar Estado" rel="modalState">
@@ -70,7 +70,7 @@ class InvIncomes extends Model
 
     public function getOperations(){
         $operaciones = '';
-        if(permisoAdmin()){
+        if(permisoAdminJefe()){
             if($this->state == 1)
                 $operaciones=
                 '<span class="form-operations" data-toggle="popoverOper" tabindex="0"

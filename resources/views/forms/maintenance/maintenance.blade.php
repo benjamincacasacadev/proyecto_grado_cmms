@@ -129,7 +129,7 @@
 <div class="row">
     @if ($form->state == 2)
         <div class="text-center text-yellow" style="font-size:20px"><b> FORMULARIO:</b> {{$form->name}} </div> <br>
-    @elseif(permisoAdmin())
+    @elseif(permisoAdminJefe())
         {{Form::Open(array('action'=>array('StFormController@storeMaintenance',code($form->id)),'method'=>'POST','id'=>'formMaintenanceForms'))}}
             <div class="offset-lg-1 col-lg-10">
                 <div class="text-center text-yellow" style="font-size:20px"><b> REGISTRAR CAMPO NUEVO</b> </div> <br>
@@ -502,7 +502,7 @@
                                                                         @if ($campo['type'] != 'serie')
                                                                             <label>{!! $campo['mostrar'] !!} </label>
                                                                             @if ($form->state != 2)
-                                                                                @if(permisoAdmin())
+                                                                                @if(permisoAdminJefe())
                                                                                     {{-- Editar y eliminar campo --}}
                                                                                     <a rel="modalEliminar" href="/forms/maintenance/deletemodal/{{ $campo['id'] }}/{{ code($form->id) }}" class="pull-right mt-1" title="Eliminar campo" style="cursor:pointer">
                                                                                         <svg class="icon text-muted font-weight-bold" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -1303,7 +1303,7 @@
         var h = 1;
         var gqq = 0;
         var rPadre = 1;
-        @if(permisoAdmin())
+        @if(permisoAdminJefe())
         $(".add_input_button_radio").click(function (e) {
             $(document).ready(function(){
                 $(".select2-selection").addClass('form-select2').css('border-color','#ccc');

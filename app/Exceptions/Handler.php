@@ -53,7 +53,23 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        return parent::render($request, $exception);
+        if ($exception instanceof \Illuminate\Session\TokenMismatchException) {
+            return redirect()->route('login');
+        }
+
+        if ($this->isHttpException($exception)) {
+            if ($exception->getStatusCode() == 404) {
+                return response()->view('errors.' . '404', [], 404);
+            } elseif ($exception->getStatusCode() == 403) {
+                return response()->view('errors.' . '403', [], 403);
+            } elseif ($exception->getStatusCode() == 405) {
+                return back();
+            } else {
+                return response()->view('errors.' . '500', [], 500);
+            }
+        } else {
+            return parent::render($request, $exception);
+        }
     }
 
     protected function unauthenticated($request, AuthenticationException $exception)

@@ -78,7 +78,7 @@
         <div class="col-lg-6">
             <address style="font-size: 10px; text-align: right">
                 @if ($outcome->state == 1)
-                    @if (permisoAdmin())
+                    @if (permisoAdminJefe())
                         <a rel="modalState" href="/outcomes/statemodal/{{ code($outcome->id) }}" class="btn btn-outline-orange border border-orange font-weight-bold" title="Cambiar estado (Autorizar ó anular)">
                             <svg class="icon icon-tabler icon-tabler-replace" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -137,12 +137,12 @@
                             <th width="15%">Origen</th>
                             <th width="15%">
                                 Almacen
-                                @if (permisoAdmin() && $outcome->state == '1')
+                                @if (permisoAdminJefe() && $outcome->state == '1')
                                     <span class="form-help edithover" id="ubicacionclass" data-toggle="popover" data-content="<span style=font-size:11px >Para editar un valor de esta columna haga doble clic en el campo o celda deseado para modificarlo.<br>Escoja el almacen deseado y se confirmarà el cambio. </span>" data-title="<b>Columna Editable</b>">?</span>
                                 @endif
                             </th>
                             <th width="17%">Destino</th>
-                            @if (permisoAdmin())
+                            @if (permisoAdminJefe())
                                 @if($outcome->state == 1)
                                     <th width="5%">Op.</th>
                                 @endif
@@ -162,7 +162,7 @@
             </div>
         @endif
 
-        @if(permisoAdmin() && $outcome->state == 1)
+        @if(permisoAdminJefe() && $outcome->state == 1)
             {{Form::Open(array('action'=>array('InvOutcomesDetailsController@storeDetails',code($outcome->id)),'method'=>'POST','autocomplete'=>'off','id'=>'formSalidas'))}}
                 <h2 >Solicitar materiales</h2>
                 <div class="table-responsive">
@@ -353,7 +353,7 @@
                         {"data": "report"},
                         {"data": "location",'className':'ubicacionclass'},
                         {"data": "observation"},
-                        @if (permisoAdmin())
+                        @if (permisoAdminJefe())
                             @if($outcome->state == 1)
                                 {"data": "operations"},
                             @endif

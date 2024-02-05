@@ -34,7 +34,7 @@ class Clients extends Model
                     <i class="fas fa-check-circle fa-lg"></i>
                 </span>
             </a>';
-            if (permisoAdmin()){
+            if (permisoAdminJefe()){
                 $estado =
                 '<a href="/clients/estado/'.code($this->id).'/1" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
                     <span class="text-yellow" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px;\'> Si desea desactivar el cliente haga clic. </span>" data-original-title="<span style=\'font-size: 12px;\'><b>CLIENTE ACTIVO</b></span>">
@@ -50,7 +50,7 @@ class Clients extends Model
                     <i class="fas fa-exclamation-circle fa-lg"></i>
                 </span>
             </a>';
-            if (permisoAdmin()){
+            if (permisoAdminJefe()){
                 $estado =
                 '<a href="/clients/estado/'.code($this->id).'/0" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
                     <span class="text-pink" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px; \' class=\'text-pink\'> Si desea activar el cliente haga clic. </span>" data-original-title="<span style=\'font-size: 12px;\' class=\'text-pink\'><b>CLIENTE INACTIV0</b></span>">

@@ -34,7 +34,7 @@ class Inventory extends Model
     }
 
     public function getCodAppendAttribute(){
-        if(permisoAdmin()){
+        if(permisoAdminJefe()){
             return '<a href="/inventory/kardex/'.code($this->id).'" target="_blank" class="text-yellow">'.$this->codAppendLiteral.'</a>';
         }
         return $this->codAppendLiteral;
@@ -45,7 +45,7 @@ class Inventory extends Model
     }
 
     public function getCod(){
-        if(permisoAdmin()){
+        if(permisoAdminJefe()){
             return '<a href="/inventory/kardex/'.code($this->id).'" target="_blank">'.$this->cod.'</a>';
         }
         return $this->cod;
@@ -74,7 +74,7 @@ class Inventory extends Model
             '<span class="text-teal" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px;\' class=\'text-teal\'> <b>MATERIAL ACTIVO</b> </span>">
                 <i class="fas fa-check-circle fa-lg"></i>
             </span>';
-            if(permisoAdmin()){
+            if(permisoAdminJefe()){
                 $estado =
                 '<a href="/items/state/'.code($this->id).'/1">
                     <span class="text-teal" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px;\'> Si desea desactivar el material haga clic. </span>" data-original-title="<span style=\'font-size: 12px;\'><b>MATERIAL ACTIVO</b></span>">
@@ -87,7 +87,7 @@ class Inventory extends Model
             '<span class="text-pink" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px; \' class=\'text-pink\'> <b>MATERIAL INACTIV0</b> </span>" >
                 <i class="fas fa-exclamation-circle fa-lg"></i>
             </span>';
-            if(permisoAdmin()){
+            if(permisoAdminJefe()){
                 $estado =
                 '<a href="/items/state/'.code($this->id).'/0">
                     <span class="text-pink" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px; \' class=\'text-pink\'> Si desea activar el material haga clic. </span>" data-original-title="<span style=\'font-size: 12px;\' class=\'text-pink\'><b>MATERIAL INACTIV0</b></span>">
@@ -103,7 +103,7 @@ class Inventory extends Model
     public function getOperations(){
 
         $operaciones = $options =  "";
-        if(permisoAdmin()){
+        if(permisoAdminJefe()){
             $options =
             '<a rel=\'modalEditInventory\' href=\'/inventory/editmodal/'. code($this->id).' \' >
                 <svg class=\'icon text-muted iconhover\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' stroke-width=\'2\' stroke=\'currentColor\' fill=\'none\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path stroke=\'none\' d=\'M0 0h24v24H0z\' fill=\'none\'/><path d=\'M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3\' /><path d=\'M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3\' /><line x1=\'16\' y1=\'5\' x2=\'19\' y2=\'8\' /></svg>

@@ -207,11 +207,28 @@ function fechaLiteral($fecha = false){
 }
 
 function permisoAdmin(){
-    return roleId() == 1 || roleId() == 2 ? true : false;
+    return roleId() == 1;
 }
 
-function canPass(){
-    if(!permisoAdmin()){
+function permisoJefe(){
+    return roleId() == 2;
+}
+
+function permisoTecnico(){
+    return roleId() == 3;
+}
+
+function permisoVeedor(){
+    return roleId() == 3 || roleId() == 4;
+}
+
+
+function permisoAdminJefe(){
+    return roleId() == 1 || roleId() == 2;
+}
+
+function canPassAdminJefe(){
+    if(!permisoAdminJefe()){
         return abort(403);
     }
 }

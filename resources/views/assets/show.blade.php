@@ -207,7 +207,7 @@ $routeAttach = storage_path('app/public/assets/'.$asset->attach);
             </div>
             <div class="card-body">
                 @php $routeAttach = storage_path('app/public/assets/'.$asset->attach); @endphp
-                @if (permisoAdmin())
+                @if (permisoAdminJefe())
                     {{Form::Open(array('action'=>array('StAssetsController@updateImage',code($asset->id)),'method'=>'POST','autocomplete'=>'off','id'=>'formAttachAsset'))}}
                         <div class="row">
                             <div class="text-center" id="divImageAttach">

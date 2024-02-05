@@ -79,7 +79,7 @@
                 <th width="10%">OT asociada</th>
                 <th width="15%">Fecha de entrega</th>
                 <th width="15%">Estado</th>
-                @if(permisoAdmin())
+                @if(permisoAdminJefe())
                     <th width="8%">Op.</th>
                 @endif
             </tr>
@@ -92,7 +92,7 @@
                 <td><input style="width: 100%;font-size:10px" id="income2" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="otb"/></td>
                 <td><input style="width: 100%;font-size:10px" id="income3" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="fechab"/></td>
                 <td></td>
-                @if(permisoAdmin())
+                @if(permisoAdminJefe())
                     <td></td>
                 @endif
             </tr>
@@ -212,7 +212,7 @@
                 {"data": "workorders"},
                 {"data": "delivery_date"},
                 {"data": "state"},
-                @if (permisoAdmin())
+                @if (permisoAdminJefe())
                     {"data": "operations"},
                 @endif
             ],

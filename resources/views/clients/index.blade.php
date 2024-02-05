@@ -50,7 +50,7 @@
                     <th width="15%" style="text-align: center !important">Dirección</th>
                     <th width="15%" style="text-align: center !important">Datos de contacto</th>
                     <th width="10%">Estado</th>
-                    @if (permisoAdmin())
+                    @if (permisoAdminJefe())
                         <th width="3%">OP.</th>
                     @endif
                 </tr>
@@ -78,7 +78,7 @@
                             <option value="0">Inactivos</option>
                         </select>
                     </td>
-                    @if (permisoAdmin())
+                    @if (permisoAdminJefe())
                         <td></td>
                     @endif
                 </tr>
@@ -167,7 +167,7 @@
                 {"data": "direccion", "className": "left"},
                 {"data": "datosContacto", "className": "left"},
                 {"data": "estado"},
-                @if (permisoAdmin())
+                @if (permisoAdminJefe())
                     {"data": "operations"},
                 @endif
             ],

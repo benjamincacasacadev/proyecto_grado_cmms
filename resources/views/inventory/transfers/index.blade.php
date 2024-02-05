@@ -40,7 +40,7 @@
         </h1>
     </div>
 
-    @if (permisoAdmin())
+    @if (permisoAdminJefe())
         <div class="col-auto ms-auto d-print-none">
             <div class="btn-list">
                 <a href="/transfers/createmodal" rel="modalCreate">

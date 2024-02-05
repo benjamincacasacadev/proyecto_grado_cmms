@@ -73,7 +73,7 @@
                         <th width="8%">Nº de serie</th>
                         <th width="13%" style="text-align: center !important">Datos del activo</th>
                         <th width="5%">Estado</th>
-                        @if (permisoAdmin())
+                        @if (permisoAdminJefe())
                             <th width="3%">OP.</th>
                         @endif
                     </tr>
@@ -124,7 +124,7 @@
                                 <option value="0">Inactivos</option>
                             </select>
                         </td>
-                        @if (permisoAdmin())
+                        @if (permisoAdminJefe())
                             <td></td>
                         @endif
                     </tr>
@@ -217,7 +217,7 @@
                 {"data": "serie"},
                 {"data": "datosContacto", "className": "left"},
                 {"data": "estado"},
-                @if (permisoAdmin())
+                @if (permisoAdminJefe())
                     {"data": "operations"},
                 @endif
             ],

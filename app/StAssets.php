@@ -22,7 +22,7 @@ class StAssets extends Model
     // FUNCIONES
     // ==========================================================================
     public function getCod(){
-        if(permisoAdmin()){
+        if(permisoAdminJefe()){
             return '<a href=\'/assets/show/'.code($this->id).'\'>'.$this->cod.'</a>';
         }
         return $this->cod;
@@ -75,7 +75,7 @@ class StAssets extends Model
                     <i class="fas fa-check-circle fa-lg"></i>
                 </span>
             </a>';
-            if (permisoAdmin()){
+            if (permisoAdminJefe()){
                 $estado =
                 '<a href="/assets/estado/'.code($this->id).'/1" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
                     <span class="text-yellow" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px;\'> Si desea inhabilitar el activo haga clic. </span>" data-original-title="<span style=\'font-size: 12px;\'><b>ACTIVO HABILITADO</b></span>">
@@ -91,7 +91,7 @@ class StAssets extends Model
                     <i class="fas fa-exclamation-circle fa-lg"></i>
                 </span>
             </a>';
-            if (permisoAdmin()){
+            if (permisoAdminJefe()){
                 $estado =
                 '<a href="/assets/estado/'.code($this->id).'/0" style="padding: .375rem .75rem; font-size: .9rem; line-height: 1.6;">
                     <span class="text-pink" data-toggle="popover" data-placement="left" data-trigger="hover" data-content="<span style=\'font-size: 12px; \' class=\'text-pink\'> Si desea habilitar el activo haga clic. </span>" data-original-title="<span style=\'font-size: 12px;\' class=\'text-pink\'><b>ACTIVO INHABILITADO</b></span>">

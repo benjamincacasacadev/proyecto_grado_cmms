@@ -42,7 +42,7 @@ class StForms extends Model
         // if($this->state != "1"){
         //     return '';
         // }
-        if(!permisoAdmin()){
+        if(!permisoAdminJefe()){
             return '';
         }
 

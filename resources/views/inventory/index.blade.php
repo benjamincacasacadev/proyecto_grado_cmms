@@ -210,7 +210,7 @@
                 {"data": "min_cant"},
                 {"data": "unit"},
                 {"data": "state"},
-                @if (permisoAdmin())
+                @if (permisoAdminJefe())
                     {"data": "operations"},
                 @endif
             ],

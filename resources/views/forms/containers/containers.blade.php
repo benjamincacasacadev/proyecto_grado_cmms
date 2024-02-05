@@ -69,7 +69,7 @@
     @if ($forms->state == 2)
         <div class="text-center text-yellow" style="font-size:20px"><b> FORMULARIO:</b> {{$forms->state}}</div> <br>
     @else
-        @if (permisoAdmin())
+        @if (permisoAdminJefe())
             <div class="offset-lg-1 col-lg-10 offset-md-0">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -213,7 +213,7 @@
                                                 </h2>
                                                 <div id="{{delete_charspecial($item['val'])}}---collapse" class="accordion-collapse collapse show" data-parent="#accordion_principal">
                                                     <div style="padding:20px 0px 30px 50px"> Aquí irá el contenido del sub contenedor de <b>{{$item['mostrar']}}</b>&nbsp;&nbsp;
-                                                        @if (permisoAdmin())
+                                                        @if (permisoAdminJefe())
                                                             @if ($forms->state != 2)
                                                                 <a rel="modalEditSubContainer" href="/forms/subcontainer/editmodal/{{$cont['id']}}/{{$item['val']}}/{{code($forms->id)}}" title="Editar subcontenedor" class="text-yellow">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.25" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -236,7 +236,7 @@
                                 @endif
                             </div>
 
-                            @if (permisoAdmin())
+                            @if (permisoAdminJefe())
                                 @if (count($containers)>0 && $forms->state != 2)
                                     <div class="row">
                                         <div style="font-size: 10px; text-align: right; padding-top:20px">

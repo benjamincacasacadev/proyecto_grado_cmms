@@ -62,7 +62,7 @@ class WorkOrders extends Model
     //                                                   FUNCIONES
     // ======================================================================================================
     public function getCod(){
-        if(permisoAdmin()){
+        if(permisoAdminJefe()){
             return '<a href=\'/work_orders/show/'.code($this->id).'\'>'.$this->cod.'</a>';
         }
         return $this->cod;
@@ -269,7 +269,7 @@ class WorkOrders extends Model
 
     public function getOperations(){
         $operaciones = '';
-        if ($this->estado == 'P' && permisoAdmin()){
+        if ($this->estado == 'P' && permisoAdminJefe()){
             $operaciones=
             '<span class="form-operations" data-toggle="popoverOper" tabindex="0"
                 data-content=
@@ -298,7 +298,7 @@ class WorkOrders extends Model
     }
 
     public function getCanEditAttribute(){
-        return $this->estado == 'P' && permisoAdmin();
+        return $this->estado == 'P' && permisoAdminJefe();
     }
 
     //  Accessor para obtener el tiempo de inicio de un ot

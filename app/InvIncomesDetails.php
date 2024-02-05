@@ -25,7 +25,7 @@ class InvIncomesDetails extends Model
 
     public function getOperations($sw){
         $operaciones = "";
-        if(permisoAdmin()){
+        if(permisoAdminJefe()){
             if($this->incomes->state == 1)
                 $operaciones=
                 '<span class="form-operations" data-toggle="popoverOper" tabindex="0"

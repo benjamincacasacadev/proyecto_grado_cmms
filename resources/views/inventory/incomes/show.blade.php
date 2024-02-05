@@ -74,7 +74,7 @@
     <div class="col-lg-6">
         <address style="font-size: 10px; text-align: right">
             @if ($income->state == 1)
-                @if (permisoAdmin())
+                @if (permisoAdminJefe())
                     <a rel="modalState" href="/incomes/statemodal/{{ code($income->id) }}" class="btn btn-outline-orange border border-orange font-weight-bold" title="Cambiar estado (Autorizar ó anular)">
                         <svg class="icon icon-tabler icon-tabler-replace" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -131,7 +131,7 @@
                         <th width="8%">Cantidad</th>
                         <th width="15%">Ubicación</th>
                         <th width="17%">Observación</th>
-                        @if(permisoAdmin() && $income->state == 1)
+                        @if(permisoAdminJefe() && $income->state == 1)
                             <th width="5%">Op.</th>
                         @endif
                     </tr>
@@ -149,7 +149,7 @@
         </div>
     @endif
 
-    @if(permisoAdmin() && $income->state == 1)
+    @if(permisoAdminJefe() && $income->state == 1)
         {{Form::Open(array('action'=>array('InvIncomesDetailsController@storeDetails',code($income->id)),'method'=>'POST','autocomplete'=>'off','id'=>'formIngreso'))}}
             <h2 >Agregar materiales</h2>
             <div class="table-responsive">
@@ -331,7 +331,7 @@
                     {"data": "cant"},
                     {"data": "location"},
                     {"data": "observation"},
-                    @if(permisoAdmin() && $income->state == 1)
+                    @if(permisoAdminJefe() && $income->state == 1)
                         {"data": "operations"},
                     @endif
                 ],

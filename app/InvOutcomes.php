@@ -21,7 +21,7 @@ class InvOutcomes extends Model
     //                                         FUNCIONES
     // =============================================================================================
     public function getCod(){
-        if(permisoAdmin()){
+        if(permisoAdminJefe()){
             return '<a href="/outcomes/show/'.code($this->id).'">'.$this->cod.'</a>';
         }
         return $this->cod;
@@ -47,7 +47,7 @@ class InvOutcomes extends Model
                 '<div class="p-2 text-center form-control-sm vermas text-orange">
                     <i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;'.$val.'
                 </div>';
-                if(permisoAdmin()){
+                if(permisoAdminJefe()){
                     $fin =
                     '<div class="p-2 text-center form-control-sm vermas">
                         <a href="/outcomes/statemodal/'.code($this->id).'" class="text-orange" title="Cambiar Estado" rel="modalState">
@@ -75,7 +75,7 @@ class InvOutcomes extends Model
     }
 
     public function getOperations(){
-        if (!permisoAdmin()){
+        if (!permisoAdminJefe()){
             return '';
         }
         if($this->state != 1){
