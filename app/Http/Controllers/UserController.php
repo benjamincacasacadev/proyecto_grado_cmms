@@ -152,7 +152,7 @@ class UserController extends Controller
             $user->ap_materno = $request->ap_materno;
             $user->email = $request->email;
             $user->celular = $request->celular;
-            $user->role_id = decode($request->roles);
+            $user->role_id = $request->roles;
             // PASSWORD
             if($request->auxpass == 1 && $request->password_first != null && $request->new_password != null ){
                 $user->password = bcrypt($request->new_password);
@@ -284,6 +284,41 @@ class UserController extends Controller
         $flasher->addFlash('info', 'Modificado con éxito', 'Avatar');
         return response()->json(['success'=>'1']);
     }
+
+    public function uploadFirmaImagen(Request $request) {
+        if (auth()->user()->active == '6') abort(403); // Validacion
+        $image_parts = explode(";base64,", $request->image);
+        $file = base64_decode($image_parts[1]);
+        $tmpFilePath = sys_get_temp_dir() . '/' . Str::uuid()->toString();
+        file_put_contents($tmpFilePath, $file);
+        $tmpFile = new File($tmpFilePath);
+        $file = new UploadedFile(
+            $tmpFile->getPathname(),
+            $tmpFile->getFilename(),
+            $tmpFile->getMimeType(),
+            0,
+            true // Mark it as test, since the file isn't from real HTTP POST.
+        );
+
+        $extension = $file->extension();
+        $ext = strtolower($extension);
+        if( !($ext == 'jpeg' || $ext == 'jpg' || $ext == 'png') ){
+            return response()->json(['success' => 'X']);
+        }
+
+        $user = User::where('id', decode($request->userid))->first();
+        if (isset($user->firma)) {
+            if (Storage::exists('public/general/firmas/' . $user->firma . '')) {
+                Storage::delete('public/general/firmas/' . $user->firma . '');
+            }
+        }
+        $name = 'firma_' . $this->generarCodigoImg(6) . '.png';
+        $file->storeAs("public/general/firmas/", $name);
+        $user->firma = $name;
+        $user->update();
+        return response()->json(['success' => 'Crop Image Uploaded Successfully']);
+    }
+
 
     public function generarCodigoImg($longitud) {
         $key = '';

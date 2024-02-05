@@ -27,6 +27,7 @@ Route::get('/perfil_usuario','UserController@perfil')->name('perfil');
 Route::post('updateprofile/{user}','UserController@updateprofile')->name('updateprofile');
 Route::post('/useravatar', 'UserController@uploadAvatarImagen')->name('users.avatar');
 Route::post('/validar_user','UserController@validarUsername')->name('users.validar');
+Route::post('/userfirma', 'UserController@uploadFirmaImagen')->name('users.firma');
 
 // ========================================================================================
 //                                      CLIENTES

@@ -171,6 +171,19 @@
                             <span id="celular-error" class="text-red"></span>
                         </div>
                     </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <label id="roles--label">* Asignar rol: </label>
+                        <div class="form-group">
+                            <select class="form-control form-select" id="tipoRol" name="roles">
+                                <option value="" hidden>Seleccionar una opción</option>
+                                @foreach($roles as $role)
+                                    <option value="{{$role->id}}" @if($role->id == $user->role_id) selected @endif>{{$role->name}}</option>
+                                @endforeach
+                            </select>
+                            <span id="roles-error" class="text-red"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

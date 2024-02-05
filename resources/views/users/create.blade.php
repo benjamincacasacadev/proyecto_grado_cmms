@@ -46,7 +46,7 @@
 
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <label id="password--label">* Contraseña:</label> &ensp; <small class="form-text text-yellow font-weight-bold">** Este se almacenará como contraseña</small>
+                        <label id="password--label">* Contraseña:</label> &ensp; <small class="form-text text-yellow font-weight-bold"></small>
                         <input class="form-control" placeholder="Número de cédula de identidad" name="password">
                         <span id="password-error" class="text-red"></span> <br>
                         <span class="label label-light"></span>
@@ -88,22 +88,6 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center mt-2">
-                        <label class="form-check form-check-inline cursor-pointer">
-                            <input class="form-check-input" type="checkbox" id="checkIncluir" name="checkIncluir" value="1">
-                            <span class="form-check-label text-yellow">¿Enviar datos de acceso al sistema por email?</span>
-                        </label>
-                    </div>
-
-                    <div class="row divEmail" style="display: none">
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                            <label id="email--label">* Email:</label>
-                            <input class="form-control" placeholder="Email" name="email" >
-                            <span id="email-error" class="text-red"></span>
-                        </div>
-                    </div>
-                </div>
                 <div class="pull-right" id="registrar">
                     <button type="submit" class="btn btn-yellow" name="btnSubmit">Registrar</button>
                 </div>
@@ -157,15 +141,6 @@
                 }
             })
         });
-
-        $("#checkIncluir").change(function() {
-            if($(this).is(":checked")) {
-                $(".divEmail").slideDown();
-            }else{
-                $(".divEmail").slideUp();
-            }
-        });
-
     </script>
 
     {{-- ===========================================================================================

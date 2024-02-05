@@ -182,6 +182,71 @@
         </div>
     {!!Form::Close()!!}
 
+    <div class="row">
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+        </div>
+        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="card-status-top bg-yellow"></div>
+                <div class="card-header">
+                    <h3 class="card-title pull-left text-yellow ">
+                        <b>IMAGEN Ó CAPTURA DE FIRMA </b>
+                    </h3>
+                </div>
+
+                <div class="row mx-4 mt-2">
+                    <div class="col-xl-6 col-lg-12 col-sm-12 col-xs-12 col-md-6">
+                        <div class="form-group">
+                            <label>
+                                Cambiar firma
+                                <span class="form-help" data-toggle='popover' data-trigger='hover' data-content='<span style="font-size: 11px;" >Se recomienda que la imagen tenga un ancho máximo de 150 píxeles (px) así no sufrirá distorsión al momento de reducirlo. </span>' data-original-title='<span style="font-size: 12px; font-weight: bold ">Información</span>'>
+                                    ?
+                                </span>
+                            </label>
+                            <input type="file" name="firma" id="input-file" accept="image/*" data-show-preview="false"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-lg-12 col-sm-12 col-xs-12 text-center col-md-6 pb-3">
+                        @if (auth()->user()->firma != null)
+                            <div class="container bg-white" style="max-width: 170px; max-height: 100px;border-radius:10%">
+                                <div class="row justify-content-center align-items-center">
+                                    <img id="imgfirma" src="/storage/general/firmas/{{auth()->user()->firma}}" style="max-width: 150px; max-height: 100px;" />
+                                </div>
+                            </div>
+                        @else
+                            <br><b class="text-yellow">No cuenta con imagen de firma... </b>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Imagen de Firma --}}
+    <div class="modal modalPrimary fade" id="modalImagenFirma" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Cambiar imagen de firma
+                    </h5>
+                    <button type="button" class="btn-close btnCancFirma" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="img-container">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <img id="imageFirma" style="max-height: 600px">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btnCancFirma" data-dismiss="modal">Cancelar</button>
+                    <input type="button" class="btn btn-yellow pull-right" id="guardarfirma" value="Guardar firma">
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Modal AVATAR --}}
     <input type="file" name="image" class="image" accept="image/*" id="inputImageAvatar" style="display:none">
     <div class="modal modalPrimary fade modal-slide-in-right" aria-hidden="true" role="dialog"  id="modalAvatar" data-backdrop="static">
@@ -237,7 +302,7 @@
         $(document).ready(function(){
             var sw_msg = "{{$swfirma}}";
             if(sw_msg == '1'){
-                toastr.success('Imagen de Firma Modificada con éxito');
+                toastr.success('Imagen de firma Modificada con éxito', 'Correcto');
             }
             var pageURL = $(location).attr("href").split('?')[0];
             window.history.pushState("profile", "Title", pageURL);
@@ -441,6 +506,112 @@
             });
         })
     </script>
+
+    {{-- CROPPER DE FIRMA --}}
+<script>
+    $(".btnCancFirma").click(function () {
+        $("#input-file").fileinput('clear');
+    })
+    $("#input-file").fileinput({
+        previewFileType: "image",
+        showUpload: false,
+        showCancel: false,
+        dropZoneEnabled: true,
+        showCaption: false,
+    });
+
+    $('#input-file').change(function(){
+        $(".fileinput-remove-button").hide();
+    })
+
+    var $modal = $('#modalImagenFirma');
+    var image = document.getElementById('imageFirma');
+    var cropper;
+    $("#input-file").on("change", function (e) {
+        var files = e.target.files;
+        var done = function (url) {
+            image.src = url;
+            $modal.modal('show');
+        };
+        var reader;
+        var file;
+        var url;
+        if ( files.length > 0) {
+            file = files[0];
+            if (URL) {
+                done(URL.createObjectURL(file));
+            } else if (FileReader) {
+                reader = new FileReader();
+                reader.onload = function (e) {
+                    done(reader.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    });
+
+    $modal.on('shown.bs.modal', function () {
+        cropper = new Cropper(image, {
+            aspectRatio: 160/100,
+            viewMode: 0,
+            crop(event) {
+                // console.log(event.detail.width);
+                // console.log(event.detail.height);
+            },
+            preview: '.preview'
+        });
+    }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+        cropper = null;
+    });
+
+    $("#guardarfirma").click(function () {
+        $(this).attr("disabled","disabled");
+        canvas = cropper.getCroppedCanvas({
+            width: 160,
+            height: 100,
+        });
+        var btnEnviarEnc = $("#guardarfirma");
+        var userid = "{{code(auth()->user()->id)}}";
+        canvas.toBlob(function (blob) {
+            url = URL.createObjectURL(blob);
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+                var base64data = reader.result;
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "{{ route('users.firma') }}",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        'image': base64data,
+                        userid : userid
+                    },
+                    beforeSend: function(){
+                        btnEnviarEnc.val("Guardando firma..."); // Para input de tipo button
+                        btnEnviarEnc.attr("disabled","disabled");
+                    },
+                    complete:function(data){
+                        btnEnviarEnc.val("Guardar firma");
+                        btnEnviarEnc.attr("disabled","disabled");
+                    },
+                    success: function (data) {
+                        btnEnviarEnc.removeAttr("disabled");
+                        $modal.modal('hide');
+                        window.location.reload();
+                        window.history.pushState("users", "Title", "/perfil_usuario?swfirma=1");
+                        window.location.reload();
+                    },
+                    error: function(data){
+                        toastr.error('Hubo un problema al actualizar los datos');
+                    }
+
+                });
+            }
+        });
+    })
+</script>
 
     <script>
         var camposprofile = ['current_password','password_first','new_password','name','ap_paterno','ap_materno','email','celular'];

@@ -179,10 +179,10 @@ class WorkOrders extends Model
 
         foreach($workorderuser as $t => $tuser){
             $nameUser = ($tuser->name.' '.$tuser->ap_paterno.' '.$tuser->ap_materno);
-            $urlavatar = '/storage/general/avatar/thumbnail/40x40/'.$tuser->avatar;
+            $urlavatar = '/storage/general/avatar/thumbnail/'.$tuser->avatar;
 
             $imgExists = false;
-            if (\Storage::exists('public/general/avatar/thumbnail/40x40/'.$tuser->avatar)){
+            if (\Storage::exists('public/general/avatar/thumbnail/'.$tuser->avatar)){
                 $imgExists = $tuser->avatar != 'avatar0.png';
             }
 
