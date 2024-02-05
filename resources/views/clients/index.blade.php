@@ -23,7 +23,7 @@
             Clientes
         </h1>
     </div>
-
+    @if (permisoAdminJefe())
     <div class="col-auto ms-auto d-print-none">
         <div class="btn-list">
             <a href="clients/modalCreate" rel="modalCreate" title="Nuevo cliente">
@@ -36,6 +36,7 @@
             </a>
         </div>
     </div>
+    @endif
 @endsection
 
 @section ('contenido')

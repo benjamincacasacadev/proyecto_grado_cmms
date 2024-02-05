@@ -55,16 +55,13 @@ class InvOutcomesDetails extends Model
 
     public function getLocationEditable(){
         $location = isset($this->location) ? $this->almacenLiteral : "-";
-        if(permisoAdminJefe()){
-            if($this->outcomes->state == 1){
-                if ($this->quantity <= $this->items->quantity){
-                    return "<div class='text-center selectedit' data-type='select' data-pk='".$this->id."' data-name='location' data-value='".$this->location."' data-source='/outcomes/location/".code($this->id)."'>"
-                                .$location.
-                            "</div>";
-                }
-                return '<i class="text-sm">No existe la cantidad solicitada</i>';
-
+        if($this->outcomes->state == 1){
+            if ($this->quantity <= $this->items->quantity){
+                return "<div class='text-center selectedit' data-type='select' data-pk='".$this->id."' data-name='location' data-value='".$this->location."' data-source='/outcomes/location/".code($this->id)."'>"
+                            .$location.
+                        "</div>";
             }
+            return '<i class="text-sm">No existe la cantidad solicitada</i>';
         }
         return $location;
     }

@@ -51,12 +51,14 @@
 
     <div class="col-auto ms-auto d-print-none">
         <div class="btn-list">
-            <a href="/inventory/createmodal" rel="modalCreate" class="btn btn-pill btn-yellow">
-                <i class="fa fa-plus" ></i> &nbsp;
-                <span class="d-none d-sm-inline-block">
-                    Material
-                </span>
-            </a>
+            @if (permisoAdminJefe())
+                <a href="/inventory/createmodal" rel="modalCreate" class="btn btn-pill btn-yellow">
+                    <i class="fa fa-plus" ></i> &nbsp;
+                    <span class="d-none d-sm-inline-block">
+                        Material
+                    </span>
+                </a>
+            @endif
         </div>
     </div>
 @endsection
@@ -96,7 +98,9 @@
                         <th width="10%">Cantidad mínima</th>
                         <th width="15%">Unidad</th>
                         <th width="15%">Estado</th>
-                        <th width="8%">Op.</th>
+                        @if (permisoAdminJefe())
+                            <th width="8%">Op.</th>
+                        @endif
                     </tr>
                 </thead>
                 <thead role="row">
@@ -108,7 +112,9 @@
                         <td><input style="width: 100%;font-size:10px" id="inven4" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="cantminb"/></td>
                         <td><input style="width: 100%;font-size:10px" id="inven5" class="form-control font-weight-bold nopegar" type="text" placeholder="🔍 &nbsp;Buscar" name="unidadb"/></td>
                         <td></td>
-                        <td></td>
+                        @if (permisoAdminJefe())
+                            <td></td>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>

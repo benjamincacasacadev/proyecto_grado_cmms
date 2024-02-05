@@ -25,10 +25,12 @@ class StAssetsController extends Controller
     }
 
     public function modalCreate(){
+        canPassAdminJefe();
         return view('assets.modalCreate');
     }
 
     public function store(Request $request, FlasherInterface $flasher) {
+        canPassAdminJefe();
         $this->validateAssets($request);
 
         // Guardar los campos de activo
@@ -124,11 +126,13 @@ class StAssetsController extends Controller
     }
 
     public function modalEdit($id){
+        canPassAdminJefe();
         $asset = StAssets::findOrFail(decode($id));
         return view('assets.modalEdit', compact('asset'));
     }
 
     public function update(Request $request, FlasherInterface $flasher, $id){
+        canPassAdminJefe();
         $this->validateAssets($request, $id);
 
         $asset = StAssets::findOrFail(decode($id));
@@ -176,12 +180,14 @@ class StAssetsController extends Controller
     }
 
     public function modalDelete($id){
+        canPassAdminJefe();
         $asset = StAssets::findOrFail(decode($id));
         $count = WorkOrders::where('asset_id',$asset->id)->count();
         return view('assets.modalDelete', compact('asset','count'));
     }
 
     public function destroy(FlasherInterface $flasher, $id){
+        canPassAdminJefe();
         $asset = StAssets::findOrFail(decode($id));
         $count = WorkOrders::where('asset_id',$asset->id)->count();
         if($count > 0){
@@ -198,6 +204,7 @@ class StAssetsController extends Controller
     }
 
     function changeEstado(FlasherInterface $flasher, $id, $estado){
+        canPassAdminJefe();
         $asset = StAssets::where('id',decode($id) )->first();
         if ($estado == 1) {
             $asset->estado = '0';
@@ -339,6 +346,7 @@ class StAssetsController extends Controller
 
         $assets = StAssets::CodName($request->search)
         ->orderBy('cod','desc')
+        ->where('estado','1')
         ->limit(20)
         ->get();
 

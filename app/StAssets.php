@@ -22,10 +22,7 @@ class StAssets extends Model
     // FUNCIONES
     // ==========================================================================
     public function getCod(){
-        if(permisoAdminJefe()){
-            return '<a href=\'/assets/show/'.code($this->id).'\'>'.$this->cod.'</a>';
-        }
-        return $this->cod;
+        return '<a href=\'/assets/show/'.code($this->id).'\'>'.$this->cod.'</a>';
     }
 
     public function getCiudadLiteralAttribute(){
@@ -104,6 +101,7 @@ class StAssets extends Model
     }
 
     public function getOperations(){
+
         $operaciones =
         '<span class="form-operations" data-toggle="popoverOper" tabindex="0"
             data-content=

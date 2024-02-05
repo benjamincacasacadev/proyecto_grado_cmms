@@ -8,7 +8,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group" id="ordentrabajo-sel2">
                 <label id="ordentrabajo--label">* Orden de trabajo asociada</label>
-                <i class="text-sm">(Pendientes ó en camino)</i><br>
+                <i class="text-sm">(Pendientes, en progreso y en pausa)</i><br>
                 <select name="ordentrabajo" class="form-control selector-workorders" id="report_id" style="width:100%">
                     <option value="">Seleccionar</option>
                 </select>
@@ -122,7 +122,7 @@
                 delay: 250,
                 data: function (params) {
                     var query = {
-                        estados: ['P'],
+                        estados: ['P','E','S'],
                         search: params.term,
                         page: params.page || 5
                     }

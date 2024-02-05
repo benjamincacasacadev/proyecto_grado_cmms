@@ -196,11 +196,8 @@ class ClientsController extends Controller
     }
 
     public function listClients(Request $request) {
-
         $request['search'] = limpiarTexto($request->search,'s2');
-        $search = ($request->search == '') ? '-----' : $request->search;
-
-        $clients = Clients::where('nombre','LIKE','%'.$search.'%')
+        $clients = Clients::Nombre($request->search)
         ->where('estado', '1')
         ->orderBy('nombre','asc')
         ->limit(40)

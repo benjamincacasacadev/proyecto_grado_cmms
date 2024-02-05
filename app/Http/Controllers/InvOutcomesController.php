@@ -34,6 +34,7 @@ class InvOutcomesController extends Controller
         ->Reason($request->input('columns.2.search.value'))
         ->WorkOrders($request->input('columns.3.search.value'))
         ->DeliveryDate($request->input('columns.4.search.value'))
+        ->PermisoVerOTs()
         ->State($request->get('state'))
         ->with('workorders');
 
@@ -86,8 +87,9 @@ class InvOutcomesController extends Controller
         $request->validate($validateArray, [], $aliasArray);
 
         $workorder = WorkOrders::findOrFail(decode($request->ordentrabajo));
-        if($workorder->estado != "P"){
-            $flasher->addFlash('warning', 'La orden de trabajo seleccionada no esta en estado pendiente', 'No se pudo crear la solicitud');
+        $estNoPerm = ['P','E','S'];
+        if(!in_array($workorder->estado, $estNoPerm)){
+            $flasher->addFlash('warning', 'La orden de trabajo seleccionada no esta en estado permitido', 'No se pudo crear la solicitud');
             return  \Response::json(['success' => '1']);
         }
 
@@ -176,6 +178,7 @@ class InvOutcomesController extends Controller
 
     public function show($id){
         $outcome = InvOutcomes::findOrFail(decode($id));
+        permisoAdminOTs($outcome->wo_id);
         Session::put('item','4.1:');
         return view("inventory.outcomes.show", compact('outcome'));
     }

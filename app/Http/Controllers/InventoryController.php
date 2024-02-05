@@ -77,10 +77,12 @@ class InventoryController extends Controller
     //                             FUNCIONES CRUD
     // ===============================================================================
     public function modalCreate(){
+        canPassAdminJefe();
         return view("inventory.modalCreate");
     }
 
     public function store(Request $request, FlasherInterface $flasher){
+        canPassAdminJefe();
         $validateArray = [
             'nombre' =>'required|max:100',
             'unidad' =>'required',
@@ -166,6 +168,7 @@ class InventoryController extends Controller
     }
 
     public function modalEdit($id){
+        canPassAdminJefe();
         $item = Inventory::findOrFail(decode($id));
         $swImg = false;
         if( isset($item->attach) && $item->attach != '' ){
@@ -175,6 +178,7 @@ class InventoryController extends Controller
     }
 
     public function update(Request $request, FlasherInterface $flasher, $id){
+        canPassAdminJefe();
         $validateArray = [
             'nombreedit' =>'required|max:100',
             'unidadedit' =>'required',
@@ -288,11 +292,13 @@ class InventoryController extends Controller
     }
 
     public function modalDelete($id){
+        canPassAdminJefe();
         $item = Inventory::findOrFail(decode($id));
         return view("inventory.modalDelete", compact('item'));
     }
 
     public function destroy(FlasherInterface $flasher, $id){
+        canPassAdminJefe();
         $item = Inventory::findOrFail(decode($id));
         if($item->getCantDetails() == 0 ){
             if (Storage::exists('public/inventory/'.$item->attach)){
@@ -326,11 +332,11 @@ class InventoryController extends Controller
     //                                    KARDEX
     // ===============================================================================
     public function kardex($id){
+        canPassAdminJefe();
         $item = Inventory::findOrFail(decode($id));
         $qrcode  = "Nombre: ".$item->title."\r\nCodigo material: ".$item->cod;
         $qrcode .= "\r\nCantidad disponible: ".number_format($item->TotalItem,2,".","");
         $details = InvStocks::selectRaw("*, SUM(incomes) as ingresos, SUM(outcomes) as egresos")->where('item_id',$item->id)->groupBy('location')->get();
-
 
         Session::put('item','4.0:');
         return view("inventory.kardex", compact('item','qrcode','details'));

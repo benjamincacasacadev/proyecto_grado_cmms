@@ -43,7 +43,7 @@
             Activos
         </h1>
     </div>
-
+    @if (permisoAdminJefe())
     <div class="col-auto ms-auto d-print-none">
         <div class="btn-list">
             <a href="assets/modalCreate" rel="modalCreate" title="Nuevo activo" type="button" class="btn btn-pill btn-primary">
@@ -54,6 +54,7 @@
             </a>
         </div>
     </div>
+    @endif
 @endsection
 
 @section ('contenido')

@@ -37,6 +37,7 @@ class HomeController extends Controller
         sum(case when estado = "S" then 1 else 0 end) AS en_pausa,
         sum(case when estado = "C" then 1 else 0 end) AS en_correccion,
         sum(case when estado = "X" then 1 else 0 end) AS anulado')
+        ->PermisoVer()
         ->first();
 
         $nameArr = [

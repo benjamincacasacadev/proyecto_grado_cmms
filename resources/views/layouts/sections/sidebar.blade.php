@@ -115,44 +115,41 @@
                 {{-- =================================================================================================================== --}}
                 {{--                                                     INVENTARIO                                                      --}}
                 {{-- =================================================================================================================== --}}
-                @php
-                    $permisoInventario = 1
-                @endphp
-                @if ($permisoInventario == 1)
-                    <li class="nav-item dropdown {!!strstr($item,'.',true)=='4'?'active':'';!!}">
-                        <a class="dropdown-item dropdown-toggle" href="#navbar-inventario" data-toggle="dropdown" role="button" aria-expanded="false">
+                <li class="nav-item dropdown {!!strstr($item,'.',true)=='4'?'active':'';!!}">
+                    <a class="dropdown-item dropdown-toggle" href="#navbar-inventario" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span class="nav-link-icon  d-lg-inline-block">
+                            <img src="{{asset('imagenes/screw.svg')}}" width="20" height="20" style="margin-bottom:20px;filter: brightness(0) invert(1);">
+                        </span>
+                        <span class="nav-link-title">
+                            Inventario
+                        </span>
+                    </a>
+
+                    <div class="dropdown-menu {!!strstr($item,'.',true)=='4.0'?'show':'';!!}">
+                        <a class="dropdown-item {!!strstr($item,':',true)=='4.0'?'active font-weight-bold':'';!!}" href="/inventory">
                             <span class="nav-link-icon  d-lg-inline-block">
-                                <img src="{{asset('imagenes/screw.svg')}}" width="20" height="20" style="margin-bottom:20px;filter: brightness(0) invert(1);">
+                                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="9" y1="6" x2="20" y2="6" /><line x1="9" y1="12" x2="20" y2="12" /><line x1="9" y1="18" x2="20" y2="18" /><line x1="5" y1="6" x2="5" y2="6.01" /><line x1="5" y1="12" x2="5" y2="12.01" /><line x1="5" y1="18" x2="5" y2="18.01" /></svg>
                             </span>
                             <span class="nav-link-title">
-                                Inventario
+                                Ver materiales
                             </span>
                         </a>
 
-                        <div class="dropdown-menu {!!strstr($item,'.',true)=='4.0'?'show':'';!!}">
-                            <a class="dropdown-item {!!strstr($item,':',true)=='4.0'?'active font-weight-bold':'';!!}" href="/inventory">
-                                <span class="nav-link-icon  d-lg-inline-block">
-                                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="9" y1="6" x2="20" y2="6" /><line x1="9" y1="12" x2="20" y2="12" /><line x1="9" y1="18" x2="20" y2="18" /><line x1="5" y1="6" x2="5" y2="6.01" /><line x1="5" y1="12" x2="5" y2="12.01" /><line x1="5" y1="18" x2="5" y2="18.01" /></svg>
-                                </span>
-                                <span class="nav-link-title">
-                                    Ver materiales
-                                </span>
-                            </a>
 
+                        <a class="dropdown-item {!!strstr($item,':',true)=='4.1'?'active font-weight-bold':'';!!}" href="/outcomes">
+                            <span class="nav-link-icon  d-lg-inline-block">
+                                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+                                    <path d="M7 12h14l-3 -3m0 6l3 -3"></path>
+                                </svg>
+                            </span>
+                            <span class="nav-link-title">
+                                Solicitudes
+                            </span>
+                        </a>
 
-                            <a class="dropdown-item {!!strstr($item,':',true)=='4.1'?'active font-weight-bold':'';!!}" href="/outcomes">
-                                <span class="nav-link-icon  d-lg-inline-block">
-                                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
-                                        <path d="M7 12h14l-3 -3m0 6l3 -3"></path>
-                                    </svg>
-                                </span>
-                                <span class="nav-link-title">
-                                    Solicitudes
-                                </span>
-                            </a>
-
+                        {{-- @if (permisoAdminJefe()) --}}
                             <a class="dropdown-item {!!strstr($item,':',true)=='4.2'?'active font-weight-bold':'';!!}" href="/incomes">
                                 <span class="nav-link-icon  d-lg-inline-block">
                                     <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M20 12h-13l3 -3m0 6l-3 -3" /></svg>
@@ -161,7 +158,9 @@
                                     Ingresos
                                 </span>
                             </a>
+                        {{-- @endif --}}
 
+                        {{-- @if (permisoAdminJefe()) --}}
                             <a class="dropdown-item {!!strstr($item,':',true)=='4.3'?'active font-weight-bold':'';!!}" href="/transfers">
                                 <span class="nav-link-icon  d-lg-inline-block">
                                     <svg class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -176,9 +175,9 @@
                                     Traspasos
                                 </span>
                             </a>
-                        </div>
-                    </li>
-                @endif
+                        {{-- @endif --}}
+                    </div>
+                </li>
 
                 {{-- =================================================================================================================== --}}
                 {{--                                            CONFIGURAR FORMULARIOS                                                   --}}

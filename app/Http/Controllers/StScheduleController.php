@@ -17,28 +17,20 @@ class StScheduleController extends Controller
     public function datesAjax(Request $request){
 
         $filters = $request->filters;
-        $clientF = isset($filters[0]) ? $filters[0] : 't';
-        $userF = isset($filters[1]) ? $filters[1] : 't';
-        $programF = isset($filters[2]) ? $filters[2] : 't';
-        $priorityF = isset($filters[3]) ? $filters[3] : 't';
-        $typeF = isset($filters[4]) ? $filters[4] : 't';
-        $areaF = isset($filters[5]) ? $filters[5] : 't';
         $stateF = isset($filters[6]) ? $filters[6] : 'all';
-        $home = isset($filters[7]) ? $filters[7] : '0';
-
-        $fecha = $stateF ==  'Ven' ? 'V' : '';
         $stateF = $stateF == 'Ven' ? '' : $stateF;
 
         $start = date('Y-m-d H:i',strtotime($request->start));
         $end = date('Y-m-d',strtotime($request->end));
         $end = $end.' 23:59';
 
-        $start = Carbon::parse($start)->subDays(15);
-        $end = Carbon::parse($end)->addDays(15);
+        $start = Carbon::parse($start)->subDays(5);
+        $end = Carbon::parse($end)->addDays(5);
 
         $workOrders = WorkOrders::
         whereDate('fecha','>=',$start)
         ->whereDate('fecha','<=',$end)
+        ->PermisoVer()
         ->orderBy('fecha','asc')
         ->get();
         $salida_cron = [];

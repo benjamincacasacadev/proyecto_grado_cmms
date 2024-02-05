@@ -1226,6 +1226,7 @@ class WorkOrdersController extends Controller
 
         $workorders = WorkOrders::
         CodTitle($request->search)
+        ->PermisoVer()
         ->searchEstado($estados)
         ->orderBy('cod','desc')
         ->limit(20)

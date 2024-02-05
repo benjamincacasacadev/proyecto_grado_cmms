@@ -21,10 +21,7 @@ class InvOutcomes extends Model
     //                                         FUNCIONES
     // =============================================================================================
     public function getCod(){
-        if(permisoAdminJefe()){
-            return '<a href="/outcomes/show/'.code($this->id).'">'.$this->cod.'</a>';
-        }
-        return $this->cod;
+        return '<a href="/outcomes/show/'.code($this->id).'" class="font-weight-bold">'.$this->cod.'</a>';
     }
 
     public function getCantDetails(){
@@ -108,6 +105,14 @@ class InvOutcomes extends Model
     // =============================================================================================
     //                                         SCOPES
     // =============================================================================================
+    public function scopePermisoVerOTs($query){
+        if(!permisoAdminJefe()){
+            $query->whereHas('workorders.pivotWO', function($q) {
+                $q->where('user_id', userId());
+            });
+        }
+    }
+
     public function scopeCod($query,$val){
         if($val != ''){
             $query->where('cod', 'like', "%{$val}%");

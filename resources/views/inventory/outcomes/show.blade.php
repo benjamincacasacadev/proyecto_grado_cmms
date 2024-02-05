@@ -90,7 +90,7 @@
                             Pendiente de retiro
                         </a>
                     @else
-                        <button type="button" class="btn btn-outline-orange font-weight-bold cursor-zoom-in " >
+                        <button type="button" class="btn btn-outline-orange font-weight-bold cursor-zoom-in" title="Para validar la solicitud, comuniquese con el personal a cargo">
                             <svg class="icon icon-tabler icon-tabler-replace" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <rect x="3" y="3" width="6" height="6" rx="1"></rect>
@@ -137,15 +137,13 @@
                             <th width="15%">Origen</th>
                             <th width="15%">
                                 Almacen
-                                @if (permisoAdminJefe() && $outcome->state == '1')
+                                @if ($outcome->state == '1')
                                     <span class="form-help edithover" id="ubicacionclass" data-toggle="popover" data-content="<span style=font-size:11px >Para editar un valor de esta columna haga doble clic en el campo o celda deseado para modificarlo.<br>Escoja el almacen deseado y se confirmarà el cambio. </span>" data-title="<b>Columna Editable</b>">?</span>
                                 @endif
                             </th>
                             <th width="17%">Destino</th>
-                            @if (permisoAdminJefe())
-                                @if($outcome->state == 1)
+                            @if($outcome->state == 1)
                                     <th width="5%">Op.</th>
-                                @endif
                             @endif
                         </tr>
                     </thead>
@@ -162,7 +160,7 @@
             </div>
         @endif
 
-        @if(permisoAdminJefe() && $outcome->state == 1)
+        @if($outcome->state == 1)
             {{Form::Open(array('action'=>array('InvOutcomesDetailsController@storeDetails',code($outcome->id)),'method'=>'POST','autocomplete'=>'off','id'=>'formSalidas'))}}
                 <h2 >Solicitar materiales</h2>
                 <div class="table-responsive">
@@ -298,6 +296,13 @@
     });
     $(".selector").select2();
 
+    $('[data-toggle="popover"]').popover({
+        html: true,
+        "trigger" : "hover",
+        "placement": "left",
+        "container": "body",
+    });
+
     var AnchoTr = function(e, width) {
         width.children().each(function() {
             $(this).width($(this).width());
@@ -353,10 +358,8 @@
                         {"data": "report"},
                         {"data": "location",'className':'ubicacionclass'},
                         {"data": "observation"},
-                        @if (permisoAdminJefe())
-                            @if($outcome->state == 1)
-                                {"data": "operations"},
-                            @endif
+                        @if($outcome->state == 1)
+                            {"data": "operations"},
                         @endif
                     ],
                     "drawCallback": function () {
