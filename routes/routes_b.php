@@ -258,3 +258,97 @@ Route::post('/outcomes/details/update/{id}', 'InvOutcomesDetailsController@updat
 Route::get('/outcomes/details/deletemodal/{id}', 'InvOutcomesDetailsController@modalDelete')->name('outcomes.details.deletemodal');
 Route::delete('/outcomes/details/destroy/{id}', 'InvOutcomesDetailsController@destroyDetails')->name('outcomes.details.destroy');
 Route::get('/outcomes/details/order', 'InvOutcomesDetailsController@order')->name('outcomes.details.order');
+
+Route::get('/createClientsX', function () {
+    abort(403);
+    $direcciones = array("Calle de las americas #123","Avenida humboldt #456","Pasaje de las Flores #789","Fundacion arcoiris obrajes #1011","Plaza de los alamos #1314","Calle montenegro Av 21 #1516","Avenida de los leones #1718","Pasaje Marina Nuñez del Prado #1920","Camino de aranjuez #2122","Calle 35 de cota cota #2324","Avenida Acha #2526","Pasaje ortega #2728","Calle Jaen #2930","Avenida Zabaleta #3132","Plaza de la loba #3334","Av Busch #3536","Calle Sagarnaga #3738","Avenida 20 de octubre #3940","Mallasa calle 5 #4142","Plaza de san miguel calle 21 #4344");
+
+    $caracteristicas_clientes = array("Tecnología de la Información","Industria Farmacéutica","Sector Automotriz","Turismo y Hospitalidad","Energías Renovables","Alimentos y Bebidas","Servicios Financieros","Construcción y Desarrollo","Educación y Formación","Medios de Comunicación","Agricultura y Agroindustria","Transporte y Logística","Entretenimiento y Eventos","Salud y Bienestar","Moda y Belleza","Gobierno y Administración Pública","Investigación y Desarrollo","Arte y Cultura","Telecomunicaciones","Consultoría Empresarial");
+
+    $nombres_contacto = array("Juan Pérez","María Rodríguez","Carlos García","Ana Martínez","Luis López","Laura Hernández","Diego González","Sofía Díaz","Pedro Sánchez","Elena Ramírez","Miguel Gómez","Lucía Torres","Alejandro Vásquez","Paula Castro","José Morales","Valentina Álvarez","Javier Ruiz","Camila Herrera","Fernando Ortiz","Isabel Cruz");
+
+    $numeros_celular_bolivia = array("61234567","72345678","63456789","74567890","65678901","76789012","67890123","78901234","69012345","70123456","61234567","72345678","63456789","74567890","65678901","76789012","67890123","78901234","69012345","70123456");
+
+    $cargos_empresa = array("Gerente de Ventas","Analista de Marketing","Jefe de Recursos Humanos","Desarrollador de Software","Director Financiero","Especialista en Soporte Técnico","Coordinador de Proyectos","Ejecutivo de Cuentas","Diseñador Gráfico","Técnico de Mantenimiento","Consultor de Negocios","Analista de Datos","Ingeniero de Producción","Asistente Administrativo","Especialista en Logística","Asesor Legal","Arquitecto de Sistemas","Investigador de Mercado","Analista de Calidad","Coordinador de Eventos");
+
+    $nits = array("45747856","987654321","876543212","234567890","98765432","1234567890","34567890","876543210","9876543","2345678901","121456789","9876543210","3456789","876547561","127656789","9876543242","345678901","87654321","2345678920","8775454");
+
+    $tipos = ['I', 'F', 'D'];
+
+    $clientes = ['ADMINISTRADORA DE TARJETAS DE CREDITO S.A.','AMERICAN EMBASSY LA PAZ','BANCO FIE S.A.','BANCO NACIONAL DE BOLIVIA S.A.','BISA SEGUROS Y REASEGUROS S.A.','COBEE S.A.','CRECER IFD','DELEGACION DE LA UNION EUROPEA EN BOLIVIA','ENDE TECNOLOGIAS S.A.','ENTEL S.A.','LA PRIMERA E.F.V.','NUEVATEL PCS DE BOLIVIA S.A.','RUAT','TELEFONICA CELULAR DE BOLIVIA S.A.','YPFB REFINACIÓN S. A.','Multitarea','PCP - PC PETROLERA','AMPER SRL','COSIN LTDA','PROSALUD'];
+
+
+    for ($i=0; $i <20 ; $i++) {
+        $nombreContacto = $nombres_contacto[$i];
+        $emailContacto = generarCorreoGmail($nombreContacto);
+        $client = new \App\Clients();
+        $client->nombre = $clientes[$i];
+        $client->nit = $nits[$i];
+        $client->tipo = $tipos[array_rand($tipos)];
+        $client->caracteristicas = $caracteristicas_clientes[$i];
+        $client->direccion = $direcciones[$i];
+        $client->nombre_contacto = $nombreContacto;
+        $client->cargo_contacto = $cargos_empresa[$i];
+        $client->celular_contacto = $numeros_celular_bolivia[$i];
+        $client->email_contacto = $emailContacto;
+        $client->estado = 1;
+        $client->save();
+    }
+    dd("FIdwqqwdN");
+});
+
+Route::get('/createAssetsX', function () {
+    abort(403);
+    $assets = ['UPS ATP 2 KVA NEOMEDIC','UPS Atlantic Power de 10KVA (reenvio stock SANTA CRUZ)','BANCO DE CAPACITORES 125KVar 2','Aire Stulz CPS','Equipo Inversor Monofasico','G.E. GRUPEL 22KVA SAN RAMON','AIRE DE PRECISION  STULZ N°5 SALA SWITCH','SUCRE RIELTEC SOCOMEC  DELPHYS MX 250KVA','VISION.TEMBLDRANI;ATP;9103-83928KG1;3KVA','HANSA.SM;(210403-98600017);ATP;G2T;2KVA','LPZ.CALACOTO;ATP G2 T ;2KVA','México ATP 9103-73566-00P (1)','AAP N° 1 SALA NUEVA CASITA','A.SENKATA;(G42K24011);EATON;9E 10Ki;10KVA','COROICO (G.E. 11KVA)','GRUPO ELECTROGENO','S.C. RADAR CARMEN SCMC DELPHYS MP ELITE 100KVA','SHOWROOM (210403-98600013) ATP G2T 2KVA (1)','BBVA.SCZ;P1;ATP;INNOVAG.2.RACK/TOWER;10KVA','AAP N°1 RADIO BASE TACOPAYA'];
+
+    $direcciones = array("Calle de las americas #123","Avenida humboldt #456","Pasaje de las Flores #789","Fundacion arcoiris obrajes #1011","Plaza de los alamos #1314","Calle montenegro Av 21 #1516","Avenida de los leones #1718","Pasaje Marina Nuñez del Prado #1920","Camino de aranjuez #2122","Calle 35 de cota cota #2324","Avenida Acha #2526","Pasaje ortega #2728","Calle Jaen #2930","Avenida Zabaleta #3132","Plaza de la loba #3334","Av Busch #3536","Calle Sagarnaga #3738","Avenida 20 de octubre #3940","Mallasa calle 5 #4142","Plaza de san miguel calle 21 #4344");
+
+    $clientIds = ['33','1','28','37','26','32','41','35','29','39','23','2','40','30','25','36','42','31','27','24','34','38'];
+
+    $ciudades = [0,1,2,3,4,5,6,7,8];
+    $categorias = [0,1,2,3,4,5,6,7,8,9,10];
+
+    $numeros_serie_equipos = array("ABCD1234EFGH5678","WXYZ9876UVTR3210","JKLM3456QRST7890","1234EFGH5678IJKL","UVTR3210WXYZ987621","QRST7890JK3LM3456","EFGH56784IJKL1234","UVTR321DW0WXYZ9876","QRST7890JKL4M3456","IJKL12334EFGH5678","UVTR321340WXYZ9876","QRST7890JKLM34C56","EFGH5678IJKL61234","UVTR32510WXYZ9876","QRST7890J53KLM3456","IJKL1234EFGH5678","UVTR3210WXYZ49876","QRST7890JKLM3456","EFGH5678IJK6L1234","UVTR32130WXYZ9876");
+
+    $marcas_equipos = array("Samsung","LG","Panasonic","Sony","Toshiba","Sharp","Philips","Hitachi","Mitsubishi Electric","Carrier","Frigidaire","Daikin","General Electric","Haier","Hisense","Lennox","Midea","Pioneer","Trane","Whirlpool");
+
+    $modelos_equipos = ['NEOMEDIC','Atlantic Power','KVAR2','CPS-2','Powerflow1','GRUPEL','SWITCH-111','RIELTEC','VISION','G2t','ATP G2 T','9103-73566-00P','AAP N° 1','G42K24011','Ecochill 4','Inverter 2','SCMC ELITE 100KVA','ATP G2T ','INNOVAG.2.','AAP new 2'];
+
+    for ($i=0; $i < 20; $i++) {
+        // Guardar los campos de activo
+        $registroMaximo = \App\StAssets::select('cod')->where('cod', 'LIKE', "%AS%")->max('cod');
+        $cod = generateCode($registroMaximo,'AS000001','AS',2,6);
+
+        $asset = new \App\StAssets();
+        $asset->cod = $cod;
+        $asset->client_id = $clientIds[array_rand($clientIds)];
+        $asset->nombre = $assets[$i];
+        $asset->categoria = $categorias[array_rand($categorias)];
+        $asset->ubicacion = $direcciones[$i];;
+        $asset->ciudad = $ciudades[array_rand($ciudades)];
+        $asset->nro_serie = $numeros_serie_equipos[$i];
+        $asset->marca = $marcas_equipos[$i];
+        $asset->modelo = $modelos_equipos[$i];
+        $asset->capacidad = rand(100, 999);
+        $asset->estado = 1;
+        $asset->save();
+    }
+
+    dd("GUARDADO");
+});
+
+function generarCorreoGmail($nombreCompleto) {
+    // Convertir el nombre completo a minúsculas y eliminar espacios
+    $nombreCompleto = strtolower(str_replace(' ', '', $nombreCompleto));
+
+    // Eliminar caracteres especiales y acentos
+    $nombreNormalizado = iconv('UTF-8', 'ASCII//TRANSLIT', $nombreCompleto);
+
+    // Eliminar cualquier carácter no alfanumérico excepto puntos
+    $nombreNormalizado = preg_replace('/[^a-z0-9.]+/i', '', $nombreNormalizado);
+
+    // Generar el correo electrónico agregando "@gmail.com"
+    $correoElectronico = $nombreNormalizado . '@gmail.com';
+
+    return $correoElectronico;
+}
