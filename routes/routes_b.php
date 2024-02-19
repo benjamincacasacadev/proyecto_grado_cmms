@@ -337,18 +337,3 @@ Route::get('/createAssetsX', function () {
     dd("GUARDADO");
 });
 
-function generarCorreoGmail($nombreCompleto) {
-    // Convertir el nombre completo a minúsculas y eliminar espacios
-    $nombreCompleto = strtolower(str_replace(' ', '', $nombreCompleto));
-
-    // Eliminar caracteres especiales y acentos
-    $nombreNormalizado = iconv('UTF-8', 'ASCII//TRANSLIT', $nombreCompleto);
-
-    // Eliminar cualquier carácter no alfanumérico excepto puntos
-    $nombreNormalizado = preg_replace('/[^a-z0-9.]+/i', '', $nombreNormalizado);
-
-    // Generar el correo electrónico agregando "@gmail.com"
-    $correoElectronico = $nombreNormalizado . '@gmail.com';
-
-    return $correoElectronico;
-}
